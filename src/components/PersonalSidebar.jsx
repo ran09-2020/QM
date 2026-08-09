@@ -8,8 +8,8 @@ const downloadableFiles = [
   { id: 3, name: 'מטריצת אייזנהאואר - דף עבודה' },
   { id: 4, name: 'מודל RADAR - מחוון' },
   { id: 5, name: '7 השאלות - טופס ראיון' },
-  { id: 6, name: 'מטריצה לפריסת חזון (דניאל קים) - טופס ריק', url: '/vision_matrix_blank.docx' },
-  { id: 7, name: 'חזון שקורא לפעולה (4 הזירות) - טופס ריק', url: '/vision_action_blank.docx' }
+  { id: 6, name: 'מטריצה לפריסת חזון (דניאל קים) - טופס ריק', url: '/n-star/vision_matrix_blank.docx' },
+  { id: 7, name: 'חזון שקורא לפעולה (4 הזירות) - טופס ריק', url: '/n-star/vision_action_blank.docx' }
 ];
 
 export default function PersonalSidebar({ session, isOpen, setIsOpen }) {
