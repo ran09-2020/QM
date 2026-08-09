@@ -42,7 +42,7 @@ function App() {
   }
 
   return (
-    <Router>
+    <Router basename="/n-star">
       <div className="app-container app-layout-new">
         <PersonalSidebar session={session} isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
         
