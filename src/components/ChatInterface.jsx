@@ -481,6 +481,17 @@ function ChatInterface({ session, isSimulationMode = false }) {
                             </button>
                           );
                         }
+                        if (props.href && props.href.startsWith('#pdf:')) {
+                          const pdfFile = props.href.replace('#pdf:', '');
+                          return (
+                            <div style={{ marginTop: '1rem', marginBottom: '1rem', border: '1px solid #e5e7eb', borderRadius: '8px', overflow: 'hidden', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
+                              <div style={{ backgroundColor: '#f3f4f6', padding: '8px 12px', fontWeight: 'bold', borderBottom: '1px solid #e5e7eb', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <span style={{fontSize: '18px'}}>📄</span> {props.children}
+                              </div>
+                              <iframe src={`${import.meta.env.BASE_URL}process_maps/${pdfFile}`} width="100%" height="500px" style={{ border: 'none' }} title="Process Map PDF" />
+                            </div>
+                          );
+                        }
                         return <a {...props} />;
                       }
                     }}
