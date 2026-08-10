@@ -483,12 +483,20 @@ function ChatInterface({ session, isSimulationMode = false }) {
                         }
                         if (props.href && props.href.startsWith('#pdf:')) {
                           const pdfFile = props.href.replace('#pdf:', '');
+                          const pdfUrl = `${import.meta.env.BASE_URL}process_maps/${pdfFile}`;
                           return (
                             <div style={{ marginTop: '1rem', marginBottom: '1rem', border: '1px solid #e5e7eb', borderRadius: '8px', overflow: 'hidden', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
-                              <div style={{ backgroundColor: '#f3f4f6', padding: '8px 12px', fontWeight: 'bold', borderBottom: '1px solid #e5e7eb', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <span style={{fontSize: '18px'}}>📄</span> {props.children}
+                              <div style={{ backgroundColor: '#f3f4f6', padding: '8px 12px', fontWeight: 'bold', borderBottom: '1px solid #e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                  <span style={{fontSize: '18px'}}>📄</span> {props.children}
+                                </div>
+                                <a href={pdfUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: '12px', backgroundColor: '#8b5cf6', color: 'white', padding: '4px 8px', borderRadius: '4px', textDecoration: 'none' }}>
+                                  פתח במסך מלא
+                                </a>
                               </div>
-                              <iframe src={`${import.meta.env.BASE_URL}process_maps/${pdfFile}`} width="100%" height="500px" style={{ border: 'none' }} title="Process Map PDF" />
+                              <div style={{ WebkitOverflowScrolling: 'touch', overflowY: 'auto' }}>
+                                <iframe src={pdfUrl} width="100%" height="500px" style={{ border: 'none', display: 'block' }} title="Process Map PDF" />
+                              </div>
                             </div>
                           );
                         }
