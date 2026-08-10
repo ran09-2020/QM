@@ -102,7 +102,7 @@ function ChatInterface({ session, isSimulationMode = false }) {
           {
             role: 'model',
             text: initialModelText,
-            hat: 'מאמן'
+            hat: 'מלמד'
           }
         ];
         setMessages(initialMessages);
