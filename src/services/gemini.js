@@ -127,7 +127,8 @@ try {
 const processMaps = [
   { file: 'teacher_onboarding.pdf', title: 'קליטת מורה חדש' },
   { file: 'emotional_needs.pdf', title: 'מיפוי ואיתור צרכים רגשיים' },
-  { file: 'external_projects.pdf', title: 'קליטה והפעלת פרויקטים ויוזמות' }
+  { file: 'external_projects.pdf', title: 'קליטה והפעלת פרויקטים ויוזמות' },
+  { file: 'staff_evaluation.pdf', title: 'הערכת עובדים והתפתחות מקצועית' }
 ];
 
 function processRandomPdf(text) {
