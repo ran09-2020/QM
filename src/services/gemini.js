@@ -134,7 +134,7 @@ const processMaps = [
 function processRandomPdf(text) {
   if (text.includes('#pdf:random')) {
     const randomMap = processMaps[Math.floor(Math.random() * processMaps.length)];
-    return text.replace('#pdf:random', `#pdf:${randomMap.file}`);
+    return text.replaceAll('#pdf:random', `#pdf:${randomMap.file}`);
   }
   return text;
 }

@@ -169,6 +169,7 @@ function ChatInterface({ session, isSimulationMode = false }) {
   }, [isSimulationMode, mentorHat]);
 
   const handleSend = async (overrideText = null) => {
+    if (isLoading) return;
     const textToSend = overrideText || input;
     if (!textToSend.trim() && !attachedFile) return;
 
@@ -409,6 +410,7 @@ function ChatInterface({ session, isSimulationMode = false }) {
       <div className="chat-messages" style={isSimulationMode ? { paddingTop: '1rem' } : {}}>
         {messages.map((msg, idx) => {
           const isLastModelMsg = msg.role === 'model' && idx === messages.length - 1;
+          const isLast = idx === messages.length - 1;
           
           if (msg.role === 'system-info') {
             return (
@@ -497,7 +499,16 @@ function ChatInterface({ session, isSimulationMode = false }) {
                                 </a>
                               </div>
                               <div style={{ WebkitOverflowScrolling: 'touch', overflowY: 'auto' }}>
-                                <iframe src={pdfUrl} width="100%" height="500px" style={{ border: 'none', display: 'block' }} title="Process Map PDF" />
+                                {isLast ? (
+                                  <iframe src={pdfUrl} width="100%" height="500px" style={{ border: 'none', display: 'block' }} title="Process Map PDF" />
+                                ) : (
+                                  <div style={{ padding: '20px', textAlign: 'center', backgroundColor: '#f9fafb' }}>
+                                    <span style={{color: '#6b7280', fontSize: '14px'}}>התצוגה נסגרה כדי לשמור על ביצועים.</span><br/>
+                                    <a href={pdfUrl} target="_blank" rel="noopener noreferrer" style={{color: '#8b5cf6', fontWeight: 'bold', textDecoration: 'none', display: 'inline-block', marginTop: '8px'}}>
+                                      לחץ כאן לפתיחת הקובץ 
+                                    </a>
+                                  </div>
+                                )}
                               </div>
                             </div>
                           );
