@@ -123,6 +123,22 @@ try {
   console.error("Failed to parse history from sessionStorage", e);
 }
 
+
+const processMaps = [
+  { file: 'teacher_onboarding.pdf', title: 'קליטת מורה חדש' },
+  { file: 'emotional_needs.pdf', title: 'מיפוי ואיתור צרכים רגשיים' },
+  { file: 'external_projects.pdf', title: 'קליטה והפעלת פרויקטים ויוזמות' }
+];
+
+function processRandomPdf(text) {
+  if (text.includes('#pdf:random')) {
+    const randomMap = processMaps[Math.floor(Math.random() * processMaps.length)];
+    return text.replace('#pdf:random', `#pdf:${randomMap.file}`)
+               .replace('{MAP_TITLE}', randomMap.title);
+  }
+  return text;
+}
+
 export const clearSimulationHistory = () => {
   simulationHistory = [];
   sessionStorage.removeItem('gemini_simulationHistory');
@@ -186,7 +202,8 @@ export async function sendMessageToGemini(userMessage, userGender = 'male', ment
 
     const result = await chat.sendMessage(finalMessageContent);
     const response = await result.response;
-    const text = response.text();
+    let text = response.text();
+    text = processRandomPdf(text);
 
     // Update local history (store text only to avoid Base64 bloating sessionStorage)
     chatHistory.push({ role: "user", parts: [{ text: historyMessageText }] });
@@ -286,7 +303,8 @@ ${clusterTools}
 
     const result = await chat.sendMessage(finalMessageContent);
     const response = await result.response;
-    const text = response.text();
+    let text = response.text();
+    text = processRandomPdf(text);
 
     simulationHistory.push({ role: "user", parts: [{ text: historyMessageText }] });
     simulationHistory.push({ role: "model", parts: [{ text: text }] });
