@@ -42,7 +42,7 @@ function App() {
   }
 
   return (
-    <Router basename="/n-star">
+    <Router basename={import.meta.env.MODE === 'production' ? '/n-star' : '/'}>
       <div className="app-container app-layout-new">
         <PersonalSidebar session={session} isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
         
