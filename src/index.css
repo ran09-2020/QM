@@ -882,3 +882,11 @@ details[open] summary {
   border: none !important;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
 }
+
+
+/* --- Practice Links & Buttons --- */
+.practice-link { color: var(--accent-color); font-weight: 700; text-decoration: none; padding: 2px 6px; border-radius: 4px; background-color: rgba(79, 70, 229, 0.1); margin-right: 5px; transition: all 0.2s; }
+.practice-link:hover { background-color: rgba(79, 70, 229, 0.2); text-decoration: underline; }
+.message-buttons { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; justify-content: center; }
+.practice-btn { background: #fdfbfb; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+

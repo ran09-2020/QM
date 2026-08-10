@@ -52,43 +52,43 @@ function ChatInterface({ session, isSimulationMode = false }) {
         const clusterInitialMessages = {
           'חזון, ייחודיות וערך': `**אשכול חזון, ייחודיות וערך:** הכלים העומדים לרשותך
 
-- **שלושת האופקים**: זיהוי תבניות וחשיבה שיטתית על פני שלושה טווחי זמן.
-- **מטריצה לפריסת חזון**: חיבור בין המצוי כיום לרצוי בעתיד תוך שמירה על ערכי הליבה.
-- **חזון שקורא לפעולה**: פריטת חזון גדול ליעדים אופרטיביים ממוקדים.
+- **שלושת האופקים**: זיהוי תבניות וחשיבה שיטתית על פני שלושה טווחי זמן. [לתירגול הכלי](#practice:שלושת_האופקים)
+- **מטריצה לפריסת חזון**: חיבור בין המצוי כיום לרצוי בעתיד תוך שמירה על ערכי הליבה. [לתירגול הכלי](#practice:מטריצה_לפריסת_חזון)
+- **חזון שקורא לפעולה**: פריטת חזון גדול ליעדים אופרטיביים ממוקדים. [לתירגול הכלי](#practice:חזון_שקורא_לפעולה)
 
 תבחר/י כלי לתרגול`,
 
           'הנהגה ותרבות מצמיחה': `**אשכול הנהגה ותרבות מצמיחה:** הכלים העומדים לרשותך
 
-- **עקומת השינוי**: הבנת השלבים הרגשיים שאנשים עוברים בעת שינוי.
-- **אדרת הדג**: זיהוי הקשר בין סיבה לתוצאה בפתרון בעיות (סיבת שורש).
-- **7 השאלות**: מיפוי מבוסס ראיונות לזיהוי כיווני התפתחות ואתגרים עתידיים.
-- **תסריט שיחה: מקושי לצורך**: ניהול שיחות קשות והמרת שיח מאשים לשיח ממוקד צרכים ופתרונות.
+- **עקומת השינוי**: הבנת השלבים הרגשיים שאנשים עוברים בעת שינוי. [לתירגול הכלי](#practice:עקומת_השינוי)
+- **אדרת הדג**: זיהוי הקשר בין סיבה לתוצאה בפתרון בעיות (סיבת שורש). [לתירגול הכלי](#practice:אדרת_הדג)
+- **7 השאלות**: מיפוי מבוסס ראיונות לזיהוי כיווני התפתחות ואתגרים עתידיים. [לתירגול הכלי](#practice:7_השאלות)
+- **תסריט שיחה: מקושי לצורך**: ניהול שיחות קשות והמרת שיח מאשים לשיח ממוקד צרכים ופתרונות. [לתירגול הכלי](#practice:תסריט_שיחה_מקושי_לצורך)
 
 תבחר/י כלי לתרגול`,
 
           'הון אנושי ושותפויות': `**אשכול הון אנושי ושותפויות:** הכלים העומדים לרשותך
 
-- **ניהול שותפויות**: בניית הסכמות, איגום משאבים והשגת מטרות משותפות.
-- **מיפוי בעלי עניין**: ניתוח הכוחות הפועלים בסביבת הארגון ורמת השפעתם.
+- **ניהול שותפויות**: בניית הסכמות, איגום משאבים והשגת מטרות משותפות. [לתירגול הכלי](#practice:ניהול_שותפויות)
+- **מיפוי בעלי עניין**: ניתוח הכוחות הפועלים בסביבת הארגון ורמת השפעתם. [לתירגול הכלי](#practice:מיפוי_בעלי_עניין)
 
 תבחר/י כלי לתרגול`,
 
           'ניהול תהליכים': `**אשכול ניהול תהליכים:** הכלים העומדים לרשותך
 
-- **ניהול תהליכים**: הבניית רצף פעולות, מדידתן והבטחת איכות הביצוע.
-- **ניהול סיכונים**: זיהוי, הערכה וטיפול מונע בסיכונים פוטנציאליים.
-- **פלסטר למשבר**: טיפול מהיר וממוקד במשבר מיידי ללא זמן לתכנון ארוך.
-- **מטריצת פעולה למידתית**: תחקור אירוע (טוב או רע) לשם הפקת לקחים ושיפור מתמיד.
+- **ניהול תהליכים**: הבניית רצף פעולות, מדידתן והבטחת איכות הביצוע. [לתירגול הכלי](#practice:ניהול_תהליכים)
+- **ניהול סיכונים**: זיהוי, הערכה וטיפול מונע בסיכונים פוטנציאליים. [לתירגול הכלי](#practice:ניהול_סיכונים)
+- **פלסטר למשבר**: טיפול מהיר וממוקד במשבר מיידי ללא זמן לתכנון ארוך. [לתירגול הכלי](#practice:פלסטר_למשבר)
+- **מטריצת פעולה למידתית**: תחקור אירוע (טוב או רע) לשם הפקת לקחים ושיפור מתמיד. [לתירגול הכלי](#practice:מטריצת_פעולה_למידתית)
 
 תבחר/י כלי לתרגול`,
 
           'ניהול תוצאות והשפעה': `**אשכול ניהול תוצאות והשפעה:** הכלים העומדים לרשותך
 
-- **מודל RADAR**: הערכת ביצועים בארגון מבוסס תוצאות, גישות, פריסה והערכה.
-- **חשיבה תוצאתית**: מיקוד בהשפעה ובתפוקות במקום רק בפעולות.
-- **מטריצת אייזנהאואר**: תעדוף משימות שוטפות על בסיס דחיפות וחשיבות.
-- **MoSCoW**: תעדוף דרישות ופיצ'רים לפני יציאה לדרך בפרויקטים.
+- **מודל RADAR**: הערכת ביצועים בארגון מבוסס תוצאות, גישות, פריסה והערכה. [לתירגול הכלי](#practice:מודל_RADAR)
+- **חשיבה תוצאתית**: מיקוד בהשפעה ובתפוקות במקום רק בפעולות. [לתירגול הכלי](#practice:חשיבה_תוצאתית)
+- **מטריצת אייזנהאואר**: תעדוף משימות שוטפות על בסיס דחיפות וחשיבות. [לתירגול הכלי](#practice:מטריצת_אייזנהאואר)
+- **MoSCoW**: תעדוף דרישות ופיצ'רים לפני יציאה לדרך בפרויקטים. [לתירגול הכלי](#practice:MoSCoW)
 
 תבחר/י כלי לתרגול`
         };
@@ -339,6 +339,33 @@ function ChatInterface({ session, isSimulationMode = false }) {
     }
   };
 
+  const startPractice = (toolName) => {
+    const toolFriendlyName = toolName.replace(/_/g, ' ');
+    const newMessages = [...messages, {
+      role: 'model',
+      text: `איך תרצה שנתרגל את הכלי "${toolFriendlyName}"?`,
+      hat: 'מלמד',
+      buttons: [
+        { label: 'תראה לי שלב אחרי שלב', action: `practice_step:${toolFriendlyName}` },
+        { label: 'תאמן אותי על תרחיש שאהיה פעיל בו', action: `practice_active:${toolFriendlyName}` }
+      ]
+    }];
+    setMessages(newMessages);
+    if (isSimulationMode) {
+      sessionStorage.setItem('sim_messages', JSON.stringify(newMessages));
+    }
+  };
+
+  const handlePracticeButtonClick = (action) => {
+    if (action.startsWith('practice_step:')) {
+      const toolName = action.replace('practice_step:', '');
+      handleSend('תראה לי שלב אחרי שלב (' + toolName + ')');
+    } else if (action.startsWith('practice_active:')) {
+      const toolName = action.replace('practice_active:', '');
+      handleSend('תאמן אותי על תרחיש שאהיה פעיל בו (' + toolName + ')');
+    }
+  };
+
   return (
     <div className="chat-container" style={{ position: 'relative' }}>
       {isSimulationMode && cluster && (
@@ -426,10 +453,39 @@ function ChatInterface({ session, isSimulationMode = false }) {
                   <ReactMarkdown 
                     remarkPlugins={[remarkGfm]} 
                     rehypePlugins={[rehypeRaw]}
+                    components={{
+                      a: ({node, ...props}) => {
+                        if (props.href && props.href.startsWith('#practice:')) {
+                          const toolName = decodeURIComponent(props.href.replace('#practice:', ''));
+                          return (
+                            <a href="#" onClick={(e) => {
+                              e.preventDefault();
+                              startPractice(toolName);
+                            }} className="practice-link">
+                              {props.children}
+                            </a>
+                          );
+                        }
+                        return <a {...props} />;
+                      }
+                    }}
                   >
                     {msg.text}
                   </ReactMarkdown>
                 </div>
+                {msg.buttons && (
+                  <div className="message-buttons">
+                    {msg.buttons.map((btn, bidx) => (
+                      <button 
+                        key={bidx} 
+                        className="pill-btn practice-btn" 
+                        onClick={() => handlePracticeButtonClick(btn.action)}
+                      >
+                        {btn.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -451,10 +507,10 @@ function ChatInterface({ session, isSimulationMode = false }) {
 
       <div className="chat-input-wrapper" style={isSimulationMode ? { paddingTop: '0.5rem' } : {}}>
         
-        {isSimulationMode && messages.length > 2 && messages[messages.length - 1].role === 'model' && (messages[messages.length - 1].text.includes('תהיה פעיל בו') || messages[messages.length - 1].text.includes('שלב אחרי שלב')) && (
+        {isSimulationMode && messages.length > 1 && messages[messages.length - 1].role === 'model' && (messages[messages.length - 1].text.includes('תהיה פעיל בו') || messages[messages.length - 1].text.includes('שלב אחרי שלב')) && (
           <div className="action-pills">
             <button className="pill-btn" onClick={() => handleSend('תראה לי שלב אחרי שלב')} style={{ borderColor: '#8b5cf6', color: '#7e22ce', fontWeight: 'bold' }}>תראה לי שלב אחרי שלב</button>
-            <button className="pill-btn" onClick={() => handleSend('אימון על תרחיש משלי')} style={{ borderColor: '#8b5cf6', color: '#7e22ce', fontWeight: 'bold' }}>אימון על תרחיש משלי</button>
+            <button className="pill-btn" onClick={() => handleSend('תאמן אותי על תרחיש שאהיה פעיל בו')} style={{ borderColor: '#8b5cf6', color: '#7e22ce', fontWeight: 'bold' }}>תאמן אותי על תרחיש שאהיה פעיל בו</button>
           </div>
         )}
         
