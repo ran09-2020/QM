@@ -466,6 +466,21 @@ function ChatInterface({ session, isSimulationMode = false }) {
                             </a>
                           );
                         }
+                        if (props.href && props.href.startsWith('#action:')) {
+                          const action = props.href.replace('#action:', '');
+                          return (
+                            <button onClick={(e) => {
+                              e.preventDefault();
+                              if (action === 'end_practice') {
+                                setMessages(prev => [...prev, { role: 'system-info', text: 'התירגול הסתיים בהצלחה. לשמירת הסיכום בלוח האירועים לחץ על "סכם ושמור" למעלה. למחיקה והתחלה מחדש, לחץ על "יציאה".' }]);
+                              } else if (action === 'active_practice') {
+                                handleSend('תאמן אותי על תרחיש שאהיה פעיל בו');
+                              }
+                            }} className="pill-btn" style={{ margin: '5px', display: 'inline-flex', borderColor: '#8b5cf6', color: '#7e22ce' }}>
+                              {props.children}
+                            </button>
+                          );
+                        }
                         return <a {...props} />;
                       }
                     }}
