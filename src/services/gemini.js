@@ -131,9 +131,17 @@ const processMaps = [
   { file: 'staff_evaluation.pdf', title: 'הערכת עובדים והתפתחות מקצועית' }
 ];
 
+let lastShownPdfIndex = -1;
+
 function processRandomPdf(text) {
   if (text.includes('#pdf:random')) {
-    const randomMap = processMaps[Math.floor(Math.random() * processMaps.length)];
+    let randomIndex;
+    do {
+      randomIndex = Math.floor(Math.random() * processMaps.length);
+    } while (randomIndex === lastShownPdfIndex && processMaps.length > 1);
+    
+    lastShownPdfIndex = randomIndex;
+    const randomMap = processMaps[randomIndex];
     return text.replaceAll('#pdf:random', `#pdf:${randomMap.file}`);
   }
   return text;
