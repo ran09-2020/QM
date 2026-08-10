@@ -293,6 +293,7 @@ body {
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;
+  margin-bottom: 0.75rem;
 }
 .pill-btn {
   background: #f8fafc;
@@ -320,11 +321,11 @@ body {
   background: #ffffff;
   border: 1px solid #cbd5e1;
   border-radius: 24px;
-  padding: 1.2rem 1.5rem;
+  padding: 0.8rem 1.5rem;
   font-family: inherit;
   font-size: 1rem;
   resize: none;
-  min-height: 60px;
+  min-height: 48px;
   max-height: 150px;
   box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
 }
@@ -885,8 +886,8 @@ details[open] summary {
 
 
 /* --- Practice Links & Buttons --- */
-.practice-link { color: var(--accent-color); font-weight: 700; text-decoration: none; padding: 2px 6px; border-radius: 4px; background-color: rgba(79, 70, 229, 0.1); margin-right: 5px; transition: all 0.2s; }
-.practice-link:hover { background-color: rgba(79, 70, 229, 0.2); text-decoration: underline; }
+.practice-link { color: #8b5cf6; font-weight: 700; text-decoration: none; padding: 0 4px; margin-right: 2px; transition: all 0.2s; }
+.practice-link:hover { color: #7e22ce; text-decoration: underline; }
 .message-buttons { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; justify-content: center; }
 .practice-btn { background: #fdfbfb; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
