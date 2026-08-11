@@ -449,7 +449,7 @@ function ChatInterface({ session, isSimulationMode = false }) {
               style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', background: 'none', border: 'none', color: '#10b981', cursor: 'pointer', fontWeight: '600', fontSize: '0.9rem', padding: 0 }}
             >
               <Download size={22} style={{ marginBottom: '2px' }} />
-              סכם ושמור
+              סיכום ושמירה
             </button>
             <button 
               onClick={handleExit}
@@ -529,7 +529,7 @@ function ChatInterface({ session, isSimulationMode = false }) {
                             <button onClick={(e) => {
                               e.preventDefault();
                               if (action === 'end_practice') {
-                                setMessages(prev => [...prev, { role: 'system-info', text: 'התירגול הסתיים בהצלחה. לשמירת הסיכום בלוח האירועים לחץ על "סכם ושמור" למעלה. למחיקה והתחלה מחדש, לחץ על "יציאה".' }]);
+                                setMessages(prev => [...prev, { role: 'system-info', text: 'התירגול הסתיים בהצלחה. לשמירת הסיכום בלוח האירועים לחץ על "סיכום ושמירה" למעלה. למחיקה והתחלה מחדש, לחץ על "יציאה".' }]);
                               } else if (action === 'active_practice') {
                                 handleSend('תאמן אותי על תרחיש שאהיה פעיל בו');
                               } else if (action === 'more_example') {
@@ -617,7 +617,7 @@ function ChatInterface({ session, isSimulationMode = false }) {
             <button className="pill-btn" onClick={() => handleSend('הצעת כלי')}>הצעת כלי 🛠️</button>
             <button className="pill-btn" onClick={() => handleSend('אתגר אותי')}>אתגר אותי 🎯</button>
             <button className="pill-btn" onClick={() => handleSend('הצעד הבא')}>הצעד הבא 🚀</button>
-            <button className="pill-btn" onClick={() => handleSend('סיכום שיחה')}>סיכום שיחה 📋</button>
+            <button className="pill-btn" onClick={() => handleSend('תמצית שיחה')}>תמצית שיחה 📋</button>
             <button className="pill-btn" onClick={() => handleSend('תנסח/תבנה לי...')}>תנסח/תבנה לי... 📝</button>
           </div>
         )}
