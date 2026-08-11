@@ -278,9 +278,14 @@ function ChatInterface({ session, isSimulationMode = false }) {
         historyStr = sessionStorage.getItem('gemini_simulationHistory') || '[]';
         clusterTitle = cluster.title;
       } else {
-        summary = await sendMessageToGemini("אנא סכם את השיחה האישית בינינו לטובת שמירה ביומן האירועים. סכם את התובנות המרכזיות בלבד.", userGender, mentorGender);
+        summary = await sendMessageToGemini("אנא סכם את השיחה האישית בינינו לטובת שמירה ביומן האירועים. סכם את התובנות המרכזיות בלבד בצורה מסודרת ומאורגנת (עם רשימות). חובה: השורה הראשונה בתשובתך חייבת להיות כותרת קצרה (2-4 מילים) שמתארת את נושא השיחה. לאחר מכן רד שורה וכתוב את הסיכום.", userGender, mentorGender);
+        
+        const lines = summary.split('\n');
+        const titleLine = lines[0].replace(/[*#]/g, '').trim();
+        clusterTitle = `שיחה אישית: ${titleLine}`;
+        summary = lines.slice(1).join('\n').trim();
+        
         historyStr = sessionStorage.getItem('gemini_chatHistory') || '[]';
-        clusterTitle = 'שיחה אישית';
       }
       
       const parsedHistory = JSON.parse(historyStr);

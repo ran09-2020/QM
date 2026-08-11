@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { X, Trash2, PlayCircle, MessageSquare, FlaskConical, ChevronDown, ChevronUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 
 export default function CalendarModal({ session, isOpen, onClose }) {
-  const [activeTab, setActiveTab] = useState('simulations');
+  const [activeTab, setActiveTab] = useState('chats');
   const [simulations, setSimulations] = useState([]);
   const [expandedSimulations, setExpandedSimulations] = useState(new Set());
   const navigate = useNavigate();
@@ -75,7 +78,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
       text: sim.cluster === 'שיחה אישית' ? 'המשך שיחה אישית' : `המשך תרגול: ${sim.cluster}`
     });
 
-    if (sim.cluster === 'שיחה אישית') {
+    if (sim.cluster.startsWith('שיחה אישית')) {
       sessionStorage.setItem('reg_messages', JSON.stringify(mappedMessages));
       onClose();
       window.dispatchEvent(new Event('force_reset_chat'));
@@ -137,10 +140,10 @@ export default function CalendarModal({ session, isOpen, onClose }) {
         <div style={{ padding: '1.5rem', overflowY: 'auto', flex: 1 }}>
           {activeTab === 'chats' && (
             <div className="tasks-list">
-              {simulations.filter(s => s.cluster === 'שיחה אישית').length === 0 ? (
+              {simulations.filter(s => s.cluster && s.cluster.startsWith('שיחה אישית')).length === 0 ? (
                 <p style={{ textAlign: 'center', color: '#64748b', padding: '2rem 0' }}>אין שיחות שמורות כרגע.</p>
               ) : (
-                simulations.filter(s => s.cluster === 'שיחה אישית').map(sim => {
+                simulations.filter(s => s.cluster && s.cluster.startsWith('שיחה אישית')).map(sim => {
                   const isExpanded = expandedSimulations.has(sim.id);
                   return (
                     <div key={sim.id} className="task-item-container" style={{ marginBottom: '1rem', border: '1px solid #e2e8f0', borderRadius: '8px', overflow: 'hidden' }}>
@@ -150,7 +153,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                             {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                           </button>
                           <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            <span style={{ color: '#7e22ce', fontWeight: '600' }}>שיחה אישית</span>
+                            <span style={{ color: '#7e22ce', fontWeight: '600' }}>{sim.cluster}</span>
                             <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
                               {new Date(sim.created_at).toLocaleDateString('he-IL')} {new Date(sim.created_at).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}
                             </span>
@@ -173,7 +176,20 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                       </div>
                       
                       {isExpanded && sim.summary && (
-                        <div className="task-content" style={{ padding: '1rem', backgroundColor: '#fff', borderTop: '1px solid #e2e8f0', fontSize: '0.95rem', color: '#334155', lineHeight: '1.6' }} dangerouslySetInnerHTML={{ __html: sim.summary }} />
+                        <div className="task-content markdown-content" style={{ padding: '1rem', backgroundColor: '#fff', borderTop: '1px solid #e2e8f0', fontSize: '0.95rem', color: '#334155', lineHeight: '1.6' }}>
+                          <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+                            {sim.summary}
+                          </ReactMarkdown>
+                          <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
+                            <button 
+                              onClick={() => resumeSimulation(sim)}
+                              style={{ padding: '0.6rem 1.5rem', borderRadius: '8px', border: '2px solid #8b5cf6', backgroundColor: '#f3e8ff', color: '#8b5cf6', fontWeight: '600', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontSize: '1rem' }}
+                            >
+                              <MessageSquare size={18} />
+                              המשך שיחה זו
+                            </button>
+                          </div>
+                        </div>
                       )}
                     </div>
                   );
@@ -184,10 +200,10 @@ export default function CalendarModal({ session, isOpen, onClose }) {
 
           {activeTab === 'simulations' && (
             <div className="tasks-list">
-              {simulations.filter(s => s.cluster !== 'שיחה אישית').length === 0 ? (
+              {simulations.filter(s => !s.cluster || !s.cluster.startsWith('שיחה אישית')).length === 0 ? (
                 <p style={{ textAlign: 'center', color: '#64748b', padding: '2rem 0' }}>אין סיכומי סימולציות כרגע.</p>
               ) : (
-                simulations.filter(s => s.cluster !== 'שיחה אישית').map(sim => {
+                simulations.filter(s => !s.cluster || !s.cluster.startsWith('שיחה אישית')).map(sim => {
                   const isExpanded = expandedSimulations.has(sim.id);
                   return (
                     <div key={sim.id} className="task-item-container" style={{ marginBottom: '1rem', border: '1px solid #e2e8f0', borderRadius: '8px', overflow: 'hidden' }}>
