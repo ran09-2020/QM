@@ -78,6 +78,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
     if (sim.cluster === 'שיחה אישית') {
       sessionStorage.setItem('reg_messages', JSON.stringify(mappedMessages));
       onClose();
+      window.dispatchEvent(new Event('force_reset_chat'));
       navigate('/');
     } else {
       sessionStorage.setItem('sim_messages', JSON.stringify(mappedMessages));
@@ -135,17 +136,58 @@ export default function CalendarModal({ session, isOpen, onClose }) {
 
         <div style={{ padding: '1.5rem', overflowY: 'auto', flex: 1 }}>
           {activeTab === 'chats' && (
-            <div style={{ textAlign: 'center', color: '#64748b', padding: '2rem 0' }}>
-              <p>אין שיחות שמורות כרגע.</p>
+            <div className="tasks-list">
+              {simulations.filter(s => s.cluster === 'שיחה אישית').length === 0 ? (
+                <p style={{ textAlign: 'center', color: '#64748b', padding: '2rem 0' }}>אין שיחות שמורות כרגע.</p>
+              ) : (
+                simulations.filter(s => s.cluster === 'שיחה אישית').map(sim => {
+                  const isExpanded = expandedSimulations.has(sim.id);
+                  return (
+                    <div key={sim.id} className="task-item-container" style={{ marginBottom: '1rem', border: '1px solid #e2e8f0', borderRadius: '8px', overflow: 'hidden' }}>
+                      <div className="task-header" style={{ padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#f8fafc' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                          <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }} onClick={() => toggleSimulationAccordion(sim.id)}>
+                            {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                          </button>
+                          <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <span style={{ color: '#7e22ce', fontWeight: '600' }}>שיחה אישית</span>
+                            <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
+                              {new Date(sim.created_at).toLocaleDateString('he-IL')} {new Date(sim.created_at).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}
+                            </span>
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                          <button 
+                            onClick={() => resumeSimulation(sim)}
+                            title="המשך שיחה"
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#059669', padding: '0.25rem' }}>
+                            <PlayCircle size={18} />
+                          </button>
+                          <button 
+                            onClick={() => deleteSimulation(sim.id)}
+                            title="מחק סיכום"
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444', padding: '0.25rem' }}>
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
+                      </div>
+                      
+                      {isExpanded && sim.summary && (
+                        <div className="task-content" style={{ padding: '1rem', backgroundColor: '#fff', borderTop: '1px solid #e2e8f0', fontSize: '0.95rem', color: '#334155', lineHeight: '1.6' }} dangerouslySetInnerHTML={{ __html: sim.summary }} />
+                      )}
+                    </div>
+                  );
+                })
+              )}
             </div>
           )}
 
           {activeTab === 'simulations' && (
             <div className="tasks-list">
-              {simulations.length === 0 ? (
+              {simulations.filter(s => s.cluster !== 'שיחה אישית').length === 0 ? (
                 <p style={{ textAlign: 'center', color: '#64748b', padding: '2rem 0' }}>אין סיכומי סימולציות כרגע.</p>
               ) : (
-                simulations.map(sim => {
+                simulations.filter(s => s.cluster !== 'שיחה אישית').map(sim => {
                   const isExpanded = expandedSimulations.has(sim.id);
                   return (
                     <div key={sim.id} className="task-item-container" style={{ marginBottom: '1rem', border: '1px solid #e2e8f0', borderRadius: '8px', overflow: 'hidden' }}>

@@ -323,6 +323,7 @@ function ChatInterface({ session, isSimulationMode = false }) {
     } else {
       sessionStorage.removeItem('reg_messages');
       clearChatHistory();
+      window.dispatchEvent(new Event('force_reset_chat'));
     }
     navigate('/');
   };
