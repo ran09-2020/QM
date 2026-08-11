@@ -160,7 +160,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                             {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                           </button>
                           <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            <span style={{ color: '#7e22ce', fontWeight: '600' }}>{sim.cluster}</span>
+                            <span style={{ color: '#7e22ce', fontWeight: '600' }}>{sim.cluster === 'שיחה אישית' ? sim.cluster : sim.cluster.replace('שיחה אישית:', '').trim()}</span>
                             <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
                               {new Date(sim.created_at).toLocaleDateString('he-IL')} {new Date(sim.created_at).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}
                             </span>
@@ -220,7 +220,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                             {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                           </button>
                           <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            <span style={{ color: '#7e22ce', fontWeight: '600' }}>{sim.cluster}</span>
+                            <span style={{ color: '#7e22ce', fontWeight: '600' }}>{sim.cluster === 'שיחה אישית' ? sim.cluster : sim.cluster.replace('שיחה אישית:', '').trim()}</span>
                             <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
                               {new Date(sim.created_at).toLocaleDateString('he-IL')} {new Date(sim.created_at).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}
                             </span>
