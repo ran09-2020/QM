@@ -131,7 +131,8 @@ const processMaps = [
   { file: 'staff_evaluation.pdf', title: 'הערכת עובדים והתפתחות מקצועית' },
   { file: 'school_vision.pdf', title: 'גיבוש והטמעת חזון בית-ספרי' },
   { file: 'school_uniqueness.pdf', title: 'פיתוח והטמעת ייחודיות בית-ספרית' },
-  { file: 'class_goals.pdf', title: 'הצבת יעדים כיתתיים וניטור התקדמות' }
+  { file: 'class_goals.pdf', title: 'הצבת יעדים כיתתיים וניטור התקדמות' },
+  { file: 'pedagogical_meetings.pdf', title: 'תכנון, ניהול ומעקב ישיבות פדגוגיות דיפרנציאליות' }
 ];
 
 let lastShownPdfIndex = -1;
