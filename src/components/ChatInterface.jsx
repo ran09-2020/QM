@@ -396,13 +396,13 @@ function ChatInterface({ session, isSimulationMode = false }) {
         <div style={{
           backgroundColor: isSimulationMode ? '#f3e8ff' : '#dbeafe',
           color: isSimulationMode ? '#6b21a8' : '#1e40af',
-          padding: '0.75rem 1.5rem',
+          padding: '0.5rem 1rem',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           borderBottom: `1px solid ${isSimulationMode ? '#e9d5ff' : '#bfdbfe'}`,
           borderRadius: '12px 12px 0 0',
-          margin: '0.5rem 0.5rem 0 0.5rem',
+          margin: '0',
           fontWeight: '500',
           flexShrink: 0
         }}>
