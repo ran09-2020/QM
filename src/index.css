@@ -891,3 +891,4 @@ details[open] summary {
 .message-buttons { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; justify-content: center; }
 .practice-btn { background: #fdfbfb; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
+.pdf-page-shadow .react-pdf__Page__canvas { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border-radius: 4px; }

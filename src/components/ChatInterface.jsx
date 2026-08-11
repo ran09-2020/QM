@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import PdfViewer from './PdfViewer';
 import rehypeRaw from 'rehype-raw';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Send, Loader2, Lightbulb, PenTool, Map, BookOpen, Users, FlaskConical, LogOut, BookOpenCheck, Save, RefreshCw, Paperclip, X, File as FileIcon, Download, DoorOpen } from 'lucide-react';
@@ -500,7 +501,7 @@ function ChatInterface({ session, isSimulationMode = false }) {
                               </div>
                               <div style={{ WebkitOverflowScrolling: 'touch', overflowY: 'auto' }}>
                                 {isLast ? (
-                                  <iframe src={pdfUrl} width="100%" height="500px" style={{ border: 'none', display: 'block' }} title="Process Map PDF" />
+                                  <PdfViewer fileUrl={pdfUrl} />
                                 ) : (
                                   <div style={{ padding: '20px', textAlign: 'center', backgroundColor: '#f9fafb' }}>
                                     <span style={{color: '#6b7280', fontSize: '14px'}}>התצוגה נסגרה כדי לשמור על ביצועים.</span><br/>
