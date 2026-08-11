@@ -585,6 +585,7 @@ function ChatInterface({ session, isSimulationMode = false }) {
             <button className="pill-btn" onClick={() => handleSend('הצעת כלי')}>הצעת כלי 🛠️</button>
             <button className="pill-btn" onClick={() => handleSend('אתגר אותי')}>אתגר אותי 🎯</button>
             <button className="pill-btn" onClick={() => handleSend('הצעד הבא')}>הצעד הבא 🚀</button>
+            <button className="pill-btn" onClick={() => handleSend('סיכום שיחה')}>סיכום שיחה 📋</button>
             <button className="pill-btn" onClick={() => handleSend('ניסוח מייל')}>ניסוח מייל ✉️</button>
           </div>
         )}
