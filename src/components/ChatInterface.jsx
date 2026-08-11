@@ -295,9 +295,19 @@ function ChatInterface({ session, isSimulationMode = false }) {
         summary = await sendMessageToGemini("אנא סכם את השיחה האישית בינינו לטובת שמירה ביומן האירועים. סכם את התובנות המרכזיות בלבד בצורה מסודרת ומאורגנת (עם רשימות). חובה: השורה הראשונה בתשובתך חייבת להיות כותרת קצרה (2-4 מילים) שמתארת את נושא השיחה. לאחר מכן רד שורה וכתוב את הסיכום.", userGender, mentorGender);
         
         const lines = summary.split('\n');
-        const titleLine = lines[0].replace(/[*#]/g, '').trim();
-        clusterTitle = `שיחה אישית: ${titleLine}`;
-        summary = lines.slice(1).join('\n').trim();
+        let titleIdx = 0;
+        if (lines.length > 0 && lines[0].includes('[כובע')) {
+            titleIdx = 1;
+        }
+        
+        if (lines.length > titleIdx) {
+            const titleLine = lines[titleIdx].replace(/[*#]/g, '').trim();
+            clusterTitle = `שיחה אישית: ${titleLine}`;
+            summary = lines.slice(titleIdx + 1).join('\n').trim();
+        } else {
+            clusterTitle = 'שיחה אישית';
+            summary = lines.join('\n').trim();
+        }
         
         historyStr = sessionStorage.getItem('gemini_chatHistory') || '[]';
       }
