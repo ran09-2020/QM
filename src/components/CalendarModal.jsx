@@ -88,7 +88,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
     if (sim.cluster && sim.cluster.startsWith('שיחה אישית')) {
       sessionStorage.setItem('reg_messages', JSON.stringify(mappedMessages));
       onClose();
-      window.dispatchEvent(new Event('force_reset_chat'));
+      window.dispatchEvent(new Event('load_resumed_chat'));
       navigate('/');
     } else {
       sessionStorage.setItem('sim_messages', JSON.stringify(mappedMessages));
