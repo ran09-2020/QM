@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
+import { loadChatHistory, loadSimulationHistory } from '../services/gemini';
 
 export default function CalendarModal({ session, isOpen, onClose }) {
   const [activeTab, setActiveTab] = useState('chats');
@@ -54,9 +55,9 @@ export default function CalendarModal({ session, isOpen, onClose }) {
     sessionStorage.setItem('sim_cluster_title', sim.cluster);
     
     if (sim.cluster && sim.cluster.startsWith('שיחה אישית')) {
-      sessionStorage.setItem('gemini_chatHistory', JSON.stringify(chatHistory));
+      loadChatHistory(chatHistory);
     } else {
-      sessionStorage.setItem('gemini_simulationHistory', JSON.stringify(chatHistory));
+      loadSimulationHistory(chatHistory);
     }
     
     const mappedMessages = chatHistory.map(item => {
@@ -160,7 +161,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                             {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                           </button>
                           <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            <span style={{ color: '#7e22ce', fontWeight: '600' }}>{sim.cluster === 'שיחה אישית' ? sim.cluster : sim.cluster.replace('שיחה אישית:', '').trim()}</span>
+                            <span style={{ color: '#7e22ce', fontWeight: '600' }}>{sim.cluster ? (sim.cluster === 'שיחה אישית' ? sim.cluster : sim.cluster.replace('שיחה אישית:', '').trim()) : 'ללא נושא'}</span>
                             <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
                               {new Date(sim.created_at).toLocaleDateString('he-IL')} {new Date(sim.created_at).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}
                             </span>

@@ -163,6 +163,16 @@ export const clearChatHistory = () => {
   sessionStorage.removeItem('gemini_chatHistory');
 };
 
+export const loadChatHistory = (history) => {
+  chatHistory = history;
+  sessionStorage.setItem('gemini_chatHistory', JSON.stringify(history));
+};
+
+export const loadSimulationHistory = (history) => {
+  simulationHistory = history;
+  sessionStorage.setItem('gemini_simulationHistory', JSON.stringify(history));
+};
+
 export async function sendMessageToGemini(userMessage, userGender = 'male', mentorGender = 'male', attachedFile = null) {
   if (!genAI) {
     throw new Error("מפתח ה-API חסר. אנא הוסף אותו בקובץ .env");
