@@ -165,8 +165,22 @@ function ChatInterface({ session, isSimulationMode = false }) {
         setInput('');
       }
     };
+
+    const handleLoadResumed = () => {
+      if (!isSimulationMode) {
+        const savedMessages = sessionStorage.getItem('reg_messages');
+        if (savedMessages) {
+          setMessages(JSON.parse(savedMessages));
+        }
+      }
+    };
+
     window.addEventListener('force_reset_chat', handleForceReset);
-    return () => window.removeEventListener('force_reset_chat', handleForceReset);
+    window.addEventListener('load_resumed_chat', handleLoadResumed);
+    return () => {
+       window.removeEventListener('force_reset_chat', handleForceReset);
+       window.removeEventListener('load_resumed_chat', handleLoadResumed);
+    };
   }, [isSimulationMode, mentorHat]);
 
   const handleSend = async (overrideText = null) => {
