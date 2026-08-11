@@ -96,15 +96,10 @@ export default function TopNav({ session, setIsSidebarOpen }) {
 
         <div className="nav-group-container">
           <div className="nav-group">
-            <button className={`top-nav-item ${location.pathname === '/' ? 'active' : ''}`} onClick={handleNewChatClick}>
-              <MessageSquare size={22} />
-              <span className="nav-text">שיחה חדשה</span>
-            </button>
             <button className="top-nav-item" onClick={() => setIsSettingsOpen(true)}>
               <Settings size={22} />
               <span className="nav-text">הגדרות</span>
             </button>
-            <button className="top-nav-item"><Save size={22} /><span className="nav-text">שמור ליומן</span></button>
             <button className="top-nav-item" onClick={() => setIsCalendarOpen(true)}>
               <Calendar size={22} />
               <span className="nav-text">יומן</span>
