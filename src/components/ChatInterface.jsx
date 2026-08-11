@@ -4,8 +4,8 @@ import remarkGfm from 'remark-gfm';
 import PdfViewer from './PdfViewer';
 import rehypeRaw from 'rehype-raw';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Send, Loader2, Lightbulb, PenTool, Map, BookOpen, Users, FlaskConical, LogOut, BookOpenCheck, Save, RefreshCw, Paperclip, X, File as FileIcon, Download, DoorOpen } from 'lucide-react';
-import { sendMessageToGemini, sendSimulationMessageToGemini, clearSimulationHistory } from '../services/gemini';
+import { Send, Loader2, Lightbulb, PenTool, Map, BookOpen, Users, FlaskConical, LogOut, BookOpenCheck, Save, RefreshCw, Paperclip, X, File as FileIcon, Download, DoorOpen, MessageSquare } from 'lucide-react';
+import { sendMessageToGemini, sendSimulationMessageToGemini, clearSimulationHistory, clearChatHistory } from '../services/gemini';
 import mammoth from 'mammoth';
 import * as XLSX from 'xlsx';
 import { supabase } from '../supabaseClient';
@@ -269,14 +269,25 @@ function ChatInterface({ session, isSimulationMode = false }) {
   const handleSummarize = async () => {
     setIsLoading(true);
     try {
-      const summary = await sendSimulationMessageToGemini("סיום תרגול והכנת סיכום", cluster.title, cluster.tools, userGender, mentorGender);
+      let summary;
+      let historyStr;
+      let clusterTitle;
+
+      if (isSimulationMode) {
+        summary = await sendSimulationMessageToGemini("סיום תרגול והכנת סיכום", cluster.title, cluster.tools, userGender, mentorGender);
+        historyStr = sessionStorage.getItem('gemini_simulationHistory') || '[]';
+        clusterTitle = cluster.title;
+      } else {
+        summary = await sendMessageToGemini("אנא סכם את השיחה האישית בינינו לטובת שמירה ביומן האירועים. סכם את התובנות המרכזיות בלבד.", userGender, mentorGender);
+        historyStr = sessionStorage.getItem('gemini_chatHistory') || '[]';
+        clusterTitle = 'שיחה אישית';
+      }
       
-      const historyStr = sessionStorage.getItem('gemini_simulationHistory') || '[]';
       const parsedHistory = JSON.parse(historyStr);
 
       const { error: insertError } = await supabase.from('simulation_summaries').insert([{ 
          user_id: session.user.id, 
-         cluster: cluster.title, 
+         cluster: clusterTitle, 
          summary: summary,
          history: parsedHistory
       }]);
@@ -288,8 +299,13 @@ function ChatInterface({ session, isSimulationMode = false }) {
 
       window.dispatchEvent(new CustomEvent('simulation_saved'));
 
-      sessionStorage.removeItem('sim_cluster_title');
-      sessionStorage.removeItem('sim_messages');
+      if (isSimulationMode) {
+        sessionStorage.removeItem('sim_cluster_title');
+        sessionStorage.removeItem('sim_messages');
+      } else {
+        sessionStorage.removeItem('reg_messages');
+      }
+      
       alert('הסיכום נשמר בהצלחה בלוח האירועים! מכין פרוטוקול...');
     } catch (error) {
       console.error(error);
@@ -300,9 +316,14 @@ function ChatInterface({ session, isSimulationMode = false }) {
   };
 
   const handleExit = () => {
-    sessionStorage.removeItem('sim_cluster_title');
-    sessionStorage.removeItem('sim_messages');
-    clearSimulationHistory();
+    if (isSimulationMode) {
+      sessionStorage.removeItem('sim_cluster_title');
+      sessionStorage.removeItem('sim_messages');
+      clearSimulationHistory();
+    } else {
+      sessionStorage.removeItem('reg_messages');
+      clearChatHistory();
+    }
     navigate('/');
   };
 
@@ -370,23 +391,23 @@ function ChatInterface({ session, isSimulationMode = false }) {
 
   return (
     <div className="chat-container" style={{ position: 'relative' }}>
-      {isSimulationMode && cluster && (
+      {(isSimulationMode ? cluster : true) && (
         <div style={{
-          backgroundColor: '#f3e8ff',
-          color: '#6b21a8',
+          backgroundColor: isSimulationMode ? '#f3e8ff' : '#dbeafe',
+          color: isSimulationMode ? '#6b21a8' : '#1e40af',
           padding: '0.75rem 1.5rem',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          borderBottom: '1px solid #e9d5ff',
+          borderBottom: `1px solid ${isSimulationMode ? '#e9d5ff' : '#bfdbfe'}`,
           borderRadius: '12px 12px 0 0',
           margin: '0.5rem 0.5rem 0 0.5rem',
           fontWeight: '500',
           flexShrink: 0
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold', fontSize: '1.1rem' }}>
-            <FlaskConical size={20} />
-            מצב תירגול פעיל
+            {isSimulationMode ? <FlaskConical size={20} /> : <MessageSquare size={20} />}
+            {isSimulationMode ? 'מצב תירגול פעיל' : 'שיחה אישית'}
           </div>
           <div style={{ display: 'flex', gap: '1.5rem' }}>
             <button 
@@ -399,7 +420,7 @@ function ChatInterface({ session, isSimulationMode = false }) {
             </button>
             <button 
               onClick={handleExit}
-              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', background: 'none', border: 'none', color: '#9333ea', cursor: 'pointer', fontWeight: '600', fontSize: '0.9rem', padding: 0 }}
+              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', background: 'none', border: 'none', color: isSimulationMode ? '#9333ea' : '#1e40af', cursor: 'pointer', fontWeight: '600', fontSize: '0.9rem', padding: 0 }}
             >
               <DoorOpen size={22} style={{ marginBottom: '2px' }} />
               יציאה

@@ -72,14 +72,19 @@ export default function CalendarModal({ session, isOpen, onClose }) {
 
     mappedMessages.unshift({
       role: 'system-info',
-      text: `המשך תרגול: ${sim.cluster}`
+      text: sim.cluster === 'שיחה אישית' ? 'המשך שיחה אישית' : `המשך תרגול: ${sim.cluster}`
     });
 
-    sessionStorage.setItem('sim_messages', JSON.stringify(mappedMessages));
-
-    onClose();
-    const clusterObj = { title: sim.cluster, tools: '' }; 
-    navigate('/simulation', { state: { cluster: clusterObj } });
+    if (sim.cluster === 'שיחה אישית') {
+      sessionStorage.setItem('reg_messages', JSON.stringify(mappedMessages));
+      onClose();
+      navigate('/');
+    } else {
+      sessionStorage.setItem('sim_messages', JSON.stringify(mappedMessages));
+      onClose();
+      const clusterObj = { title: sim.cluster, tools: '' }; 
+      navigate('/simulation', { state: { cluster: clusterObj } });
+    }
   };
 
   if (!isOpen) return null;
