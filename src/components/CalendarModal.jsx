@@ -40,7 +40,11 @@ export default function CalendarModal({ session, isOpen, onClose }) {
     const confirmed = window.confirm("האם אתה בטוח שברצונך למחוק רשומה זו לצמיתות?");
     if (!confirmed) return;
 
-    await supabase.from('simulation_summaries').delete().eq('id', id);
+    const { error } = await supabase.from('simulation_summaries').delete().eq('id', id);
+    if (error) {
+      console.error("Error deleting record:", error);
+      alert("שגיאה במחיקה: ייתכן וחסרות הרשאות מחיקה (RLS Policy) במסד הנתונים.");
+    }
     fetchSimulations();
   };
 
