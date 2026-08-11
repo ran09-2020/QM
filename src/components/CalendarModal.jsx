@@ -44,15 +44,22 @@ export default function CalendarModal({ session, isOpen, onClose }) {
   };
 
   const resumeSimulation = (sim) => {
-    if (!sim.history) {
-      alert("שגיאה: היסטוריית השיחה חסרה עבור סימולציה זו ולכן לא ניתן להמשיך אותה.");
+    const chatHistory = sim.messages || sim.history;
+    
+    if (!chatHistory) {
+      alert("שגיאה: היסטוריית השיחה חסרה עבור רשומה זו ולכן לא ניתן להמשיך אותה.");
       return;
     }
 
     sessionStorage.setItem('sim_cluster_title', sim.cluster);
-    sessionStorage.setItem('gemini_simulationHistory', JSON.stringify(sim.history));
     
-    const mappedMessages = sim.history.map(item => {
+    if (sim.cluster && sim.cluster.startsWith('שיחה אישית')) {
+      sessionStorage.setItem('gemini_chatHistory', JSON.stringify(chatHistory));
+    } else {
+      sessionStorage.setItem('gemini_simulationHistory', JSON.stringify(chatHistory));
+    }
+    
+    const mappedMessages = chatHistory.map(item => {
       let hat = undefined;
       let text = item.parts[0].text;
       
@@ -75,10 +82,10 @@ export default function CalendarModal({ session, isOpen, onClose }) {
 
     mappedMessages.unshift({
       role: 'system-info',
-      text: sim.cluster === 'שיחה אישית' ? 'המשך שיחה אישית' : `המשך תרגול: ${sim.cluster}`
+      text: sim.cluster && sim.cluster.startsWith('שיחה אישית') ? 'המשך שיחה אישית' : `המשך תרגול: ${sim.cluster}`
     });
 
-    if (sim.cluster.startsWith('שיחה אישית')) {
+    if (sim.cluster && sim.cluster.startsWith('שיחה אישית')) {
       sessionStorage.setItem('reg_messages', JSON.stringify(mappedMessages));
       onClose();
       window.dispatchEvent(new Event('force_reset_chat'));
