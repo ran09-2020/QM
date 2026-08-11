@@ -581,11 +581,11 @@ function ChatInterface({ session, isSimulationMode = false }) {
         
         {!isSimulationMode && (
           <div className="action-pills">
-            <button className="pill-btn" onClick={() => handleSend('לקבל עצה 💡')}>לקבל עצה 💡</button>
-            <button className="pill-btn" onClick={() => handleSend('ללמוד כלי 📚')}>ללמוד כלי 📚</button>
-            <button className="pill-btn" onClick={() => handleSend('לחשוב יחד 🤔')}>לחשוב יחד 🤔</button>
-            <button className="pill-btn" onClick={() => handleSend('למפות שאלות 🗺️')}>למפות שאלות 🗺️</button>
-            <button className="pill-btn" onClick={() => handleSend('סיכום 📋')}>סיכום 📋</button>
+            <button className="pill-btn" onClick={() => handleSend('אתגר ניהולי')}>אתגר ניהולי 🧩</button>
+            <button className="pill-btn" onClick={() => handleSend('הצעת כלי')}>הצעת כלי 🛠️</button>
+            <button className="pill-btn" onClick={() => handleSend('אתגר אותי')}>אתגר אותי 🎯</button>
+            <button className="pill-btn" onClick={() => handleSend('הצעד הבא')}>הצעד הבא 🚀</button>
+            <button className="pill-btn" onClick={() => handleSend('ניסוח מייל')}>ניסוח מייל ✉️</button>
           </div>
         )}
         
