@@ -129,7 +129,8 @@ const processMaps = [
   { file: 'emotional_needs.pdf', title: 'מיפוי ואיתור צרכים רגשיים' },
   { file: 'external_projects.pdf', title: 'קליטה והפעלת פרויקטים ויוזמות' },
   { file: 'staff_evaluation.pdf', title: 'הערכת עובדים והתפתחות מקצועית' },
-  { file: 'school_vision.pdf', title: 'גיבוש והטמעת חזון בית-ספרי' }
+  { file: 'school_vision.pdf', title: 'גיבוש והטמעת חזון בית-ספרי' },
+  { file: 'school_uniqueness.pdf', title: 'פיתוח והטמעת ייחודיות בית-ספרית' }
 ];
 
 let lastShownPdfIndex = -1;
