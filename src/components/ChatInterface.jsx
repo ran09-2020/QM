@@ -313,6 +313,9 @@ function ChatInterface({ session, isSimulationMode = false }) {
       }
       
       const parsedHistory = JSON.parse(historyStr);
+      if (parsedHistory.length >= 2) {
+        parsedHistory.splice(-2, 2);
+      }
 
       const { error: insertError } = await supabase.from('simulation_summaries').insert([{ 
          user_id: session.user.id, 

@@ -80,9 +80,9 @@ export default function CalendarModal({ session, isOpen, onClose }) {
       };
     });
 
-    mappedMessages.unshift({
+    mappedMessages.push({
       role: 'system-info',
-      text: sim.cluster && sim.cluster.startsWith('שיחה אישית') ? 'המשך שיחה אישית' : `המשך תרגול: ${sim.cluster}`
+      text: 'המשך השיחה'
     });
 
     if (sim.cluster && sim.cluster.startsWith('שיחה אישית')) {
