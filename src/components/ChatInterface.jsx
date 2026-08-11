@@ -313,7 +313,7 @@ function ChatInterface({ session, isSimulationMode = false }) {
       }
       
       const parsedHistory = JSON.parse(historyStr);
-      if (parsedHistory.length >= 2) {
+      if (Array.isArray(parsedHistory) && parsedHistory.length >= 2) {
         parsedHistory.splice(-2, 2);
       }
 
