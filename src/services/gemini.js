@@ -210,15 +210,15 @@ export async function sendMessageToGemini(userMessage, userGender = 'male', ment
 
     const result = await chat.sendMessage(finalMessageContent);
     const response = await result.response;
-    let text = response.text();
-    text = processRandomPdf(text);
+    const text = response.text();
+    const processedText = processRandomPdf(text);
 
     // Update local history (store text only to avoid Base64 bloating sessionStorage)
     chatHistory.push({ role: "user", parts: [{ text: historyMessageText }] });
     chatHistory.push({ role: "model", parts: [{ text: text }] });
     sessionStorage.setItem('gemini_chatHistory', JSON.stringify(chatHistory));
 
-    return text;
+    return processedText;
   } catch (error) {
     console.error("Gemini API Error:", error);
     throw new Error("שגיאה בתקשורת עם שירותי הבינה המלאכותית.");
@@ -312,14 +312,14 @@ ${clusterTools}
 
     const result = await chat.sendMessage(finalMessageContent);
     const response = await result.response;
-    let text = response.text();
-    text = processRandomPdf(text);
+    const text = response.text();
+    const processedText = processRandomPdf(text);
 
     simulationHistory.push({ role: "user", parts: [{ text: historyMessageText }] });
     simulationHistory.push({ role: "model", parts: [{ text: text }] });
     sessionStorage.setItem('gemini_simulationHistory', JSON.stringify(simulationHistory));
 
-    return text;
+    return processedText;
   } catch (error) {
     console.error("Gemini Simulation API Error:", error);
     throw new Error("שגיאה בתקשורת עם שירותי הבינה המלאכותית במהלך הסימולציה.");
