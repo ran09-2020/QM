@@ -1,5 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&display=swap');
-
 :root {
   --bg-color: #faf7f2;
   --panel-bg: rgba(255, 255, 255, 0.95);
@@ -12,7 +11,6 @@
   --user-msg-bg: #ffffff;
   --right-sidebar-width: 224px;
 }
-
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   font-family: 'Assistant', sans-serif;
@@ -20,9 +18,11 @@ body {
   color: var(--text-primary);
   direction: rtl;
   height: 100vh;
-  overflow: hidden;
+  width: 100vw;
+  max-width: 100vw;
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
-
 /* Auth Screens */
 .auth-container { display: flex; align-items: center; justify-content: center; height: 100vh; padding: 1rem; }
 .auth-box { background: var(--panel-bg); padding: 3rem 2rem; border-radius: 24px; border: 1px solid var(--panel-border); text-align: center; max-width: 400px; width:100%; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
@@ -36,14 +36,13 @@ body {
 .auth-button { background: var(--accent-color); color: white; padding: 1rem; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; display:flex; justify-content:center;}
 .auth-switch { margin-top: 1.5rem; font-size: 0.9rem; }
 .switch-btn { background: none; border: none; color: var(--accent-color); font-weight: 600; cursor: pointer; font-family: inherit; }
-
 .app-layout-new {
   display: flex;
   height: 100vh;
-  width: 100%;
+  width: 100vw;
+  max-width: 100vw;
   overflow-x: hidden;
 }
-
 /* Personal Sidebar (Right) */
 .personal-sidebar {
   width: var(--right-sidebar-width);
@@ -53,7 +52,6 @@ body {
   flex-direction: column;
   height: 100%;
 }
-
 .sidebar-logo-section {
   display: flex;
   align-items: center;
@@ -63,7 +61,6 @@ body {
   color: var(--text-primary);
 }
 .sidebar-logo-section h2 { margin: 0; font-size: 1.2rem; font-weight: 700; }
-
 .profile-section {
   padding: 0 1rem 1rem;
   display: flex;
@@ -85,9 +82,6 @@ body {
   align-items: center;
   justify-content: center;
 }
-
-
-
 .sidebar-content {
   flex: 1;
   overflow-y: auto;
@@ -130,7 +124,6 @@ body {
   display: flex; align-items: center; padding: 2px; transition: color 0.2s;
 }
 .accordion-toggle:hover { color: #475569; }
-
 .task-checkbox-label {
   display: flex;
   align-items: flex-start;
@@ -144,7 +137,6 @@ body {
 }
 .task-checkbox-label.completed { text-decoration: line-through; opacity: 0.5; font-weight: 400; }
 .task-checkbox-label input { margin-top: 4px; cursor: pointer; }
-
 .task-actions { display: flex; gap: 0.2rem; opacity: 0; transition: opacity 0.2s; }
 .task-item-container:hover .task-actions { opacity: 1; }
 .task-action-btn {
@@ -153,7 +145,6 @@ body {
 }
 .task-action-btn.edit:hover { color: var(--accent-color); background: #f0fdf4; }
 .task-action-btn.delete:hover { color: #ef4444; background: #fee2e2; }
-
 .task-body {
   padding: 0 2.2rem 0.8rem 0.5rem;
   font-size: 0.85rem;
@@ -161,7 +152,6 @@ body {
   line-height: 1.5;
   white-space: pre-wrap;
 }
-
 .task-edit-form { display: flex; flex-direction: column; gap: 0.5rem; padding: 0.6rem; }
 .task-edit-form input, .task-edit-form textarea {
   width: 100%; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.4rem;
@@ -169,7 +159,6 @@ body {
 }
 .task-edit-form input:focus, .task-edit-form textarea:focus { outline: none; border-color: var(--accent-color); background: white;}
 .task-edit-actions { display: flex; justify-content: flex-end; gap: 0.5rem; }
-
 /* Add Task Section */
 .add-task-section {
   margin-top: 0.5rem;
@@ -181,7 +170,6 @@ body {
   transition: all 0.2s;
 }
 .add-task-trigger:hover { border-color: var(--accent-color); color: var(--accent-color); background: #f0fdf4; }
-
 .add-task-form {
   display: flex; flex-direction: column; gap: 0.5rem;
   background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.6rem;
@@ -195,10 +183,8 @@ body {
 .save-btn { background: var(--accent-color); color: white; border: none; border-radius: 6px; padding: 0.3rem 0.8rem; font-size: 0.8rem; cursor: pointer; font-weight: 600; }
 .save-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .cancel-btn { background: #e2e8f0; color: #475569; border: none; border-radius: 6px; padding: 0.3rem 0.8rem; font-size: 0.8rem; cursor: pointer; font-weight: 600; }
-
 .sidebar-footer { padding: 1rem 1.5rem; border-top: 1px solid #e2e8f0; }
 .logout-btn { background: none; border:none; display:flex; align-items:center; gap:0.5rem; color: #ef4444; font-weight: 600; cursor:pointer;}
-
 .main-content-area {
   flex: 1;
   display: flex;
@@ -207,7 +193,6 @@ body {
   width: 100%;
   overflow: hidden;
 }
-
 /* Top Nav */
 .top-nav {
   display: flex;
@@ -233,7 +218,6 @@ body {
 }
 .top-nav-item:hover, .top-nav-item.active { color: var(--accent-color); }
 .top-nav-item.practice { color: #8b5cf6; }
-
 /* Chat Container */
 .page-wrapper { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #fafafa;}
 .chat-container { flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
@@ -241,7 +225,6 @@ body {
 .message-wrapper { display: flex; max-width: 85%; }
 .message-wrapper.user { align-self: flex-end; } /* User on left */
 .message-wrapper.model { align-self: flex-start; } /* Mentor on right */
-
 .message-bubble {
   padding: 1.5rem 1.8rem;
   border-radius: 20px;
@@ -259,7 +242,6 @@ body {
   background: var(--bot-msg-bg);
   border: none;
 }
-
 /* Mentor Badge */
 .mentor-badge {
   position: absolute;
@@ -278,7 +260,6 @@ body {
   border: 1px solid #bbf7d0;
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
-
 /* Input Area with Pills */
 .chat-input-wrapper {
   padding: 0.5rem 4rem 0.5rem;
@@ -288,7 +269,6 @@ body {
   background: white;
   border-top: 1px solid #f1f5f9;
 }
-
 .action-pills {
   display: flex;
   gap: 0.5rem;
@@ -310,7 +290,6 @@ body {
   font-weight: 500;
 }
 .pill-btn:hover { background: #e2e8f0; color:#0f172a;}
-
 .input-row {
   display: flex;
   gap: 1rem;
@@ -343,17 +322,14 @@ body {
 }
 .send-btn:hover:not(:disabled) { background: #64748b; }
 .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
 .markdown-content p { margin-bottom: 0.8rem; }
 .markdown-content p:last-child { margin-bottom: 0; }
 .markdown-content strong, .markdown-content b { font-weight: 700; }
 .markdown-content ul, .markdown-content ol { margin-right: 1.5rem; margin-bottom: 0.8rem; }
-
 /* --- Mobile Responsiveness --- */
 .sidebar-overlay { display: none; }
 .menu-btn { background: none; border: none; cursor: pointer; display: flex; align-items: center; }
 .mobile-close-btn { display: none; background: none; border: none; color: #64748b; cursor: pointer; margin-right: auto; padding-right: 1rem;}
-
 @media (max-width: 768px) {
   .personal-sidebar {
     position: fixed;
@@ -366,7 +342,6 @@ body {
     max-width: 85%;
   }
   .personal-sidebar.open { right: 0; }
-  
   .sidebar-overlay {
     display: block;
     position: fixed;
@@ -375,58 +350,57 @@ body {
     z-index: 999;
     backdrop-filter: blur(2px);
   }
-  
   .mobile-close-btn { display: block; }
   
-  /* TopNav adjustment for mobile - Icons only, Brand on right */
+  /* TopNav adjustment for mobile - Prevent overlap */
   .top-nav { 
-    padding: 0.8rem 1rem; 
+    padding: 0.5rem; 
     align-items: center;
+    gap: 0.2rem;
   }
-  
   .mobile-brand-section {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.4rem;
+    flex-shrink: 0;
   }
   .mobile-brand-text { display: flex; flex-direction: column; align-items: flex-start; }
-  .mobile-brand-text h2 { margin: 0; font-size: 1.1rem; color: #0f172a; font-weight: 700; line-height: 1.1; }
-  .mobile-brand-text span { font-size: 0.75rem; color: #64748b; }
-  .status-dot { width: 10px; height: 10px; background: #22c55e; border-radius: 50%; }
+  .mobile-brand-text h2 { margin: 0; font-size: 1rem; color: #0f172a; font-weight: 700; line-height: 1.1; }
+  .mobile-brand-text span { font-size: 0.7rem; color: #64748b; }
+  .status-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; }
   
   .nav-group-container {
     flex: 1;
     display: flex;
-    justify-content: flex-end; /* Pushes icons to the left */
-    gap: 0.8rem;
+    justify-content: flex-end;
+    gap: 0.4rem;
   }
-  .nav-group { gap: 0.8rem; }
-  .nav-group.secondary { gap: 0.8rem; display: flex; }
-  
-  .nav-text { display: none; } /* Hide text on mobile! */
-  .top-nav-item { padding: 0.4rem; gap: 0; color: #475569; }
+  .nav-group { gap: 0.4rem; }
+  .nav-group.secondary { gap: 0.4rem; display: flex; }
+  .nav-text { display: none; }
+  .top-nav-item { padding: 0.3rem; gap: 0; color: #475569; }
   
   /* Chat Interface mobile tweaks */
-  .chat-messages { padding: 1.5rem; gap: 1.5rem; }
-  .chat-input-wrapper { padding: 1rem; }
-  .message-wrapper { max-width: 92%; }
+  .chat-messages { padding: 1rem; gap: 1rem; }
+  .chat-input-wrapper { padding: 0.5rem; }
+  .message-wrapper { max-width: 95%; }
   
   .action-pills { 
     flex-wrap: nowrap; 
     overflow-x: auto; 
     padding-bottom: 0.5rem; 
     -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
   }
-  .pill-btn { white-space: nowrap; flex-shrink: 0; }
+  .action-pills::-webkit-scrollbar { display: none; /* Chrome/Safari */ }
+  .pill-btn { white-space: nowrap; flex-shrink: 0; font-size: 0.85rem; padding: 0.4rem 0.8rem; }
 }
-
 .typing-indicator {
   display: flex;
   align-items: center;
   gap: 4px;
   padding: 4px 8px;
 }
-
 .typing-dot {
   width: 8px;
   height: 8px;
@@ -434,15 +408,12 @@ body {
   border-radius: 50%;
   animation: typing 1.4s infinite ease-in-out both;
 }
-
 .typing-dot:nth-child(1) {
   animation-delay: -0.32s;
 }
-
 .typing-dot:nth-child(2) {
   animation-delay: -0.16s;
 }
-
 @keyframes typing {
   0%, 80%, 100% { 
     transform: scale(0);
@@ -451,7 +422,6 @@ body {
     transform: scale(1);
   }
 }
-
 /* Table Styles */
 .markdown-content table {
   border-collapse: collapse;
@@ -463,38 +433,31 @@ body {
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
-
 .markdown-content th, 
 .markdown-content td {
   border: 1px solid #e2e8f0;
   padding: 0.75rem;
   text-align: right;
 }
-
 .markdown-content th {
   background-color: #f8fafc;
   font-weight: 600;
   color: #334155;
 }
-
 .markdown-content tr:nth-child(even) {
   background-color: #f8fafc;
 }
-
-
 /* File Attachment Styles */
 .input-area-container {
   display: flex;
   flex-direction: column;
   width: 100%;
 }
-
 .file-preview-area {
   padding: 0 0.5rem 0.5rem 0.5rem;
   display: flex;
   align-items: center;
 }
-
 .attached-file-pill {
   display: inline-flex;
   align-items: center;
@@ -506,13 +469,11 @@ body {
   font-size: 0.85rem;
   color: #475569;
 }
-
 .user-message-file {
   background-color: rgba(255, 255, 255, 0.2);
   border-color: rgba(255, 255, 255, 0.3);
   color: inherit;
 }
-
 .remove-file-btn {
   background: none;
   border: none;
@@ -525,12 +486,10 @@ body {
   border-radius: 50%;
   margin-right: 0.25rem;
 }
-
 .remove-file-btn:hover {
   background-color: #e2e8f0;
   color: #ef4444;
 }
-
 .attach-btn {
   background: none;
   border: none;
@@ -543,21 +502,17 @@ body {
   transition: all 0.2s;
   border-radius: 50%;
 }
-
 .attach-btn:hover:not(:disabled) {
   background-color: #f1f5f9;
   color: #3b82f6;
 }
-
 .attach-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
-
 .spin {
   animation: spin 1s linear infinite;
 }
-
 @keyframes spin {
   from {
     transform: rotate(0deg);
@@ -566,7 +521,6 @@ body {
     transform: rotate(360deg);
   }
 }
-
 /* Force markdown tables to right-align in RTL and prevent squishing */
 .markdown-body table th,
 .markdown-body table td,
@@ -576,12 +530,10 @@ table th, table td {
   text-align: right !important;
   min-width: 150px;
 }
-
 table {
   display: block;
   overflow-x: auto;
 }
-
 details {
   margin: 1rem 0;
   background: #f8fafc;
@@ -589,22 +541,17 @@ details {
   border-radius: 8px;
   padding: 0.5rem 1rem;
 }
-
 summary {
   cursor: pointer;
   font-weight: 600;
   color: var(--accent-color);
   outline: none;
 }
-
 details[open] summary {
   margin-bottom: 0.5rem;
   border-bottom: 1px solid #e2e8f0;
   padding-bottom: 0.5rem;
 }
-
-
-
 .action-pill {
   background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
   border: 1px solid rgba(255, 255, 255, 0.6);
@@ -625,7 +572,6 @@ details[open] summary {
   box-shadow: 0 4px 8px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,1);
   background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
 }
-
 .hat-coach {
   background: rgba(243, 232, 255, 0.6) !important;
   border-color: rgba(216, 180, 254, 0.5) !important;
@@ -633,11 +579,9 @@ details[open] summary {
 .hat-advisor {
   animation-delay: -0.32s;
 }
-
 .typing-dot:nth-child(2) {
   animation-delay: -0.16s;
 }
-
 @keyframes typing {
   0%, 80%, 100% { 
     transform: scale(0);
@@ -646,7 +590,6 @@ details[open] summary {
     transform: scale(1);
   }
 }
-
 /* Table Styles */
 .markdown-content table {
   border-collapse: collapse;
@@ -658,38 +601,31 @@ details[open] summary {
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
-
 .markdown-content th, 
 .markdown-content td {
   border: 1px solid #e2e8f0;
   padding: 0.75rem;
   text-align: right;
 }
-
 .markdown-content th {
   background-color: #f8fafc;
   font-weight: 600;
   color: #334155;
 }
-
 .markdown-content tr:nth-child(even) {
   background-color: #f8fafc;
 }
-
-
 /* File Attachment Styles */
 .input-area-container {
   display: flex;
   flex-direction: column;
   width: 100%;
 }
-
 .file-preview-area {
   padding: 0 0.5rem 0.5rem 0.5rem;
   display: flex;
   align-items: center;
 }
-
 .attached-file-pill {
   display: inline-flex;
   align-items: center;
@@ -701,13 +637,11 @@ details[open] summary {
   font-size: 0.85rem;
   color: #475569;
 }
-
 .user-message-file {
   background-color: rgba(255, 255, 255, 0.2);
   border-color: rgba(255, 255, 255, 0.3);
   color: inherit;
 }
-
 .remove-file-btn {
   background: none;
   border: none;
@@ -720,12 +654,10 @@ details[open] summary {
   border-radius: 50%;
   margin-right: 0.25rem;
 }
-
 .remove-file-btn:hover {
   background-color: #e2e8f0;
   color: #ef4444;
 }
-
 .attach-btn {
   background: none;
   border: none;
@@ -738,21 +670,17 @@ details[open] summary {
   transition: all 0.2s;
   border-radius: 50%;
 }
-
 .attach-btn:hover:not(:disabled) {
   background-color: #f1f5f9;
   color: #3b82f6;
 }
-
 .attach-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
-
 .spin {
   animation: spin 1s linear infinite;
 }
-
 @keyframes spin {
   from {
     transform: rotate(0deg);
@@ -761,7 +689,6 @@ details[open] summary {
     transform: rotate(360deg);
   }
 }
-
 /* Force markdown tables to right-align in RTL and prevent squishing */
 .markdown-body table th,
 .markdown-body table td,
@@ -771,12 +698,10 @@ table th, table td {
   text-align: right !important;
   min-width: 150px;
 }
-
 table {
   display: block;
   overflow-x: auto;
 }
-
 details {
   margin: 1rem 0;
   background: #f8fafc;
@@ -784,22 +709,17 @@ details {
   border-radius: 8px;
   padding: 0.5rem 1rem;
 }
-
 summary {
   cursor: pointer;
   font-weight: 600;
   color: var(--accent-color);
   outline: none;
 }
-
 details[open] summary {
   margin-bottom: 0.5rem;
   border-bottom: 1px solid #e2e8f0;
   padding-bottom: 0.5rem;
 }
-
-
-
 .action-pill {
   background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
   border: 1px solid rgba(255, 255, 255, 0.6);
@@ -820,7 +740,174 @@ details[open] summary {
   box-shadow: 0 4px 8px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,1);
   background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
 }
-
+.hat-coach {
+  background: rgba(243, 232, 255, 0.6) !important;
+  border-color: rgba(216, 180, 254, 0.5) !important;
+}
+.hat-advisor {
+  animation-delay: -0.32s;
+}
+.typing-dot:nth-child(2) {
+  animation-delay: -0.16s;
+}
+@keyframes typing {
+  0%, 80%, 100% { 
+    transform: scale(0);
+  } 
+  40% { 
+    transform: scale(1);
+  }
+}
+/* Table Styles */
+.markdown-content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1rem 0;
+  font-size: 0.95rem;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.markdown-content th, 
+.markdown-content td {
+  border: 1px solid #e2e8f0;
+  padding: 0.75rem;
+  text-align: right;
+}
+.markdown-content th {
+  background-color: #f8fafc;
+  font-weight: 600;
+  color: #334155;
+}
+.markdown-content tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+/* File Attachment Styles */
+.input-area-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.file-preview-area {
+  padding: 0 0.5rem 0.5rem 0.5rem;
+  display: flex;
+  align-items: center;
+}
+.attached-file-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  color: #475569;
+}
+.user-message-file {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: inherit;
+}
+.remove-file-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  border-radius: 50%;
+  margin-right: 0.25rem;
+}
+.remove-file-btn:hover {
+  background-color: #e2e8f0;
+  color: #ef4444;
+}
+.attach-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #94a3b8;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  border-radius: 50%;
+}
+.attach-btn:hover:not(:disabled) {
+  background-color: #f1f5f9;
+  color: #3b82f6;
+}
+.attach-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.spin {
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* Force markdown tables to right-align in RTL and prevent squishing */
+.markdown-body table th,
+.markdown-body table td,
+.message-content table th,
+.message-content table td,
+table th, table td {
+  text-align: right !important;
+  min-width: 150px;
+}
+table {
+  display: block;
+  overflow-x: auto;
+}
+details {
+  margin: 1rem 0;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+}
+summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--accent-color);
+  outline: none;
+}
+details[open] summary {
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 0.5rem;
+}
+.action-pill {
+  background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 20px;
+  padding: 0.2rem 0.8rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--accent-color);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-block;
+  margin: 0 6px;
+  text-decoration: none;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.8);
+}
+.action-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,1);
+  background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
+}
 .hat-coach {
   background: rgba(243, 232, 255, 0.6) !important;
   border-color: rgba(216, 180, 254, 0.5) !important;
@@ -829,8 +916,6 @@ details[open] summary {
   background: rgba(219, 234, 254, 0.6) !important;
   border-color: rgba(191, 219, 254, 0.5) !important;
 }
-
-
 .hat-badge {
   display: inline-flex;
   align-items: center;
@@ -845,8 +930,6 @@ details[open] summary {
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   color: white;
 }
-
-
 /* Hat Bubble Styles */
 .bubble-hat-coach {
   background-color: #E0F2FE !important;
@@ -859,7 +942,6 @@ details[open] summary {
   border: none !important;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
 }
-
 .bubble-hat-advisor {
   background-color: #DCFCE7 !important;
   color: #000000 !important;
@@ -871,7 +953,6 @@ details[open] summary {
   border: none !important;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
 }
-
 .bubble-hat-teacher {
   background-color: #F3E8FF !important;
   color: #000000 !important;
@@ -883,12 +964,9 @@ details[open] summary {
   border: none !important;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
 }
-
-
 /* --- Practice Links & Buttons --- */
 .practice-link { color: #8b5cf6; font-weight: 700; text-decoration: none; padding: 0 4px; margin-right: 2px; transition: all 0.2s; }
 .practice-link:hover { color: #7e22ce; text-decoration: underline; }
 .message-buttons { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; justify-content: center; }
 .practice-btn { background: #fdfbfb; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-
 .pdf-page-shadow .react-pdf__Page__canvas { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border-radius: 4px; }
