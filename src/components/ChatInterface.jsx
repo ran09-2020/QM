@@ -32,6 +32,38 @@ function ChatInterface({ session, isSimulationMode = false }) {
   
   const messagesEndRef = useRef(null);
   const lastModelMessageRef = useRef(null);
+  const previousShowAllButtons = useRef(false);
+
+  useEffect(() => {
+    const userMessageCount = messages.filter(m => m.role === 'user').length;
+    const currentShowAllButtons = userMessageCount > 2 || (userMessageCount === 2 && !isLoading);
+    
+    if (!previousShowAllButtons.current && currentShowAllButtons && !isSimulationMode) {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const playNote = (freq, startTime, duration) => {
+          const oscillator = audioCtx.createOscillator();
+          const gainNode = audioCtx.createGain();
+          oscillator.type = 'sine';
+          oscillator.frequency.setValueAtTime(freq, startTime);
+          gainNode.gain.setValueAtTime(0, startTime);
+          gainNode.gain.linearRampToValueAtTime(0.1, startTime + 0.02);
+          gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+          oscillator.connect(gainNode);
+          gainNode.connect(audioCtx.destination);
+          oscillator.start(startTime);
+          oscillator.stop(startTime + duration);
+        };
+        const now = audioCtx.currentTime;
+        playNote(523.25, now, 0.2); // C5
+        playNote(659.25, now + 0.08, 0.2); // E5
+        playNote(783.99, now + 0.16, 0.4); // G5
+      } catch(e) {
+        console.log("Audio play error", e);
+      }
+    }
+    previousShowAllButtons.current = currentShowAllButtons;
+  }, [messages, isLoading, isSimulationMode]);
 
   useEffect(() => {
     if (isSimulationMode) {
@@ -50,6 +82,8 @@ function ChatInterface({ session, isSimulationMode = false }) {
         clearSimulationHistory();
         clearSimulationHistory();
         
+        const chooseStr = userGender === 'female' ? 'תבחרי כלי לתרגול' : 'תבחר כלי לתרגול';
+        
         const clusterInitialMessages = {
           'חזון, ייחודיות וערך': `**אשכול חזון, ייחודיות וערך:** הכלים העומדים לרשותך
 
@@ -57,7 +91,7 @@ function ChatInterface({ session, isSimulationMode = false }) {
 - **מטריצה לפריסת חזון**: חיבור בין המצוי כיום לרצוי בעתיד תוך שמירה על ערכי הליבה. [לתירגול](#practice:מטריצה_לפריסת_חזון)
 - **חזון שקורא לפעולה**: פריטת חזון גדול ליעדים אופרטיביים ממוקדים. [לתירגול](#practice:חזון_שקורא_לפעולה)
 
-תבחר/י כלי לתרגול`,
+${chooseStr}`,
 
           'הנהגה ותרבות מצמיחה': `**אשכול הנהגה ותרבות מצמיחה:** הכלים העומדים לרשותך
 
@@ -66,14 +100,14 @@ function ChatInterface({ session, isSimulationMode = false }) {
 - **7 השאלות**: מיפוי מבוסס ראיונות לזיהוי כיווני התפתחות ואתגרים עתידיים. [לתירגול](#practice:7_השאלות)
 - **תסריט שיחה: מקושי לצורך**: ניהול שיחות קשות והמרת שיח מאשים לשיח ממוקד צרכים ופתרונות. [לתירגול](#practice:תסריט_שיחה_מקושי_לצורך)
 
-תבחר/י כלי לתרגול`,
+${chooseStr}`,
 
           'הון אנושי ושותפויות': `**אשכול הון אנושי ושותפויות:** הכלים העומדים לרשותך
 
 - **ניהול שותפויות**: בניית הסכמות, איגום משאבים והשגת מטרות משותפות. [לתירגול](#practice:ניהול_שותפויות)
 - **מיפוי בעלי עניין**: ניתוח הכוחות הפועלים בסביבת הארגון ורמת השפעתם. [לתירגול](#practice:מיפוי_בעלי_עניין)
 
-תבחר/י כלי לתרגול`,
+${chooseStr}`,
 
           'ניהול תהליכים': `**אשכול ניהול תהליכים:** הכלים העומדים לרשותך
 
@@ -82,7 +116,7 @@ function ChatInterface({ session, isSimulationMode = false }) {
 - **פלסטר למשבר**: טיפול מהיר וממוקד במשבר מיידי ללא זמן לתכנון ארוך. [לתירגול](#practice:פלסטר_למשבר)
 - **מעגל למידה מארועים**: תחקור אירוע (טוב או רע) לשם הפקת לקחים ושיפור מתמיד. [לתירגול](#practice:מעגל_למידה_מארועים)
 
-תבחר/י כלי לתרגול`,
+${chooseStr}`,
 
           'ניהול תוצאות והשפעה': `**אשכול ניהול תוצאות והשפעה:** הכלים העומדים לרשותך
 
@@ -91,14 +125,14 @@ function ChatInterface({ session, isSimulationMode = false }) {
 - **מטריצת אייזנהאואר**: תעדוף משימות שוטפות על בסיס דחיפות וחשיבות. [לתירגול](#practice:מטריצת_אייזנהאואר)
 - **MoSCoW**: תעדוף דרישות ופיצ'רים לפני יציאה לדרך בפרויקטים. [לתירגול](#practice:MoSCoW)
 
-תבחר/י כלי לתרגול`
+${chooseStr}`
         };
 
-        const initialModelText = clusterInitialMessages[cluster.title] || `כדי להתחיל, נציג את הכלים העומדים לרשותך באשכול זה: \n\n${cluster.tools}\n\nאיזה כלי תרצה לתרגל כעת? תבחר/י כלי לתרגול`;
+        const initialModelText = clusterInitialMessages[cluster.title] || `כדי להתחיל, נציג את הכלים העומדים לרשותך באשכול זה: \n\n${cluster.tools}\n\nאיזה כלי תרצה לתרגל כעת? ${chooseStr}`;
         const initialMessages = [
           {
             role: 'system-info',
-            text: `מתחילים תרגול: ${cluster.title}. (מחכה למנטור שיכין את התרחיש...)`
+            text: mentorGender === 'female' ? `מתחילים תרגול: ${cluster.title}. (מחכה למנטורית שתכין את התרחיש...)` : `מתחילים תרגול: ${cluster.title}. (מחכה למנטור שיכין את התרחיש...)`
           },
           {
             role: 'model',
@@ -183,7 +217,84 @@ function ChatInterface({ session, isSimulationMode = false }) {
     };
   }, [isSimulationMode, mentorHat]);
 
-  const handleSend = async (overrideText = null) => {
+  const handlePillClick = async (pillLabel) => {
+    const isNewChat = messages.filter(m => m.role === 'user').length < 2;
+    let promptToSend = pillLabel;
+    
+    const replyMale = mentorGender === 'female' ? 'השיבי לי' : 'השב לי';
+    const replyFemale = mentorGender === 'female' ? 'השיבי לי' : 'השב לי';
+    const replyStr = userGender === 'female' ? replyFemale : replyMale;
+
+    if (isNewChat) {
+      switch(pillLabel) {
+        case 'אתגר ניהולי':
+          promptToSend = userGender === 'female'
+            ? `${replyStr} אך ורק במשפט הבא וללא שום מילה נוספת (ללא הקדמות): 'מהו האתגר הניהולי שאת מתמודדת איתו כעת?'`
+            : `${replyStr} אך ורק במשפט הבא וללא שום מילה נוספת (ללא הקדמות): 'מהו האתגר הניהולי שאתה מתמודד איתו כעת?'`;
+          break;
+        case 'אתגר אותי':
+          promptToSend = `${replyStr} אך ורק במשפט הבא וללא שום מילה נוספת (ללא הקדמות): 'עדיין לא התחלנו לשוחח. אין לי על מה לאתגר אותך'`;
+          break;
+        case 'הצעת כלי':
+          promptToSend = userGender === 'female'
+            ? `${replyStr} אך ורק במשפט הבא וללא שום מילה נוספת (ללא הקדמות): 'לאיזו בעיה או צורך ניהולי תרצי שאציע כלי?'`
+            : `${replyStr} אך ורק במשפט הבא וללא שום מילה נוספת (ללא הקדמות): 'לאיזו בעיה או צורך ניהולי תרצה שאציע כלי?'`;
+          break;
+        case 'הצעד הבא':
+          promptToSend = `${replyStr} אך ורק במשפט הבא וללא שום מילה נוספת (ללא הקדמות): 'הצעד הבא של מה? לא שוחחנו על כלום עדיין'`;
+          break;
+        case 'תמצית שיחה':
+          promptToSend = `${replyStr} אך ורק במשפט הבא וללא שום מילה נוספת (ללא הקדמות): 'עדיין לא התחלנו לשוחח. אין מה לתמצת'`;
+          break;
+        case 'תנסח/תבנה לי...':
+          promptToSend = userGender === 'female'
+            ? `${replyStr} אך ורק במשפט הבא וללא שום מילה נוספת (ללא הקדמות): 'בשמחה. מכיוון שעדיין לא שוחחנו ואין לי חומר רקע, אנא פרטי לי בקצרה איזה מסמך או תבנית תרצי שאבנה עבורך ובאיזה נושא.'`
+            : `${replyStr} אך ורק במשפט הבא וללא שום מילה נוספת (ללא הקדמות): 'בשמחה. מכיוון שעדיין לא שוחחנו ואין לי חומר רקע, אנא פרט לי בקצרה איזה מסמך או תבנית תרצה שאבנה עבורך ובאיזה נושא.'`;
+          break;
+      }
+    } else {
+      switch(pillLabel) {
+        case 'אתגר ניהולי':
+          promptToSend = userGender === 'female'
+            ? "בהקשר לנושא הנוכחי שאנחנו מדברים עליו, אני מעוניינת להעלות אתגר ניהולי ספציפי שעולה לי."
+            : "בהקשר לנושא הנוכחי שאנחנו מדברים עליו, אני מעוניין להעלות אתגר ניהולי ספציפי שעולה לי.";
+          break;
+        case 'אתגר אותי':
+          promptToSend = mentorGender === 'female'
+            ? "בהקשר למה שדיברנו עד עכשיו, אנא אתגרי אותי בשאלה קשה או בתרחיש שיגרום לי לחשוב מחוץ לקופסה לגבי הנושא שלנו."
+            : "בהקשר למה שדיברנו עד עכשיו, אנא אתגר אותי בשאלה קשה או בתרחיש שיגרום לי לחשוב מחוץ לקופסה לגבי הנושא שלנו.";
+          break;
+        case 'הצעת כלי':
+          promptToSend = mentorGender === 'female'
+            ? "בהקשר לדיון שלנו, איזה כלי ניהולי מתוך ארגז הכלים שלך היית מציעה לי ליישם כאן כדי להתקדם?"
+            : "בהקשר לדיון שלנו, איזה כלי ניהולי מתוך ארגז הכלים שלך היית מציע לי ליישם כאן כדי להתקדם?";
+          break;
+        case 'הצעד הבא':
+          promptToSend = userGender === 'female'
+            ? "לאור המסקנות שלנו מהשיחה עכשיו, מהו לדעתך הצעד המעשי והאופרטיבי הבא שאני צריכה לעשות?"
+            : "לאור המסקנות שלנו מהשיחה עכשיו, מהו לדעתך הצעד המעשי והאופרטיבי הבא שאני צריך לעשות?";
+          break;
+        case 'תמצית שיחה':
+          promptToSend = mentorGender === 'female'
+            ? "אנא סכמי את עיקרי השיחה שלנו עד כה, וצייני תובנות מרכזיות או משימות ברורות שעלו ממנה."
+            : "אנא סכם את עיקרי השיחה שלנו עד כה, וציין תובנות מרכזיות או משימות ברורות שעלו ממנה.";
+          break;
+        case 'תנסח/תבנה לי...':
+          promptToSend = mentorGender === 'female'
+            ? (userGender === 'female' 
+               ? `${replyStr} אך ורק במשפט הבא וללא שום מילה נוספת (ללא הקדמות): 'איזה מסמך או תבנית תרצי שאנסח או אבנה עבורך על בסיס השיחה שלנו?'`
+               : `${replyStr} אך ורק במשפט הבא וללא שום מילה נוספת (ללא הקדמות): 'איזה מסמך או תבנית תרצה שאנסח או אבנה עבורך על בסיס השיחה שלנו?'`)
+            : (userGender === 'female'
+               ? `${replyStr} אך ורק במשפט הבא וללא שום מילה נוספת (ללא הקדמות): 'איזה מסמך או תבנית תרצי שאנסח או אבנה עבורך על בסיס השיחה שלנו?'`
+               : `${replyStr} אך ורק במשפט הבא וללא שום מילה נוספת (ללא הקדמות): 'איזה מסמך או תבנית תרצה שאנסח או אבנה עבורך על בסיס השיחה שלנו?'`);
+          break;
+      }
+    }
+
+    handleSend(pillLabel, promptToSend);
+  };
+
+  const handleSend = async (overrideText = null, hiddenPrompt = null) => {
     if (isLoading) return;
     const textToSend = overrideText || input;
     if (!textToSend.trim() && !attachedFile) return;
@@ -201,10 +312,11 @@ function ChatInterface({ session, isSimulationMode = false }) {
 
     try {
       let responseText = '';
+      const textForGemini = hiddenPrompt || textToSend;
       if (isSimulationMode) {
-        responseText = await sendSimulationMessageToGemini(textToSend, cluster.title, cluster.tools, userGender, mentorGender, fileToSend);
+        responseText = await sendSimulationMessageToGemini(textForGemini, cluster.title, cluster.tools, userGender, mentorGender, fileToSend);
       } else {
-        responseText = await sendMessageToGemini(textToSend, userGender, mentorGender, fileToSend);
+        responseText = await sendMessageToGemini(textForGemini, userGender, mentorGender, fileToSend);
       }
       let activeHat = null;
       const hatMatch = responseText.match(/(?:\*\*|__)?\[כובע:\s*([^\]]+)\](?:\*\*|__)?\s*/);
@@ -218,6 +330,31 @@ function ChatInterface({ session, isSimulationMode = false }) {
       // Remove raw HTML <br> tags that the model might generate inside tables
       responseText = responseText.replace(/<br\s*\/?>/gi, ' ');
       
+      // Log tool usage to user_stats dashboard
+      if (!isSimulationMode) { // We only really care about tracking actual usage, not practice runs
+        const knownTools = [
+          "שלושת האופקים", "מטריצה לפריסת חזון", "חזון שקורא לפעולה", "עקומת השינוי", "אדרת הדג", "7 השאלות",
+          "תסריט שיחה: מקושי לצורך", "ניהול שותפויות", "מיפוי בעלי עניין", "ניהול תהליכים", "ניהול סיכונים", 
+          "פלסטר למשבר", "פלסטר זמני", "מעגל למידה מארועים", "מודל RADAR", "חשיבה תוצאתית", "מטריצת אייזנהאואר", "MoSCoW"
+        ];
+        
+        // Find which tools were mentioned in this response
+        const detectedTools = knownTools.filter(tool => responseText.includes(tool));
+        
+        if (detectedTools.length > 0 && session?.user?.id) {
+          // Avoid duplicate logging if the same tool was logged very recently (basic deduplication could be added, but insert is fine for now)
+          const statsToInsert = detectedTools.map(tool => ({
+            user_id: session.user.id,
+            tool_name: tool,
+            cluster_name: 'ייעוץ שוטף' 
+          }));
+          
+          supabase.from('user_stats').insert(statsToInsert).then(({error}) => {
+             if (error) console.error("Error logging tool stats:", error);
+          });
+        }
+      }
+
       setMessages([...newMessages, { role: 'model', text: responseText, hat: activeHat }]);
     } catch (error) {
       console.error(error);
@@ -491,11 +628,11 @@ function ChatInterface({ session, isSimulationMode = false }) {
               className={`message-wrapper ${msg.role}`}
               ref={isLastModelMsg ? lastModelMessageRef : null}
             >
-              <div className={`message-bubble ${msg.hat === 'מאמן' ? 'bubble-hat-coach' : msg.hat === 'יועץ' || msg.hat === 'יועצת' ? 'bubble-hat-advisor' : msg.hat === 'מלמד' ? 'bubble-hat-teacher' : ''}`}>
+              <div className={`message-bubble ${msg.hat === 'מאמן' || msg.hat === 'מאמנת' ? 'bubble-hat-coach' : msg.hat === 'יועץ' || msg.hat === 'יועצת' ? 'bubble-hat-advisor' : msg.hat === 'מלמד' || msg.hat === 'מלמדת' || msg.hat === 'מורה' ? 'bubble-hat-teacher' : ''}`}>
                 <div className="message-content">
                 {msg.hat && (
-                  <div className={`hat-badge ${msg.hat === 'מאמן' ? 'badge-hat-coach' : msg.hat === 'יועץ' || msg.hat === 'יועצת' ? 'badge-hat-advisor' : msg.hat === 'מלמד' ? 'badge-hat-teacher' : ''}`}>
-                    {msg.hat === 'מאמן' ? '🎯 מאמן' : msg.hat === 'יועץ' || msg.hat === 'יועצת' ? `💡 ${msg.hat}` : msg.hat === 'מלמד' ? '📚 מלמד' : msg.hat}
+                  <div className={`hat-badge ${msg.hat === 'מאמן' || msg.hat === 'מאמנת' ? 'badge-hat-coach' : msg.hat === 'יועץ' || msg.hat === 'יועצת' ? 'badge-hat-advisor' : msg.hat === 'מלמד' || msg.hat === 'מלמדת' || msg.hat === 'מורה' ? 'badge-hat-teacher' : ''}`}>
+                    {msg.hat === 'מאמן' || msg.hat === 'מאמנת' ? `🎯 ${msg.hat}` : msg.hat === 'יועץ' || msg.hat === 'יועצת' ? `💡 ${msg.hat}` : msg.hat === 'מלמד' || msg.hat === 'מלמדת' || msg.hat === 'מורה' ? `📚 ${msg.hat}` : msg.hat}
                   </div>
                 )}
                 
@@ -613,12 +750,16 @@ function ChatInterface({ session, isSimulationMode = false }) {
         
         {!isSimulationMode && (
           <div className="action-pills">
-            <button className="pill-btn" onClick={() => handleSend('אתגר ניהולי')}>אתגר ניהולי 🧩</button>
-            <button className="pill-btn" onClick={() => handleSend('הצעת כלי')}>הצעת כלי 🛠️</button>
-            <button className="pill-btn" onClick={() => handleSend('אתגר אותי')}>אתגר אותי 🎯</button>
-            <button className="pill-btn" onClick={() => handleSend('הצעד הבא')}>הצעד הבא 🚀</button>
-            <button className="pill-btn" onClick={() => handleSend('תמצית שיחה')}>תמצית שיחה 📋</button>
-            <button className="pill-btn" onClick={() => handleSend('תנסח/תבנה לי...')}>תנסח/תבנה לי... 📝</button>
+            <button className="pill-btn" onClick={() => handlePillClick('אתגר ניהולי')}>אתגר ניהולי 🧩</button>
+            {(messages.filter(m => m.role === 'user').length > 2 || (messages.filter(m => m.role === 'user').length === 2 && !isLoading)) && (
+              <>
+                <button className="pill-btn" onClick={() => handlePillClick('הצעת כלי')}>הצעת כלי 🛠️</button>
+                <button className="pill-btn" onClick={() => handlePillClick('אתגר אותי')}>אתגר אותי 🎯</button>
+                <button className="pill-btn" onClick={() => handlePillClick('הצעד הבא')}>הצעד הבא 🚀</button>
+                <button className="pill-btn" onClick={() => handlePillClick('תמצית שיחה')}>תמצית שיחה 📋</button>
+              </>
+            )}
+            <button className="pill-btn" onClick={() => handlePillClick('תנסח/תבנה לי...')}>{mentorGender === 'female' ? 'תנסחי/תבני לי...' : 'תנסח/תבנה לי...'} 📝</button>
           </div>
         )}
         

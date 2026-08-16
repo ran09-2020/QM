@@ -5,6 +5,9 @@ import Auth from './components/Auth';
 import TopNav from './components/TopNav';
 import PersonalSidebar from './components/PersonalSidebar';
 import ChatInterface from './components/ChatInterface';
+import DashboardModal from './components/DashboardModal';
+import SettingsModal from './components/SettingsModal';
+import CalendarModal from './components/CalendarModal';
 import { Loader2 } from 'lucide-react';
 
 
@@ -13,6 +16,9 @@ function App() {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isDashboardModalOpen, setIsDashboardModalOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -44,7 +50,15 @@ function App() {
   return (
     <Router basename={import.meta.env.MODE === 'production' ? '/n-star' : '/'}>
       <div className="app-container app-layout-new">
-        <PersonalSidebar session={session} isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+        {/* Personal Sidebar Overlay/Slide-in */}
+        <PersonalSidebar 
+          isOpen={isSidebarOpen} 
+          setIsOpen={setIsSidebarOpen} 
+          session={session} 
+          onOpenDashboard={() => setIsDashboardModalOpen(true)}
+          onOpenSettings={() => setIsSettingsOpen(true)}
+          onOpenCalendar={() => setIsCalendarOpen(true)}
+        />
         
         <main className="main-content-area">
           <TopNav session={session} setIsSidebarOpen={setIsSidebarOpen} />
@@ -56,6 +70,28 @@ function App() {
             </Routes>
           </div>
         </main>
+
+        <DashboardModal 
+          isOpen={isDashboardModalOpen} 
+          onClose={() => setIsDashboardModalOpen(false)} 
+          session={session} 
+        />
+
+        {isSettingsOpen && (
+          <SettingsModal 
+            isOpen={isSettingsOpen} 
+            onClose={() => setIsSettingsOpen(false)} 
+            session={session} 
+          />
+        )}
+        
+        {isCalendarOpen && (
+          <CalendarModal 
+            isOpen={isCalendarOpen} 
+            onClose={() => setIsCalendarOpen(false)} 
+            session={session} 
+          />
+        )}
       </div>
     </Router>
   );
