@@ -147,7 +147,7 @@ export default function DashboardModal({ session, isOpen, onClose }) {
                   <div className="dashboard-card kpi-card" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', padding: '1.5rem', background: 'linear-gradient(to right, #ffffff, #f8fafc)', margin: 0 }}>
                     <div className="kpi-item" style={{ textAlign: 'center', borderLeft: '1px solid #e2e8f0', padding: '0 0.5rem', position: 'relative' }}>
                       {showInfo ? (
-                        <div style={{ fontSize: '0.82rem', color: '#475569', lineHeight: '1.4', textAlign: 'right', paddingRight: '1rem' }}>
+                        <div style={{ fontSize: '0.9rem', color: '#475569', lineHeight: '1.5', textAlign: 'right', paddingRight: '1rem' }}>
                           <button 
                             onClick={() => setShowInfo(false)} 
                             style={{ position: 'absolute', top: '-5px', right: '-5px', background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}
@@ -176,7 +176,7 @@ export default function DashboardModal({ session, isOpen, onClose }) {
                     </div>
                     <div className="kpi-item" style={{ textAlign: 'center', borderLeft: '1px solid #e2e8f0', padding: '0 0.5rem', position: 'relative' }}>
                       {showClusterInfo ? (
-                        <div style={{ fontSize: '0.82rem', color: '#475569', lineHeight: '1.4', textAlign: 'right', paddingRight: '1rem' }}>
+                        <div style={{ fontSize: '0.9rem', color: '#475569', lineHeight: '1.5', textAlign: 'right', paddingRight: '1rem' }}>
                           <button 
                             onClick={() => setShowClusterInfo(false)} 
                             style={{ position: 'absolute', top: '-5px', right: '-5px', background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}
@@ -206,7 +206,7 @@ export default function DashboardModal({ session, isOpen, onClose }) {
                     </div>
                     <div className="kpi-item" style={{ textAlign: 'center', padding: '0 0.5rem', position: 'relative' }}>
                       {showTasksInfo ? (
-                        <div style={{ fontSize: '0.82rem', color: '#475569', lineHeight: '1.4', textAlign: 'right', paddingRight: '1rem' }}>
+                        <div style={{ fontSize: '0.9rem', color: '#475569', lineHeight: '1.5', textAlign: 'right', paddingRight: '1rem' }}>
                           <button 
                             onClick={() => setShowTasksInfo(false)} 
                             style={{ position: 'absolute', top: '-5px', right: '-5px', background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}
