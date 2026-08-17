@@ -152,7 +152,7 @@ export default function DashboardModal({ session, isOpen, onClose }) {
                           style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#8b5cf6', padding: 0, display: 'flex' }}
                           title="מה זה אומר?"
                         >
-                          <Info size={14} />
+                          <Info size={22} strokeWidth={2.5} />
                         </button>
                       </div>
                     </div>
@@ -167,7 +167,7 @@ export default function DashboardModal({ session, isOpen, onClose }) {
                   </div>
 
                   {showInfo && (
-                    <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', fontSize: '0.9rem', color: '#475569', border: '1px solid #e2e8f0', lineHeight: '1.6' }}>
+                    <div style={{ background: '#f8fafc', maxWidth: '450px', margin: '0 auto 1.5rem auto', padding: '1.25rem', borderRadius: '12px', fontSize: '0.9rem', color: '#475569', border: '1px solid #e2e8f0', lineHeight: '1.6', textAlign: 'center', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
                       כשאתה מעלה דילמה, המטרה היא לא רק לתת עצה, אלא לצייד אותך בשיטת עבודה והתכוונות מערכתית. המנטור חושף בפניך כלי מקצועי (כמו מודל RADAR, אדרת הדג או מיפוי בעלי עניין) ומדריך אותך כיצד לנתח ולתת מענה לאתגר שלך. כך אתה לא רק פותר את הבעיה המיידית, אלא מתרגל הלכה למעשה חשיבה ניהולית-אסטרטגית חדשה.
                     </div>
                   )}
