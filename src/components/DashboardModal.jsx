@@ -143,18 +143,34 @@ export default function DashboardModal({ session, isOpen, onClose }) {
                   
                   {/* Top KPIs Row */}
                   <div className="dashboard-card kpi-card" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', padding: '1.5rem', background: 'linear-gradient(to right, #ffffff, #f8fafc)', margin: 0 }}>
-                    <div className="kpi-item" style={{ textAlign: 'center', borderLeft: '1px solid #e2e8f0', padding: '0 0.5rem' }}>
-                      <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#8b5cf6' }}>{stats.length}</div>
-                      <div style={{ color: '#64748b', fontSize: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-                        כלים שתורגלו
-                        <button 
-                          onClick={() => setShowInfo(!showInfo)} 
-                          style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#8b5cf6', padding: 0, display: 'flex' }}
-                          title="מה זה אומר?"
-                        >
-                          <Info size={22} strokeWidth={2.5} />
-                        </button>
-                      </div>
+                    <div className="kpi-item" style={{ textAlign: 'center', borderLeft: '1px solid #e2e8f0', padding: '0 0.5rem', position: 'relative' }}>
+                      {showInfo ? (
+                        <div style={{ fontSize: '0.82rem', color: '#475569', lineHeight: '1.4', textAlign: 'right', paddingRight: '1rem' }}>
+                          <button 
+                            onClick={() => setShowInfo(false)} 
+                            style={{ position: 'absolute', top: '-5px', right: '-5px', background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}
+                            title="סגור"
+                          >
+                            <X size={16} />
+                          </button>
+                          <strong>מה המשמעות?</strong><br/>
+                          המטרה היא לא רק לתת עצה, אלא לצייד בשיטת עבודה והתכוונות מערכתית. המנטור חושף בפניך כלי ניהולי (כמו מודל RADAR, אדרת הדג) ומדריך אותך. כך אתה מתרגל חשיבה ניהולית-אסטרטגית חדשה.
+                        </div>
+                      ) : (
+                        <>
+                          <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#8b5cf6' }}>{stats.length}</div>
+                          <div style={{ color: '#64748b', fontSize: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                            כלים שתורגלו
+                            <button 
+                              onClick={() => setShowInfo(true)} 
+                              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#8b5cf6', padding: 0, display: 'flex' }}
+                              title="מה זה אומר?"
+                            >
+                              <Info size={22} strokeWidth={2.5} />
+                            </button>
+                          </div>
+                        </>
+                      )}
                     </div>
                     <div className="kpi-item" style={{ textAlign: 'center', borderLeft: '1px solid #e2e8f0', padding: '0 0.5rem' }}>
                       <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#10b981' }}>{sortedClusters.length > 0 ? getShortClusterName(sortedClusters[0][0]) : '-'}</div>
@@ -166,14 +182,32 @@ export default function DashboardModal({ session, isOpen, onClose }) {
                     </div>
                   </div>
 
-                  {showInfo && (
-                    <div style={{ background: '#f8fafc', maxWidth: '450px', margin: '0 auto 1.5rem auto', padding: '1.25rem', borderRadius: '12px', fontSize: '0.9rem', color: '#475569', border: '1px solid #e2e8f0', lineHeight: '1.6', textAlign: 'center', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
-                      כשאתה מעלה דילמה, המטרה היא לא רק לתת עצה, אלא לצייד אותך בשיטת עבודה והתכוונות מערכתית. המנטור חושף בפניך כלי מקצועי (כמו מודל RADAR, אדרת הדג או מיפוי בעלי עניין) ומדריך אותך כיצד לנתח ולתת מענה לאתגר שלך. כך אתה לא רק פותר את הבעיה המיידית, אלא מתרגל הלכה למעשה חשיבה ניהולית-אסטרטגית חדשה.
-                    </div>
-                  )}
-
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-                    {/* Section 1: Clusters */}
+                    {/* Section 2: Tool Usage (Moved to Right column, styled Purple) */}
+                    <div className="dashboard-card" style={{ margin: 0, borderColor: '#e9d5ff', backgroundColor: '#faf5ff' }}>
+                      <h3 style={{ color: '#8b5cf6' }}><Target className="icon-title" style={{ color: '#8b5cf6' }} /> ארגז הכלים בשימוש</h3>
+                      <p style={{ fontSize: '0.8rem', color: '#a78bfa', marginBottom: '1rem' }}>כלים ניהוליים שתורגלו</p>
+                      
+                      {sortedTools.length === 0 ? (
+                        <p className="empty-state" style={{ color: '#a78bfa' }}>טרם השתמשת בכלים בצ'אט.</p>
+                      ) : (
+                        <ul className="stats-list">
+                          {sortedTools.map(([tool, count]) => (
+                            <li key={tool}>
+                              <div className="stat-label" style={{ color: '#8b5cf6' }}>
+                                <span>{tool}</span>
+                                <span className="stat-count" style={{ color: '#8b5cf6' }}>({count})</span>
+                              </div>
+                              <div className="progress-bar-bg" style={{ backgroundColor: '#e9d5ff' }}>
+                                <div className="progress-bar-fill" style={{ width: `${(count / totalStats) * 100}%`, backgroundColor: '#8b5cf6' }}></div>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+
+                    {/* Section 1: Clusters (Moved to Left column) */}
                     <div className="dashboard-card" style={{ margin: 0 }}>
                       <h3><PieChart className="icon-title" /> התפתחות המיקוד הניהולי</h3>
                       <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '1rem' }}>התפלגות לפי 5 האשכולות</p>
@@ -189,30 +223,6 @@ export default function DashboardModal({ session, isOpen, onClose }) {
                               </div>
                               <div className="progress-bar-bg">
                                 <div className="progress-bar-fill cluster-fill" style={{ width: `${(count / totalStats) * 100}%` }}></div>
-                              </div>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-
-                    {/* Section 2: Tool Usage */}
-                    <div className="dashboard-card" style={{ margin: 0 }}>
-                      <h3><Target className="icon-title" /> ארגז הכלים בשימוש</h3>
-                      <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '1rem' }}>כלים ניהוליים שתורגלו</p>
-                      
-                      {sortedTools.length === 0 ? (
-                        <p className="empty-state">טרם השתמשת בכלים בצ'אט.</p>
-                      ) : (
-                        <ul className="stats-list">
-                          {sortedTools.map(([tool, count]) => (
-                            <li key={tool}>
-                              <div className="stat-label">
-                                <span>{tool}</span>
-                                <span className="stat-count">({count})</span>
-                              </div>
-                              <div className="progress-bar-bg">
-                                <div className="progress-bar-fill" style={{ width: `${(count / totalStats) * 100}%` }}></div>
                               </div>
                             </li>
                           ))}
