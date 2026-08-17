@@ -205,20 +205,20 @@
 
 .handoff-task-item {
   background-color: var(--bg-color);
-  border-left: 4px solid var(--accent-color);
-  padding: 1rem;
+  border-right: 3px solid var(--accent-color);
+  padding: 0.75rem 1rem;
   border-radius: 6px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 .handoff-task-item h4 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1rem;
+  margin: 0;
+  font-size: 0.95rem;
   color: var(--text-color);
 }
 
 .handoff-task-item p {
-  margin: 0;
+  margin: 0.3rem 0 0 0;
   font-size: 0.85rem;
   color: #666;
   white-space: pre-wrap;

@@ -144,7 +144,7 @@ export default function DashboardModal({ session, isOpen, onClose }) {
                   <div className="dashboard-card kpi-card" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', padding: '1.5rem', background: 'linear-gradient(to right, #ffffff, #f8fafc)', margin: 0 }}>
                     <div className="kpi-item" style={{ textAlign: 'center', borderLeft: '1px solid #e2e8f0', padding: '0 0.5rem' }}>
                       <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#8b5cf6' }}>{stats.length}</div>
-                      <div style={{ color: '#64748b', fontSize: '0.85rem' }}>אירועים שתועדו</div>
+                      <div style={{ color: '#64748b', fontSize: '0.85rem' }}>כלים שתורגלו</div>
                     </div>
                     <div className="kpi-item" style={{ textAlign: 'center', borderLeft: '1px solid #e2e8f0', padding: '0 0.5rem' }}>
                       <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#10b981' }}>{sortedClusters.length > 0 ? getShortClusterName(sortedClusters[0][0]) : '-'}</div>
@@ -169,7 +169,7 @@ export default function DashboardModal({ session, isOpen, onClose }) {
                             <li key={cluster}>
                               <div className="stat-label">
                                 <span>{cluster}</span>
-                                <span className="stat-count">{count} מקרים</span>
+                                <span className="stat-count">({count})</span>
                               </div>
                               <div className="progress-bar-bg">
                                 <div className="progress-bar-fill cluster-fill" style={{ width: `${(count / totalStats) * 100}%` }}></div>
@@ -192,7 +192,7 @@ export default function DashboardModal({ session, isOpen, onClose }) {
                             <li key={tool}>
                               <div className="stat-label">
                                 <span>{tool}</span>
-                                <span className="stat-count">{count} פעמים</span>
+                                <span className="stat-count">({count})</span>
                               </div>
                               <div className="progress-bar-bg">
                                 <div className="progress-bar-fill" style={{ width: `${(count / totalStats) * 100}%` }}></div>
