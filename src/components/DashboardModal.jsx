@@ -10,6 +10,7 @@ export default function DashboardModal({ session, isOpen, onClose }) {
   const [activeTab, setActiveTab] = useState('stats'); // 'stats' or 'tasks'
   const [showInfo, setShowInfo] = useState(false);
   const [showClusterInfo, setShowClusterInfo] = useState(false);
+  const [showTasksInfo, setShowTasksInfo] = useState(false);
 
   useEffect(() => {
     if (isOpen && session?.user?.id) {
@@ -203,9 +204,35 @@ export default function DashboardModal({ session, isOpen, onClose }) {
                         </>
                       )}
                     </div>
-                    <div className="kpi-item" style={{ textAlign: 'center', padding: '0 0.5rem' }}>
-                      <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#f59e0b' }}>{displayGuidanceTasks.length}</div>
-                      <div style={{ color: '#64748b', fontSize: '0.85rem' }}>ממתינים להדרכה</div>
+                    <div className="kpi-item" style={{ textAlign: 'center', padding: '0 0.5rem', position: 'relative' }}>
+                      {showTasksInfo ? (
+                        <div style={{ fontSize: '0.82rem', color: '#475569', lineHeight: '1.4', textAlign: 'right', paddingRight: '1rem' }}>
+                          <button 
+                            onClick={() => setShowTasksInfo(false)} 
+                            style={{ position: 'absolute', top: '-5px', right: '-5px', background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}
+                            title="סגור"
+                          >
+                            <X size={16} />
+                          </button>
+                          <strong>מה המשמעות?</strong><br/>
+                          מספר זה מייצג את הדילמות והאתגרים שבחרת לשמור לדיון מעמיק, פנים אל פנים, עם המדריך הבית-ספרי. זהו כלי ניהולי שעוזר לך לאסוף שאלות ממוקדות ולא ללכת לאיבוד בשוטף.<br/>
+                          נקודה לחשיבה: האם רשימה זו משקפת את האתגרים הדחופים ביותר שלך כרגע?
+                        </div>
+                      ) : (
+                        <>
+                          <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#f59e0b' }}>{displayGuidanceTasks.length}</div>
+                          <div style={{ color: '#64748b', fontSize: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                            ממתינים להדרכה
+                            <button 
+                              onClick={() => setShowTasksInfo(true)} 
+                              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#f59e0b', padding: 0, display: 'flex' }}
+                              title="מה זה אומר?"
+                            >
+                              <Info size={22} strokeWidth={2.5} />
+                            </button>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
 
