@@ -145,7 +145,16 @@ export default function DashboardModal({ session, isOpen, onClose }) {
                   <div className="dashboard-card kpi-card" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', padding: '1.5rem', background: 'linear-gradient(to right, #ffffff, #f8fafc)', margin: 0 }}>
                     <div className="kpi-item" style={{ textAlign: 'center', borderLeft: '1px solid #e2e8f0', padding: '0 0.5rem' }}>
                       <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#8b5cf6' }}>{stats.length}</div>
-                      <div style={{ color: '#64748b', fontSize: '0.85rem' }}>כלים שתורגלו</div>
+                      <div style={{ color: '#64748b', fontSize: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                        כלים שתורגלו
+                        <button 
+                          onClick={() => setShowInfo(!showInfo)} 
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#8b5cf6', padding: 0, display: 'flex' }}
+                          title="מה זה אומר?"
+                        >
+                          <Info size={14} />
+                        </button>
+                      </div>
                     </div>
                     <div className="kpi-item" style={{ textAlign: 'center', borderLeft: '1px solid #e2e8f0', padding: '0 0.5rem' }}>
                       <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#10b981' }}>{sortedClusters.length > 0 ? getShortClusterName(sortedClusters[0][0]) : '-'}</div>
@@ -156,6 +165,12 @@ export default function DashboardModal({ session, isOpen, onClose }) {
                       <div style={{ color: '#64748b', fontSize: '0.85rem' }}>ממתינים להדרכה</div>
                     </div>
                   </div>
+
+                  {showInfo && (
+                    <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', fontSize: '0.9rem', color: '#475569', border: '1px solid #e2e8f0', lineHeight: '1.6' }}>
+                      כשאתה מעלה דילמה, המטרה היא לא רק לתת עצה, אלא לצייד אותך בשיטת עבודה והתכוונות מערכתית. המנטור חושף בפניך כלי מקצועי (כמו מודל RADAR, אדרת הדג או מיפוי בעלי עניין) ומדריך אותך כיצד לנתח ולתת מענה לאתגר שלך. כך אתה לא רק פותר את הבעיה המיידית, אלא מתרגל הלכה למעשה חשיבה ניהולית-אסטרטגית חדשה.
+                    </div>
+                  )}
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                     {/* Section 1: Clusters */}
@@ -183,24 +198,9 @@ export default function DashboardModal({ session, isOpen, onClose }) {
 
                     {/* Section 2: Tool Usage */}
                     <div className="dashboard-card" style={{ margin: 0 }}>
-                      <h3 style={{ display: 'flex', alignItems: 'center' }}>
-                        <Target className="icon-title" /> ארגז הכלים בשימוש
-                        <button 
-                          onClick={() => setShowInfo(!showInfo)} 
-                          style={{ background: 'none', border: 'none', cursor: 'pointer', marginRight: '0.5rem', color: '#64748b', display: 'flex', alignItems: 'center', padding: '2px' }}
-                          title="מה זה אומר?"
-                        >
-                          <Info size={18} />
-                        </button>
-                      </h3>
+                      <h3><Target className="icon-title" /> ארגז הכלים בשימוש</h3>
                       <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '1rem' }}>כלים ניהוליים שתורגלו</p>
                       
-                      {showInfo && (
-                        <div style={{ background: '#f8fafc', padding: '0.85rem', borderRadius: '8px', fontSize: '0.85rem', color: '#475569', marginBottom: '1rem', border: '1px solid #e2e8f0', lineHeight: '1.5' }}>
-                          כשאתה מעלה דילמה, המטרה היא לא רק לתת עצה, אלא לצייד אותך בשיטת עבודה והתכוונות מערכתית. המנטור חושף בפניך כלי מקצועי (כמו מודל RADAR, אדרת הדג או מיפוי בעלי עניין) ומדריך אותך כיצד לנתח ולתת מענה לאתגר שלך. כך אתה לא רק פותר את הבעיה המיידית, אלא מתרגל הלכה למעשה חשיבה ניהולית-אסטרטגית חדשה.
-                        </div>
-                      )}
-
                       {sortedTools.length === 0 ? (
                         <p className="empty-state">טרם השתמשת בכלים בצ'אט.</p>
                       ) : (
