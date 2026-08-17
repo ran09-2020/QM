@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
-import { Compass, PieChart, CheckSquare, Printer, Loader2, Target, X } from 'lucide-react';
+import { Compass, PieChart, CheckSquare, Printer, Loader2, Target, X, Info } from 'lucide-react';
 import './DashboardModal.css';
 
 export default function DashboardModal({ session, isOpen, onClose }) {
@@ -8,6 +8,7 @@ export default function DashboardModal({ session, isOpen, onClose }) {
   const [stats, setStats] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [activeTab, setActiveTab] = useState('stats'); // 'stats' or 'tasks'
+  const [showInfo, setShowInfo] = useState(false);
 
   useEffect(() => {
     if (isOpen && session?.user?.id) {
@@ -182,8 +183,24 @@ export default function DashboardModal({ session, isOpen, onClose }) {
 
                     {/* Section 2: Tool Usage */}
                     <div className="dashboard-card" style={{ margin: 0 }}>
-                      <h3><Target className="icon-title" /> ארגז הכלים בשימוש</h3>
+                      <h3 style={{ display: 'flex', alignItems: 'center' }}>
+                        <Target className="icon-title" /> ארגז הכלים בשימוש
+                        <button 
+                          onClick={() => setShowInfo(!showInfo)} 
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', marginRight: '0.5rem', color: '#64748b', display: 'flex', alignItems: 'center', padding: '2px' }}
+                          title="מה זה אומר?"
+                        >
+                          <Info size={18} />
+                        </button>
+                      </h3>
                       <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '1rem' }}>כלים ניהוליים שתורגלו</p>
+                      
+                      {showInfo && (
+                        <div style={{ background: '#f8fafc', padding: '0.85rem', borderRadius: '8px', fontSize: '0.85rem', color: '#475569', marginBottom: '1rem', border: '1px solid #e2e8f0', lineHeight: '1.5' }}>
+                          כשאתה מעלה דילמה, המטרה היא לא רק לתת עצה, אלא לצייד אותך בשיטת עבודה. המנטור חושף בפניך כלי מקצועי (כמו מודל RADAR, אדרת הדג או מיפוי בעלי עניין) ומדריך אותך כיצד לנתח ולפתור את האתגר שלך. כך אתה לא רק פותר את הבעיה המיידית, אלא מתרגל הלכה למעשה חשיבה ניהולית-אסטרטגית חדשה.
+                        </div>
+                      )}
+
                       {sortedTools.length === 0 ? (
                         <p className="empty-state">טרם השתמשת בכלים בצ'אט.</p>
                       ) : (
