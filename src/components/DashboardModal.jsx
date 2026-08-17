@@ -131,9 +131,17 @@ export default function DashboardModal({ session, isOpen, onClose }) {
                   
                   {/* Top KPIs Row */}
                   <div className="dashboard-card kpi-card" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', padding: '1.5rem', background: 'linear-gradient(to right, #ffffff, #f8fafc)', margin: 0 }}>
-                    <div className="kpi-item" style={{ textAlign: 'center', borderLeft: '1px solid #e2e8f0', padding: '0 0.5rem', position: 'relative' }}>
+                    <div 
+                      className="kpi-item" 
+                      style={{ textAlign: 'center', borderLeft: '1px solid #e2e8f0', padding: '0 0.5rem', position: 'relative', cursor: 'pointer' }}
+                      onClick={() => {
+                        if (window.innerWidth <= 768) {
+                          document.getElementById('details-tools')?.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }}
+                    >
                       {showInfo ? (
-                        <div style={{ fontSize: '0.9rem', color: '#475569', lineHeight: '1.5', textAlign: 'right', paddingRight: '1rem' }}>
+                        <div style={{ fontSize: '0.9rem', color: '#475569', lineHeight: '1.5', textAlign: 'right', paddingRight: '1rem' }} onClick={(e) => e.stopPropagation()}>
                           <button 
                             onClick={() => setShowInfo(false)} 
                             style={{ position: 'absolute', top: '-5px', right: '-5px', background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}
@@ -150,7 +158,7 @@ export default function DashboardModal({ session, isOpen, onClose }) {
                           <div style={{ color: '#64748b', fontSize: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
                             כלים שתורגלו
                             <button 
-                              onClick={() => setShowInfo(true)} 
+                              onClick={(e) => { e.stopPropagation(); setShowInfo(true); }} 
                               style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#8b5cf6', padding: 0, display: 'flex' }}
                               title="מה זה אומר?"
                             >
@@ -160,9 +168,17 @@ export default function DashboardModal({ session, isOpen, onClose }) {
                         </>
                       )}
                     </div>
-                    <div className="kpi-item" style={{ textAlign: 'center', borderLeft: '1px solid #e2e8f0', padding: '0 0.5rem', position: 'relative' }}>
+                    <div 
+                      className="kpi-item" 
+                      style={{ textAlign: 'center', borderLeft: '1px solid #e2e8f0', padding: '0 0.5rem', position: 'relative', cursor: 'pointer' }}
+                      onClick={() => {
+                        if (window.innerWidth <= 768) {
+                          document.getElementById('details-clusters')?.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }}
+                    >
                       {showClusterInfo ? (
-                        <div style={{ fontSize: '0.9rem', color: '#475569', lineHeight: '1.5', textAlign: 'right', paddingRight: '1rem' }}>
+                        <div style={{ fontSize: '0.9rem', color: '#475569', lineHeight: '1.5', textAlign: 'right', paddingRight: '1rem' }} onClick={(e) => e.stopPropagation()}>
                           <button 
                             onClick={() => setShowClusterInfo(false)} 
                             style={{ position: 'absolute', top: '-5px', right: '-5px', background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}
@@ -180,7 +196,7 @@ export default function DashboardModal({ session, isOpen, onClose }) {
                           <div style={{ color: '#64748b', fontSize: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
                             אשכול מוביל
                             <button 
-                              onClick={() => setShowClusterInfo(true)} 
+                              onClick={(e) => { e.stopPropagation(); setShowClusterInfo(true); }} 
                               style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#10b981', padding: 0, display: 'flex' }}
                               title="מה זה אומר?"
                             >
@@ -190,9 +206,17 @@ export default function DashboardModal({ session, isOpen, onClose }) {
                         </>
                       )}
                     </div>
-                    <div className="kpi-item" style={{ textAlign: 'center', padding: '0 0.5rem', position: 'relative' }}>
+                    <div 
+                      className="kpi-item" 
+                      style={{ textAlign: 'center', padding: '0 0.5rem', position: 'relative', cursor: 'pointer' }}
+                      onClick={() => {
+                        if (window.innerWidth <= 768) {
+                          document.getElementById('details-tasks')?.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }}
+                    >
                       {showTasksInfo ? (
-                        <div style={{ fontSize: '0.9rem', color: '#475569', lineHeight: '1.5', textAlign: 'right', paddingRight: '1rem' }}>
+                        <div style={{ fontSize: '0.9rem', color: '#475569', lineHeight: '1.5', textAlign: 'right', paddingRight: '1rem' }} onClick={(e) => e.stopPropagation()}>
                           <button 
                             onClick={() => setShowTasksInfo(false)} 
                             style={{ position: 'absolute', top: '-5px', right: '-5px', background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}
@@ -210,7 +234,7 @@ export default function DashboardModal({ session, isOpen, onClose }) {
                           <div style={{ color: '#64748b', fontSize: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
                             ממתינים להדרכה
                             <button 
-                              onClick={() => setShowTasksInfo(true)} 
+                              onClick={(e) => { e.stopPropagation(); setShowTasksInfo(true); }} 
                               style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#f59e0b', padding: 0, display: 'flex' }}
                               title="מה זה אומר?"
                             >
@@ -224,7 +248,7 @@ export default function DashboardModal({ session, isOpen, onClose }) {
 
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
                     {/* Section 2: Tool Usage (Right column, styled Purple) */}
-                    <div className="dashboard-card" style={{ margin: 0, borderColor: '#e9d5ff', backgroundColor: '#faf5ff' }}>
+                    <div id="details-tools" className="dashboard-card" style={{ margin: 0, borderColor: '#e9d5ff', backgroundColor: '#faf5ff' }}>
                       <h3 style={{ color: '#8b5cf6' }}><Target className="icon-title" style={{ color: '#8b5cf6' }} /> ארגז הכלים בשימוש</h3>
                       <p style={{ fontSize: '0.8rem', color: '#a78bfa', marginBottom: '1rem' }}>כלים ניהוליים שתורגלו</p>
                       
@@ -248,7 +272,7 @@ export default function DashboardModal({ session, isOpen, onClose }) {
                     </div>
 
                     {/* Section 1: Clusters (Center column) */}
-                    <div className="dashboard-card" style={{ margin: 0 }}>
+                    <div id="details-clusters" className="dashboard-card" style={{ margin: 0 }}>
                       <h3><PieChart className="icon-title" /> התפתחות המיקוד הניהולי</h3>
                       <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '1rem' }}>התפלגות לפי 5 האשכולות</p>
                       {sortedClusters.length === 0 ? (
@@ -271,7 +295,7 @@ export default function DashboardModal({ session, isOpen, onClose }) {
                     </div>
 
                     {/* Section 3: Tasks (Left column, styled Orange) */}
-                    <div className="dashboard-card" style={{ margin: 0, borderColor: '#fed7aa', backgroundColor: '#fff7ed' }}>
+                    <div id="details-tasks" className="dashboard-card" style={{ margin: 0, borderColor: '#fed7aa', backgroundColor: '#fff7ed' }}>
                       <h3 style={{ color: '#c2410c' }}><CheckSquare className="icon-title" style={{ color: '#c2410c' }} /> ממתינים להדרכה</h3>
                       <p style={{ fontSize: '0.8rem', color: '#ea580c', marginBottom: '1rem' }}>נושאים לדיון הקרוב עם המדריך</p>
                       
