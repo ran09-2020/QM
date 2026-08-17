@@ -172,9 +172,34 @@ export default function DashboardModal({ session, isOpen, onClose }) {
                         </>
                       )}
                     </div>
-                    <div className="kpi-item" style={{ textAlign: 'center', borderLeft: '1px solid #e2e8f0', padding: '0 0.5rem' }}>
-                      <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#10b981' }}>{sortedClusters.length > 0 ? getShortClusterName(sortedClusters[0][0]) : '-'}</div>
-                      <div style={{ color: '#64748b', fontSize: '0.85rem' }}>אשכול מוביל</div>
+                    <div className="kpi-item" style={{ textAlign: 'center', borderLeft: '1px solid #e2e8f0', padding: '0 0.5rem', position: 'relative' }}>
+                      {showClusterInfo ? (
+                        <div style={{ fontSize: '0.82rem', color: '#475569', lineHeight: '1.4', textAlign: 'right', paddingRight: '1rem' }}>
+                          <button 
+                            onClick={() => setShowClusterInfo(false)} 
+                            style={{ position: 'absolute', top: '-5px', right: '-5px', background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}
+                            title="סגור"
+                          >
+                            <X size={16} />
+                          </button>
+                          הנתון חושף את אזור המיקוד שבו פעלת לאחרונה, בהתאם לכלים שתורגלו.<br/><br/>
+                          <strong>ניווט מכוון או תגובתי?</strong>
+                        </div>
+                      ) : (
+                        <>
+                          <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#10b981' }}>{sortedClusters.length > 0 ? getShortClusterName(sortedClusters[0][0]) : '-'}</div>
+                          <div style={{ color: '#64748b', fontSize: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                            אשכול מוביל
+                            <button 
+                              onClick={() => setShowClusterInfo(true)} 
+                              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#10b981', padding: 0, display: 'flex' }}
+                              title="מה זה אומר?"
+                            >
+                              <Info size={22} strokeWidth={2.5} />
+                            </button>
+                          </div>
+                        </>
+                      )}
                     </div>
                     <div className="kpi-item" style={{ textAlign: 'center', padding: '0 0.5rem' }}>
                       <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#f59e0b' }}>{displayGuidanceTasks.length}</div>
