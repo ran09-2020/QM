@@ -9,6 +9,7 @@ export default function DashboardModal({ session, isOpen, onClose }) {
   const [tasks, setTasks] = useState([]);
   const [activeTab, setActiveTab] = useState('stats'); // 'stats' or 'tasks'
   const [showInfo, setShowInfo] = useState(false);
+  const [showClusterInfo, setShowClusterInfo] = useState(false);
 
   useEffect(() => {
     if (isOpen && session?.user?.id) {
