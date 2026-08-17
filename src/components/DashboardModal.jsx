@@ -236,8 +236,8 @@ export default function DashboardModal({ session, isOpen, onClose }) {
                     </div>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-                    {/* Section 2: Tool Usage (Moved to Right column, styled Purple) */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+                    {/* Section 2: Tool Usage (Right column, styled Purple) */}
                     <div className="dashboard-card" style={{ margin: 0, borderColor: '#e9d5ff', backgroundColor: '#faf5ff' }}>
                       <h3 style={{ color: '#8b5cf6' }}><Target className="icon-title" style={{ color: '#8b5cf6' }} /> ארגז הכלים בשימוש</h3>
                       <p style={{ fontSize: '0.8rem', color: '#a78bfa', marginBottom: '1rem' }}>כלים ניהוליים שתורגלו</p>
@@ -261,7 +261,7 @@ export default function DashboardModal({ session, isOpen, onClose }) {
                       )}
                     </div>
 
-                    {/* Section 1: Clusters (Moved to Left column) */}
+                    {/* Section 1: Clusters (Center column) */}
                     <div className="dashboard-card" style={{ margin: 0 }}>
                       <h3><PieChart className="icon-title" /> התפתחות המיקוד הניהולי</h3>
                       <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '1rem' }}>התפלגות לפי 5 האשכולות</p>
@@ -277,6 +277,27 @@ export default function DashboardModal({ session, isOpen, onClose }) {
                               </div>
                               <div className="progress-bar-bg">
                                 <div className="progress-bar-fill cluster-fill" style={{ width: `${(count / totalStats) * 100}%` }}></div>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+
+                    {/* Section 3: Tasks (Left column, styled Orange) */}
+                    <div className="dashboard-card" style={{ margin: 0, borderColor: '#fde68a', backgroundColor: '#fffbeb' }}>
+                      <h3 style={{ color: '#d97706' }}><CheckSquare className="icon-title" style={{ color: '#d97706' }} /> ממתינים להדרכה</h3>
+                      <p style={{ fontSize: '0.8rem', color: '#fbbf24', marginBottom: '1rem' }}>נושאים לדיון הקרוב</p>
+                      
+                      {displayGuidanceTasks.length === 0 ? (
+                        <p className="empty-state" style={{ color: '#fbbf24' }}>אין נושאים כרגע.</p>
+                      ) : (
+                        <ul className="stats-list">
+                          {displayGuidanceTasks.map(task => (
+                            <li key={task.id} style={{ marginBottom: '0.75rem', paddingBottom: '0.75rem', borderBottom: '1px solid #fef3c7' }}>
+                              <div className="stat-label" style={{ color: '#d97706', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '0.25rem' }}>
+                                <span style={{ fontWeight: '500', lineHeight: '1.3' }}>{task.title}</span>
+                                <span style={{ fontSize: '0.75rem', color: '#f59e0b' }}>{new Date(task.created_at).toLocaleDateString('he-IL')}</span>
                               </div>
                             </li>
                           ))}
