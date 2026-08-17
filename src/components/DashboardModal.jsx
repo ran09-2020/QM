@@ -127,7 +127,7 @@ export default function DashboardModal({ session, isOpen, onClose }) {
             </div>
           ) : (
             <>
-                <div className="dashboard-grid print-hidden" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <div className="dashboard-grid print-hidden" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '-1rem' }}>
                   
                   {/* Top KPIs Row */}
                   <div className="dashboard-card kpi-card" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', padding: '1.5rem', background: 'linear-gradient(to right, #ffffff, #f8fafc)', margin: 0 }}>
@@ -176,7 +176,7 @@ export default function DashboardModal({ session, isOpen, onClose }) {
                         </div>
                       ) : (
                         <>
-                          <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#10b981' }}>{sortedClusters.length > 0 ? getShortClusterName(sortedClusters[0][0]) : '-'}</div>
+                          <div style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#10b981' }}>{sortedClusters.length > 0 ? getShortClusterName(sortedClusters[0][0]) : '-'}</div>
                           <div style={{ color: '#64748b', fontSize: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
                             אשכול מוביל
                             <button 
@@ -273,22 +273,22 @@ export default function DashboardModal({ session, isOpen, onClose }) {
                     {/* Section 3: Tasks (Left column, styled Orange) */}
                     <div className="dashboard-card" style={{ margin: 0, borderColor: '#fed7aa', backgroundColor: '#fff7ed' }}>
                       <h3 style={{ color: '#c2410c' }}><CheckSquare className="icon-title" style={{ color: '#c2410c' }} /> ממתינים להדרכה</h3>
-                      <p style={{ fontSize: '0.8rem', color: '#ea580c', marginBottom: '1rem' }}>נושאים לדיון הקרוב</p>
+                      <p style={{ fontSize: '0.8rem', color: '#ea580c', marginBottom: '1rem' }}>נושאים לדיון הקרוב עם המדריך</p>
                       
                       {displayGuidanceTasks.length === 0 ? (
                         <p className="empty-state" style={{ color: '#ea580c' }}>אין נושאים כרגע.</p>
                       ) : (
                         <ul className="stats-list">
                           {displayGuidanceTasks.map(task => (
-                            <li key={task.id} style={{ marginBottom: '0.75rem', paddingBottom: '0.75rem', borderBottom: '1px solid #ffedd5' }}>
-                              <div className="stat-label" style={{ color: '#9a3412', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '0.35rem' }}>
-                                <span style={{ fontWeight: '600', lineHeight: '1.3' }}>{task.title}</span>
+                            <li key={task.id} style={{ marginBottom: '0.5rem', paddingBottom: '0.5rem', borderBottom: '1px solid #ffedd5' }}>
+                              <div className="stat-label" style={{ color: '#9a3412', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '0.15rem' }}>
+                                <span style={{ fontWeight: '600', lineHeight: '1.2' }}>{task.title}</span>
                                 {task.description && (
-                                  <span style={{ fontSize: '0.8rem', color: '#c2410c', lineHeight: '1.4' }}>
+                                  <span style={{ fontSize: '0.8rem', color: '#c2410c', lineHeight: '1.2' }}>
                                     {task.description.split('\n')[0]}
                                   </span>
                                 )}
-                                <span style={{ fontSize: '0.75rem', color: '#fdba74' }}>{new Date(task.created_at).toLocaleDateString('he-IL')}</span>
+                                <span style={{ fontSize: '0.7rem', color: '#fdba74' }}>{new Date(task.created_at).toLocaleDateString('he-IL')}</span>
                               </div>
                             </li>
                           ))}
