@@ -246,7 +246,7 @@ export default function DashboardModal({ session, isOpen, onClose }) {
                     </div>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+                  <div className="dashboard-details-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
                     {/* Section 2: Tool Usage (Right column, styled Purple) */}
                     <div id="details-tools" className="dashboard-card" style={{ margin: 0, borderColor: '#e9d5ff', backgroundColor: '#faf5ff' }}>
                       <h3 style={{ color: '#8b5cf6' }}><Target className="icon-title" style={{ color: '#8b5cf6' }} /> ארגז הכלים בשימוש</h3>
