@@ -118,20 +118,7 @@ export default function DashboardModal({ session, isOpen, onClose }) {
           </div>
         </div>
 
-        <div className="dashboard-tabs print-hidden">
-          <button 
-            className={`dashboard-tab ${activeTab === 'stats' ? 'active' : ''}`}
-            onClick={() => setActiveTab('stats')}
-          >
-            דפוסי עבודה
-          </button>
-          <button 
-            className={`dashboard-tab ${activeTab === 'tasks' ? 'active' : ''}`}
-            onClick={() => setActiveTab('tasks')}
-          >
-            הכנה להדרכה
-          </button>
-        </div>
+
 
         <div className="dashboard-modal-body">
           {loading ? (
@@ -140,7 +127,6 @@ export default function DashboardModal({ session, isOpen, onClose }) {
             </div>
           ) : (
             <>
-              {activeTab === 'stats' && (
                 <div className="dashboard-grid print-hidden" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                   
                   {/* Top KPIs Row */}
@@ -285,19 +271,24 @@ export default function DashboardModal({ session, isOpen, onClose }) {
                     </div>
 
                     {/* Section 3: Tasks (Left column, styled Orange) */}
-                    <div className="dashboard-card" style={{ margin: 0, borderColor: '#fde68a', backgroundColor: '#fffbeb' }}>
-                      <h3 style={{ color: '#d97706' }}><CheckSquare className="icon-title" style={{ color: '#d97706' }} /> ממתינים להדרכה</h3>
-                      <p style={{ fontSize: '0.8rem', color: '#fbbf24', marginBottom: '1rem' }}>נושאים לדיון הקרוב</p>
+                    <div className="dashboard-card" style={{ margin: 0, borderColor: '#fed7aa', backgroundColor: '#fff7ed' }}>
+                      <h3 style={{ color: '#c2410c' }}><CheckSquare className="icon-title" style={{ color: '#c2410c' }} /> ממתינים להדרכה</h3>
+                      <p style={{ fontSize: '0.8rem', color: '#ea580c', marginBottom: '1rem' }}>נושאים לדיון הקרוב</p>
                       
                       {displayGuidanceTasks.length === 0 ? (
-                        <p className="empty-state" style={{ color: '#fbbf24' }}>אין נושאים כרגע.</p>
+                        <p className="empty-state" style={{ color: '#ea580c' }}>אין נושאים כרגע.</p>
                       ) : (
                         <ul className="stats-list">
                           {displayGuidanceTasks.map(task => (
-                            <li key={task.id} style={{ marginBottom: '0.75rem', paddingBottom: '0.75rem', borderBottom: '1px solid #fef3c7' }}>
-                              <div className="stat-label" style={{ color: '#d97706', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '0.25rem' }}>
-                                <span style={{ fontWeight: '500', lineHeight: '1.3' }}>{task.title}</span>
-                                <span style={{ fontSize: '0.75rem', color: '#f59e0b' }}>{new Date(task.created_at).toLocaleDateString('he-IL')}</span>
+                            <li key={task.id} style={{ marginBottom: '0.75rem', paddingBottom: '0.75rem', borderBottom: '1px solid #ffedd5' }}>
+                              <div className="stat-label" style={{ color: '#9a3412', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '0.35rem' }}>
+                                <span style={{ fontWeight: '600', lineHeight: '1.3' }}>{task.title}</span>
+                                {task.description && (
+                                  <span style={{ fontSize: '0.8rem', color: '#c2410c', lineHeight: '1.4' }}>
+                                    {task.description.split('\n')[0]}
+                                  </span>
+                                )}
+                                <span style={{ fontSize: '0.75rem', color: '#fdba74' }}>{new Date(task.created_at).toLocaleDateString('he-IL')}</span>
                               </div>
                             </li>
                           ))}
@@ -306,33 +297,6 @@ export default function DashboardModal({ session, isOpen, onClose }) {
                     </div>
                   </div>
                 </div>
-              )}
-
-              {(activeTab === 'tasks' || window.matchMedia("print").matches) && (
-                <div className="dashboard-card full-width print-visible" style={{ marginTop: 0 }}>
-                  <div className="card-header-flex">
-                    <h3><CheckSquare className="icon-title" /> נקודות לדיון בהדרכה</h3>
-                    <button className="print-button print-hidden" onClick={handlePrint}>
-                      <Printer size={18} /> הדפס לפגישה
-                    </button>
-                  </div>
-                  <p style={{ fontSize: '0.9rem', color: '#64748b', marginBottom: '1.5rem' }}>
-                    אלו הדילמות והנושאים שסימנת במיוחד מתוך האפליקציה כדי לדון בהם פנים אל פנים מול המדריך הבית-ספרי.
-                  </p>
-                  {displayGuidanceTasks.length === 0 ? (
-                    <p className="empty-state">אין כרגע נושאים הממתינים להדרכה. סמן דילמות בסרגל המשימות כ"לדיון בהדרכה".</p>
-                  ) : (
-                    <div className="handoff-tasks">
-                      {displayGuidanceTasks.map(task => (
-                        <div key={task.id} className="handoff-task-item">
-                          <h4>{task.title}</h4>
-                          {task.description && <p>{task.description}</p>}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
             </>
           )}
         </div>
