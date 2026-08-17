@@ -338,15 +338,37 @@ ${chooseStr}`
           "פלסטר למשבר", "פלסטר זמני", "מעגל למידה מארועים", "מודל RADAR", "חשיבה תוצאתית", "מטריצת אייזנהאואר", "MoSCoW"
         ];
         
+        // Mapping tools to EFQM clusters
+        const toolToCluster = {
+          "שלושת האופקים": "חזון אסטרטגיה וערכים",
+          "מטריצה לפריסת חזון": "חזון אסטרטגיה וערכים",
+          "חזון שקורא לפעולה": "חזון אסטרטגיה וערכים",
+          "MoSCoW": "חזון אסטרטגיה וערכים",
+          "עקומת השינוי": "הנהגה מתפתחת מעצימה ומפתחת",
+          "תסריט שיחה: מקושי לצורך": "הנהגה מתפתחת מעצימה ומפתחת",
+          "פלסטר למשבר": "הנהגה מתפתחת מעצימה ומפתחת",
+          "פלסטר זמני": "הנהגה מתפתחת מעצימה ומפתחת",
+          "מטריצת אייזנהאואר": "הנהגה מתפתחת מעצימה ומפתחת",
+          "ניהול שותפויות": "פיתוח הון אנושי ושותפויות",
+          "מיפוי בעלי עניין": "פיתוח הון אנושי ושותפויות",
+          "מעגל למידה מארועים": "פיתוח הון אנושי ושותפויות",
+          "אדרת הדג": "ניהול תהליכים נתונים ומידע",
+          "7 השאלות": "ניהול תהליכים נתונים ומידע",
+          "ניהול תהליכים": "ניהול תהליכים נתונים ומידע",
+          "ניהול סיכונים": "ניהול תהליכים נתונים ומידע",
+          "מודל RADAR": "תוצאות",
+          "חשיבה תוצאתית": "תוצאות"
+        };
+        
         // Find which tools were mentioned in this response
         const detectedTools = knownTools.filter(tool => responseText.includes(tool));
         
         if (detectedTools.length > 0 && session?.user?.id) {
-          // Avoid duplicate logging if the same tool was logged very recently (basic deduplication could be added, but insert is fine for now)
+          // Avoid duplicate logging if the same tool was logged very recently
           const statsToInsert = detectedTools.map(tool => ({
             user_id: session.user.id,
             tool_name: tool,
-            cluster_name: 'ייעוץ שוטף' 
+            cluster_name: toolToCluster[tool] || 'ייעוץ כללי'
           }));
           
           supabase.from('user_stats').insert(statsToInsert).then(({error}) => {
