@@ -1,9 +1,12 @@
-import React from 'react';
-import { Menu } from 'lucide-react';
+import React, { useState } from 'react';
+import { Menu, ChevronDown, Plus } from 'lucide-react';
+import { useSchool } from '../contexts/SchoolContext';
 
 export default function TopNav({ session, setIsSidebarOpen }) {
   const mentorGender = session?.user?.user_metadata?.mentor_gender || 'male';
   const mentorTitle = mentorGender === 'female' ? 'המנטורית האישית שלך' : 'המנטור האישי שלך';
+  
+  const { role } = useSchool();
 
   return (
     <div className="top-nav">
@@ -17,8 +20,7 @@ export default function TopNav({ session, setIsSidebarOpen }) {
         </div>
         <div className="status-dot"></div>
       </div>
-      {/* Spacer to push anything else if needed, though TopNav is now just a branding header */}
-      <div className="nav-group-container"></div>
+      
     </div>
   );
 }

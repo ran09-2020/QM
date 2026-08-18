@@ -6,6 +6,7 @@ export default function SettingsModal({ session, onClose }) {
   const metadata = session?.user?.user_metadata || {};
   const [userGender, setUserGender] = useState(metadata.user_gender || 'male');
   const [mentorGender, setMentorGender] = useState(metadata.mentor_gender || 'male');
+  const [userRole, setUserRole] = useState(metadata.user_role || 'principal');
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState('');
   const [showDangerZone, setShowDangerZone] = useState(false);
@@ -13,7 +14,7 @@ export default function SettingsModal({ session, onClose }) {
   const handleSave = async () => {
     setLoading(true);
     const { error } = await supabase.auth.updateUser({
-      data: { user_gender: userGender, mentor_gender: mentorGender }
+      data: { user_gender: userGender, mentor_gender: mentorGender, user_role: userRole }
     });
     
     // Force refresh the session locally to ensure it's written to localStorage
@@ -49,8 +50,16 @@ export default function SettingsModal({ session, onClose }) {
         <div style={{marginBottom:'1.5rem', textAlign:'right'}}>
           <label style={{display:'block', marginBottom:'0.5rem', fontWeight:'600', color:'#475569'}}>צורת הפנייה אליך (מין המשתמש/ת)</label>
           <select value={userGender} onChange={e => setUserGender(e.target.value)} style={{width:'100%', padding:'0.75rem', borderRadius:'12px', border:'1px solid #cbd5e1', fontFamily:'inherit', fontSize:'1rem'}}>
-            <option value="male">לשון זכר (מנהל)</option>
-            <option value="female">לשון נקבה (מנהלת)</option>
+            <option value="male">לשון זכר</option>
+            <option value="female">לשון נקבה</option>
+          </select>
+        </div>
+
+        <div style={{marginBottom:'1.5rem', textAlign:'right'}}>
+          <label style={{display:'block', marginBottom:'0.5rem', fontWeight:'600', color:'#475569'}}>תפקיד במערכת</label>
+          <select value={userRole} onChange={e => setUserRole(e.target.value)} style={{width:'100%', padding:'0.75rem', borderRadius:'12px', border:'1px solid #cbd5e1', fontFamily:'inherit', fontSize:'1rem', background: '#f8fafc'}}>
+            <option value="principal">מנהל/ת בית ספר</option>
+            <option value="mentor">מדריך/ה (מלווה מנהלים)</option>
           </select>
         </div>
 
@@ -115,6 +124,10 @@ export default function SettingsModal({ session, onClose }) {
         <button onClick={handleSave} disabled={loading} style={{width:'100%', padding:'1rem', borderRadius:'12px', background:'var(--accent-color)', color:'white', border:'none', fontWeight:'600', fontSize:'1.1rem', cursor:'pointer', display:'flex', justifyContent:'center'}}>
           {loading ? <Loader2 className="animate-spin" size={24}/> : 'שמור הגדרות'}
         </button>
+        
+        <div style={{ textAlign: 'center', fontSize: '0.75rem', color: '#94a3b8', marginTop: '1rem', direction: 'ltr' }}>
+          Model: gemini-flash-latest
+        </div>
       </div>
     </div>
   );

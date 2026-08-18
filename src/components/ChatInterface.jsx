@@ -4,18 +4,31 @@ import remarkGfm from 'remark-gfm';
 import PdfViewer from './PdfViewer';
 import rehypeRaw from 'rehype-raw';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Send, Loader2, Lightbulb, PenTool, Map, BookOpen, Users, FlaskConical, LogOut, BookOpenCheck, Save, RefreshCw, Paperclip, X, File as FileIcon, Download, DoorOpen, MessageSquare } from 'lucide-react';
+import { Send, Loader2, Lightbulb, PenTool, Map, BookOpen, Users, FlaskConical, LogOut, BookOpenCheck, Save, RefreshCw, Paperclip, X, File as FileIcon, Download, DoorOpen, MessageSquare, ChevronDown, Plus } from 'lucide-react';
 import { sendMessageToGemini, sendSimulationMessageToGemini, clearSimulationHistory, clearChatHistory } from '../services/gemini';
 import mammoth from 'mammoth';
 import * as XLSX from 'xlsx';
 import { supabase } from '../supabaseClient';
+import { getSchoolInsertData } from '../utils/supabaseHelpers';
+import { useSchool } from '../contexts/SchoolContext';
 
 function ChatInterface({ session, isSimulationMode = false }) {
   const location = useLocation();
   const navigate = useNavigate();
   const cluster = location.state?.cluster;
+  const { role, schools, activeSchool, selectSchool, addSchool } = useSchool();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const handleAddSchool = async () => {
+    const name = prompt('הכנס שם לבית הספר החדש (לדוגמה: "תיכון אילן רמון"):');
+    if (name) {
+      await addSchool(name);
+      setIsDropdownOpen(false);
+    }
+  };
 
   const metadata = session?.user?.user_metadata || {};
+  const userRole = metadata.user_role || 'principal';
   const userGender = metadata.user_gender || 'male';
   const mentorGender = metadata.mentor_gender || 'male';
   const mentorHat = mentorGender === 'female' ? 'יועצת' : 'יועץ';
@@ -98,7 +111,7 @@ ${chooseStr}`,
 - **עקומת השינוי**: הבנת השלבים הרגשיים שאנשים עוברים בעת שינוי. [לתירגול](#practice:עקומת_השינוי)
 - **אדרת הדג**: זיהוי הקשר בין סיבה לתוצאה בפתרון בעיות (סיבת שורש). [לתירגול](#practice:אדרת_הדג)
 - **7 השאלות**: מיפוי מבוסס ראיונות לזיהוי כיווני התפתחות ואתגרים עתידיים. [לתירגול](#practice:7_השאלות)
-- **תסריט שיחה: מקושי לצורך**: ניהול שיחות קשות והמרת שיח מאשים לשיח ממוקד צרכים ופתרונות. [לתירגול](#practice:תסריט_שיחה_מקושי_לצורך)
+- **להפוך קושי לצורך**: ניהול שיחות קשות והמרת שיח מאשים לשיח ממוקד צרכים ופתרונות. [לתירגול](#practice:תסריט_שיחה(הופכים_קושי_לצורך))
 
 ${chooseStr}`,
 
@@ -314,9 +327,9 @@ ${chooseStr}`
       let responseText = '';
       const textForGemini = hiddenPrompt || textToSend;
       if (isSimulationMode) {
-        responseText = await sendSimulationMessageToGemini(textForGemini, cluster.title, cluster.tools, userGender, mentorGender, fileToSend);
+        responseText = await sendSimulationMessageToGemini(textForGemini, cluster.title, cluster.tools, userRole, userGender, mentorGender, fileToSend);
       } else {
-        responseText = await sendMessageToGemini(textForGemini, userGender, mentorGender, fileToSend);
+        responseText = await sendMessageToGemini(textForGemini, userRole, userGender, mentorGender, fileToSend);
       }
       let activeHat = null;
       const hatMatch = responseText.match(/(?:\*\*|__)?\[כובע:\s*([^\]]+)\](?:\*\*|__)?\s*/);
@@ -334,7 +347,7 @@ ${chooseStr}`
       if (!isSimulationMode) { // We only really care about tracking actual usage, not practice runs
         const knownTools = [
           "שלושת האופקים", "מטריצה לפריסת חזון", "חזון שקורא לפעולה", "עקומת השינוי", "אדרת הדג", "7 השאלות",
-          "תסריט שיחה: מקושי לצורך", "ניהול שותפויות", "מיפוי בעלי עניין", "ניהול תהליכים", "ניהול סיכונים", 
+          "להפוך קושי לצורך", "ניהול שותפויות", "מיפוי בעלי עניין", "ניהול תהליכים", "ניהול סיכונים", 
           "פלסטר למשבר", "פלסטר זמני", "מעגל למידה מארועים", "מודל RADAR", "חשיבה תוצאתית", "מטריצת אייזנהאואר", "MoSCoW"
         ];
         
@@ -345,7 +358,7 @@ ${chooseStr}`
           "חזון שקורא לפעולה": "חזון אסטרטגיה וערכים",
           "MoSCoW": "חזון אסטרטגיה וערכים",
           "עקומת השינוי": "הנהגה מתפתחת מעצימה ומפתחת",
-          "תסריט שיחה: מקושי לצורך": "הנהגה מתפתחת מעצימה ומפתחת",
+          "להפוך קושי לצורך": "הנהגה מתפתחת מעצימה ומפתחת",
           "פלסטר למשבר": "הנהגה מתפתחת מעצימה ומפתחת",
           "פלסטר זמני": "הנהגה מתפתחת מעצימה ומפתחת",
           "מטריצת אייזנהאואר": "הנהגה מתפתחת מעצימה ומפתחת",
@@ -360,15 +373,30 @@ ${chooseStr}`
           "חשיבה תוצאתית": "תוצאות"
         };
         
-        // Find which tools were mentioned in this response
-        const detectedTools = knownTools.filter(tool => responseText.includes(tool));
+        // Extract tools explicitly practiced using the new tag format: [TOOL_PRACTICED: שם הכלי]
+        const toolRegex = /\[TOOL_PRACTICED:\s*(.+?)\]/g;
+        let match;
+        const explicitlyPracticedTools = [];
         
-        if (detectedTools.length > 0 && session?.user?.id) {
-          // Avoid duplicate logging if the same tool was logged very recently
-          const statsToInsert = detectedTools.map(tool => ({
+        while ((match = toolRegex.exec(responseText)) !== null) {
+          const toolName = match[1].trim();
+          // Verify it's a known tool to avoid hallucinated tools
+          const validTool = knownTools.find(t => t === toolName || t.includes(toolName) || toolName.includes(t));
+          if (validTool && !explicitlyPracticedTools.includes(validTool)) {
+            explicitlyPracticedTools.push(validTool);
+          }
+        }
+
+        // Clean the tags from the response before displaying to the user
+        responseText = responseText.replace(toolRegex, '').trim();
+        
+        if (explicitlyPracticedTools.length > 0 && session?.user?.id) {
+          const schoolData = getSchoolInsertData(role, activeSchool);
+          const statsToInsert = explicitlyPracticedTools.map(tool => ({
             user_id: session.user.id,
             tool_name: tool,
-            cluster_name: toolToCluster[tool] || 'ייעוץ כללי'
+            cluster_name: toolToCluster[tool] || 'ייעוץ כללי',
+            ...schoolData
           }));
           
           supabase.from('user_stats').insert(statsToInsert).then(({error}) => {
@@ -380,7 +408,9 @@ ${chooseStr}`
       setMessages([...newMessages, { role: 'model', text: responseText, hat: activeHat }]);
     } catch (error) {
       console.error(error);
-      setMessages([...newMessages, { role: 'model', text: `מצטער, התרחשה שגיאה: ${error.message}` }]);
+      setInput(textToSend);
+      if (fileToSend) setAttachedFile(fileToSend);
+      setMessages([...newMessages, { role: 'model', text: `⚠️ ${error.message}\n\n*(הטקסט שלך הוחזר לתיבת ההקלדה למטה. פשוט לחץ שוב על 'שלח' כדי לנסות שוב)*` }]);
     } finally {
       setIsLoading(false);
     }
@@ -447,11 +477,11 @@ ${chooseStr}`
       let clusterTitle;
 
       if (isSimulationMode) {
-        summary = await sendSimulationMessageToGemini("סיום תרגול והכנת סיכום", cluster.title, cluster.tools, userGender, mentorGender);
+        summary = await sendSimulationMessageToGemini("סיום תרגול והכנת סיכום", cluster.title, cluster.tools, userRole, userGender, mentorGender);
         historyStr = sessionStorage.getItem('gemini_simulationHistory') || '[]';
         clusterTitle = cluster.title;
       } else {
-        summary = await sendMessageToGemini("אנא סכם את השיחה האישית בינינו לטובת שמירה ביומן האירועים. סכם את התובנות המרכזיות בלבד בצורה מסודרת ומאורגנת (עם רשימות). חובה: השורה הראשונה בתשובתך חייבת להיות כותרת קצרה (2-4 מילים) שמתארת את נושא השיחה. לאחר מכן רד שורה וכתוב את הסיכום.", userGender, mentorGender);
+        summary = await sendMessageToGemini("אנא סכם את השיחה האישית בינינו לטובת שמירה ביומן האירועים. סכם את התובנות המרכזיות בלבד בצורה מסודרת ומאורגנת (עם רשימות). חובה: השורה הראשונה בתשובתך חייבת להיות כותרת קצרה (2-4 מילים) שמתארת את נושא השיחה. לאחר מכן רד שורה וכתוב את הסיכום.", userRole, userGender, mentorGender);
         
         const lines = summary.split('\n');
         let titleIdx = 0;
@@ -476,11 +506,13 @@ ${chooseStr}`
         parsedHistory.splice(-2, 2);
       }
 
+      const schoolData = getSchoolInsertData(role, activeSchool);
       const { error: insertError } = await supabase.from('simulation_summaries').insert([{ 
          user_id: session.user.id, 
          cluster: clusterTitle, 
          summary: summary,
-         history: parsedHistory
+         history: parsedHistory,
+         ...schoolData
       }]);
       
       if (insertError) {
@@ -595,11 +627,66 @@ ${chooseStr}`
           borderRadius: '12px 12px 0 0',
           margin: '0',
           fontWeight: '500',
-          flexShrink: 0
+          flexShrink: 0,
+          position: 'relative',
+          zIndex: 50
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold', fontSize: '1.1rem' }}>
             {isSimulationMode ? <FlaskConical size={20} /> : <MessageSquare size={20} />}
             {isSimulationMode ? 'מצב תירגול פעיל' : 'שיחה אישית'}
+            
+            {role === 'mentor' && (
+              <div style={{ position: 'relative', marginRight: '1rem', display: 'inline-block' }}>
+                <button 
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  style={{ 
+                    display: 'flex', alignItems: 'center', gap: '0.5rem', 
+                    background: 'white', padding: '0.3rem 0.8rem', 
+                    borderRadius: '20px', border: '1px solid #cbd5e1',
+                    boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+                    cursor: 'pointer', fontFamily: 'inherit', fontWeight: '500',
+                    fontSize: '0.9rem', color: '#334155'
+                  }}
+                >
+                  {activeSchool ? activeSchool.name : 'בחר בית ספר...'}
+                  <ChevronDown size={14} />
+                </button>
+                
+                {isDropdownOpen && (
+                  <div style={{ 
+                    position: 'absolute', top: '100%', right: 0, marginTop: '0.5rem', 
+                    background: 'white', border: '1px solid #e2e8f0', borderRadius: '12px', 
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)', minWidth: '180px', zIndex: 100,
+                    overflow: 'hidden'
+                  }}>
+                    {schools.map(school => (
+                      <div 
+                        key={school.id} 
+                        onClick={() => { selectSchool(school); setIsDropdownOpen(false); }}
+                        style={{ 
+                          padding: '0.6rem 1rem', cursor: 'pointer', 
+                          background: activeSchool?.id === school.id ? '#f1f5f9' : 'transparent',
+                          borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', gap: '0.5rem',
+                          fontSize: '0.9rem', color: '#334155'
+                        }}
+                      >
+                        <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: school.theme_color || '#4F46E5' }}></div>
+                        {school.name}
+                      </div>
+                    ))}
+                    <div 
+                      onClick={handleAddSchool}
+                      style={{ 
+                        padding: '0.6rem 1rem', cursor: 'pointer', color: 'var(--accent-color)', 
+                        display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '500', fontSize: '0.9rem'
+                      }}
+                    >
+                      <Plus size={14} /> הוסף בית ספר חדש
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
           <div style={{ display: 'flex', gap: '1.5rem' }}>
             <button 

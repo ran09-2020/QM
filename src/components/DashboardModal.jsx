@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
+import { applySchoolFilter } from '../utils/supabaseHelpers';
+import { useSchool } from '../contexts/SchoolContext';
 import { Compass, PieChart, CheckSquare, Printer, Loader2, Target, X, Info } from 'lucide-react';
 import './DashboardModal.css';
 
@@ -12,20 +14,21 @@ export default function DashboardModal({ session, isOpen, onClose }) {
   const [showClusterInfo, setShowClusterInfo] = useState(false);
   const [showTasksInfo, setShowTasksInfo] = useState(false);
 
+  const { role, activeSchool } = useSchool();
+
   useEffect(() => {
     if (isOpen && session?.user?.id) {
       fetchData();
     }
-  }, [isOpen, session]);
+  }, [isOpen, session, role, activeSchool]);
 
   const fetchData = async () => {
     setLoading(true);
     try {
       // Fetch user stats
-      const { data: statsData } = await supabase
-        .from('user_stats')
-        .select('*')
-        .eq('user_id', session.user.id);
+      let statsQuery = supabase.from('user_stats').select('*').eq('user_id', session.user.id);
+      statsQuery = applySchoolFilter(statsQuery, role, activeSchool);
+      const { data: statsData } = await statsQuery;
       if (statsData) {
         const resetTime = session?.user?.user_metadata?.dashboard_reset_time;
         if (resetTime) {
@@ -37,12 +40,9 @@ export default function DashboardModal({ session, isOpen, onClose }) {
       }
 
       // Fetch open tasks
-      const { data: tasksData } = await supabase
-        .from('tasks')
-        .select('*')
-        .eq('user_id', session.user.id)
-        .eq('is_completed', false)
-        .order('created_at', { ascending: false });
+      let tasksQuery = supabase.from('tasks').select('*').eq('user_id', session.user.id).eq('is_completed', false);
+      tasksQuery = applySchoolFilter(tasksQuery, role, activeSchool);
+      const { data: tasksData } = await tasksQuery.order('created_at', { ascending: false });
       
       if (tasksData) setTasks(tasksData);
     } catch (err) {

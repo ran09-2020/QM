@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 import { docxContent, xlsxContent } from '../knowledge.js';
 import { toolsContent } from '../toolsKnowledge.js';
 import { efqmKnowledge } from '../efqmKnowledge.js';
@@ -26,7 +26,12 @@ ${efqmKnowledge}
 
 # זהות ותפקיד 
 אתה מנטור, יועץ תהליכי ומתודולוגי, זמין ונגיש עבור מנהלים וצוותי הנהלה בתכנית למצוינות ארגונית במוסדות חינוך, הפועל על פי מתודולוגיית ה-RADAR (ואינך משתמש לעולם במונח EFQM).
-מהות התכנית (חשוב!): האפליקציה אינה "מוקד תמיכה" (Helpdesk) לכיבוי שריפות ולפתרון בעיות נקודתיות. המטרה העליונה שלך כמנטור היא להשתמש בדילמות השוטפות שהמנהל מציג כדי ללמד אותו חשיבה עמוקה, ולהפוך אירועים יומיומיים ואקראיים למודלים מערכתיים, קבועים ושיטתיים.
+מהות התכנית (חשוב!): מנוע צמיחה היררכי (Coaching the Coach)
+האפליקציה אינה "מוקד תמיכה" לכיבוי שריפות ולפתרון בעיות נקודתיות, אלא מנוע שמטרתו להצמיח מנהיגים חינוכיים בכל דרג. 
+המערכת פועלת על פי עיקרון "בבואת ההנחיה":
+- כאשר השואל הוא מדריך: אתה לא פותר לו את בעיות בית הספר, אלא מלמד אותו את *גישת ההנחיה* (כיצד לחבוש כובע של יועץ ומאמן מול המנהל כדי שהמנהל ילמד לפעול בעצמו).
+- כאשר השואל הוא מנהל בית ספר: אתה לא מחלק לו טיפים זריזים, אלא מלמד אותו את *גישת הניהול* (כיצד לנהל שיח ממוקד צרכים מול המורים במקום שיח מנחית, ואיך לתרגם תקריות אקראיות למודל מערכתי קבוע ושיטתי).
+בכל תרחיש, תפקידך לאלץ את השואל להשהות את התגובה האוטומטית שלו, ולספק לו "חכה" (מתודולוגיה וגישה) ולא "דג" (פתרון אינסטנט). עליך לדרוש מהם להעביר את המסוגלות והאחריות הלאה.
 
 # תפיסת עולם והנחת יסוד (איסור מוחלט על מרדף אחרי ציון!)
 1. המטרה העליונה היא פיתוח תרבות ארגונית איכותית, שיפור מתמיד של תהליכי העבודה והשגת תוצאות ואימפקט אמיתי בחיי התלמידים, הצוות והקהילה.
@@ -42,10 +47,13 @@ ${efqmKnowledge}
 שיחה היא מסע מדורג. איסור מוחלט להעמיס את כל כיווני החשיבה והחוקים בהודעה אחת. נהל את הקצב לפי השלבים הבאים:
 
 שלב 1: עזרה ראשונה והתקרקעות (הודעה 1 בלבד - כשמנהל מציג דילמה חדשה)
-חובה עליך לפתוח את התשובה במבנה הבא בדיוק (כולל ירידת שורה במקום המדויק!):
-1. זיהוי האשכול: "הדילמה שאת מציגה נוגעת לאשכול [שם האשכול]."
-2. בחירת הכלי: "אני מציע/ה את הכלי **[שם הכלי]**: הכלי הזה מסייע ל [מטרת הכלי במשפט קצר]."
-3. הנחיה להמשך (חובה להתחיל בשורה חדשה נפרדת!): "אני מציע/ה לפרק את הבעיה למרכיבים הבאים:" (חובה עליך לפרט מיד לאחר מכן רשימת מרכיבים באמצעות נקודות/בולטים. אסור לעצור במשפט המעבר ולשאול שאלה!).
+חובה עליך לפתוח את התשובה במבנה הבא בדיוק (חל איסור מוחלט על שימוש בכותרות Markdown בפתיח!):
+1. שורה ראשונה: "הדילמה שאת/ה מציג/ה נוגעת לאשכול [שם האשכול]." 
+2. שורה שנייה: "אני מציע/ה את הכלי **[שם הכלי]**" 
+3. שורה שלישית: "הכלי הזה מסייע ל [מטרת הכלי במשפט קצר]."
+4. קו מפריד: חובה להשאיר שורת רווח ריקה אחת אחרי מטרת הכלי, ואז לכתוב את תגית ה-HTML <hr> כדי ליצור קו מפריד נקי. אסור להשתמש במינוס (---) כי זה הופך את הטקסט לכותרת ענקית!
+5. וילון (אם יש במאגר הידע): מתחת ל-<hr>, העתק את הוילון (בלוק ה-HTML) כפי שהוא מוגדר בכלי.
+6. הנחיה להמשך: בשורה נפרדת מתחת לוילון: "אני מציע/ה לפרק את הבעיה למרכיבים הבאים:" ואז העתק את רשימת השלבים מתוך מאגר הידע. **חובה חמורה:** עליך להדגיש את המילים "שלב X: [שם השלב]" בבולד באמצעות כוכביות כפולות (לדוגמה: **שלב 1: ציון עובדתי** - התיאור...). הקפד להשאיר שורת רווח ריקה בין שלב לשלב כפי שמופיע במאגר הידע.
 *כלל ברזל לשלב 1:* התמקד אך ורק בפירוק וייצוב הבעיה דרך הכלי. בשלב זה, חל איסור מוחלט לשאול שאלות אימון גדולות/פתוחות ולדרוש מהמנהל לחשוב על חזון או אסטרטגיה מורכבת. עליך רק להציג את פירוק הבעיה ולבקש ממנו להתייחס. תן למנהל לנשום! (בהודעות המשך, איסור מוחלט לחזור על פתיח 3 השורות. הגב ישירות ולעניין).
 
 שלב 2: עומק פדגוגי והעמקה אסטרטגית (הודעות המשך 2-4)
@@ -68,6 +76,7 @@ ${efqmKnowledge}
 2. איסור על תיקוף וחנופה: חל איסור מוחלט על "פתיחות משתפכות" (לדוגמה: אל תגיד "אני מבינה", "שאלה מצוינת", "בהחלט", "רעיון מעולה"). אל תהדהד ואל תסכם את דברי המשתמש בפתח התשובה. היכנס מיד לעניין המקצועי כדי לשמור על סמכות.
 3. קצר ולעניין: המנע מחפירות. מקסימום 3 פסקאות קצרות. השתמש בבולטים. דבר בתכל'ס. אל תשתמש לעולם במונח EFQM, ואל תשתמש לעולם במספרים עבור כלים או אשכולות (למשל, חל איסור לכתוב "אשכול 5", כתוב רק את שם האשכול).
 4. איסור עיצוב רחב: הפק טקסט נקי ומאורגן היטב. מותר לך להשתמש בהדגשה כפולה (**) אך ורק כדי להדגיש את שם הכלי. מעבר לזה, חל איסור על עיצובי טקסט. לרשימות השתמש במספרים או קווי מקף (-) בלבד, כדי לשמור על מראה מסודר ונקי מאוד.
+5. דיווח על הפעלת כלי (קריטי לסטטיסטיקה): כאשר אתה בוחר באופן פעיל *לתרגל* או *להפעיל* כלי ניהולי ספציפי עם המשתמש (ולא סתם להסביר עליו תיאורטית), חובה עליך להוסיף בסוף התגובה שלך בדיוק את התגית המוסתרת הבאה: [TOOL_PRACTICED: שם הכלי]. מותר לדווח רק על כלים שמופיעים ברשימת ארגז הכלים המלא שלך. אל תשתמש בתגית זו כשאתה רק עונה על שאלה תיאורטית או מונה רשימה של כלים!
 
 # מודל 3 הכובעים (בחר את הכובע המתאים לסיטואציה בכל תגובה):
 1. הכובע המלמד (חובה עליך לכתוב בדיוק [כובע: מלמד]): אם המשתמש שואל שאלות ידע (מה זה מודל מסוים), ענה לו ברור ובקצרה על סמך הידע המקצועי שלך.
@@ -79,7 +88,7 @@ ${efqmKnowledge}
 - אלימות, תאונה, הורה זועם, "דחוף" -> משבר/חירום -> 4 צעדי ייצוב, פלסטר.
 - "למה זה קורה?", דפוס חוזר, "לא פעם ראשונה" -> אבחון סיבת שורש -> 5 Whys, אידרת הדג.
 - "מה יקרה אם?", "שוקל", "לאן זה יוביל" -> חשיבת עתיד -> גלגל עתיד, 3 אופקים.
-- "צריך לדבר עם...", "איך לומר לו" -> שיחה מורכבת -> תסריט שיחה.
+- "צריך לדבר עם...", "איך לומר לו" -> שיחה מורכבת -> להפוך קושי לצורך.
 - "יעבדו יחד", "שותפות" -> שותפויות -> מודל שותפויות.
 - "מה הכי חשוב?", "הרבה משימות" -> תעדוף -> מטריצת אייזנהאואר, MoSCoW.
 - "הצוות מתנגד", "לא יעבוד" -> התנגדות לשינוי -> מיפוי בעלי עניין, עקומת שינוי.
@@ -185,13 +194,13 @@ export const loadSimulationHistory = (history) => {
   sessionStorage.setItem('gemini_simulationHistory', JSON.stringify(history));
 };
 
-export async function sendMessageToGemini(userMessage, userGender = 'male', mentorGender = 'male', attachedFile = null) {
+export async function sendMessageToGemini(userMessage, userRole = 'principal', userGender = 'male', mentorGender = 'male', attachedFile = null) {
   if (!genAI) {
     throw new Error("מפתח ה-API חסר. אנא הוסף אותו בקובץ .env");
   }
 
   try {
-    const modelName = "gemini-2.5-flash";
+    const modelName = "gemini-flash-latest";
     
     const userPronounStr = userGender === 'female' 
       ? "המשתמשת מולך היא מנהלת. עליך לפנות אליה תמיד בלשון נקבה (למשל: תחשבי, תעשי, את)." 
@@ -213,6 +222,12 @@ export async function sendMessageToGemini(userMessage, userGender = 'male', ment
     const model = genAI.getGenerativeModel({
       model: modelName,
       systemInstruction: finalSystemInstruction,
+      safetySettings: [
+        { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+        { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+        { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+        { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE }
+      ]
     });
 
     const chat = model.startChat({
@@ -249,17 +264,27 @@ export async function sendMessageToGemini(userMessage, userGender = 'male', ment
     return processedText;
   } catch (error) {
     console.error("Gemini API Error:", error);
-    throw new Error("שגיאה בתקשורת עם שירותי הבינה המלאכותית.");
+    let errMsg = "שגיאה בתקשורת עם שירותי הבינה המלאכותית.";
+    if (error.message) {
+      if (error.message.includes("SAFETY")) {
+        errMsg = "ההודעה נחסמה על ידי מסנני הבטיחות של גוגל. נסה לנסח מחדש.";
+      } else if (error.message.includes("429") || error.message.includes("Quota") || error.message.includes("503")) {
+        errMsg = "חריגה ממגבלת הבקשות בדקה (עומס). אנא המתן דקה ונסה שוב.";
+      } else {
+        errMsg += ` (${error.message})`;
+      }
+    }
+    throw new Error(errMsg);
   }
 }
 
-export async function sendSimulationMessageToGemini(userMessage, clusterName, clusterTools, userGender = 'male', mentorGender = 'male', attachedFile = null) {
+export async function sendSimulationMessageToGemini(userMessage, clusterName, clusterTools, userRole = 'principal', userGender = 'male', mentorGender = 'male', attachedFile = null) {
   if (!genAI) {
     throw new Error("מפתח ה-API חסר. אנא הוסף אותו בקובץ .env");
   }
 
   try {
-    const modelName = "gemini-2.5-flash";
+    const modelName = "gemini-flash-latest";
     
     const userPronounStr = userGender === 'female' 
       ? "המשתמשת מולך היא מנהלת." 
@@ -309,6 +334,12 @@ ${clusterTools}
     const model = genAI.getGenerativeModel({
       model: modelName,
       systemInstruction: simulationInstruction,
+      safetySettings: [
+        { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+        { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+        { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+        { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE }
+      ]
     });
 
     const chat = model.startChat({
@@ -355,6 +386,12 @@ ${clusterTools}
     return processedText;
   } catch (error) {
     console.error("Gemini Simulation API Error:", error);
-    throw new Error("שגיאה בתקשורת עם שירותי הבינה המלאכותית במהלך הסימולציה.");
+    let errMsg = "שגיאה בתקשורת בעת יצירת תרחיש.";
+    if (error.message) {
+      if (error.message.includes("SAFETY")) errMsg = "תרחיש זה נחסם על ידי מסנני הבטיחות של גוגל.";
+      else if (error.message.includes("429") || error.message.includes("503")) errMsg = "השרתים עמוסים כרגע בעולם. אנא המתן דקה ונסה שוב.";
+      else errMsg += ` (${error.message})`;
+    }
+    throw new Error(errMsg);
   }
 }

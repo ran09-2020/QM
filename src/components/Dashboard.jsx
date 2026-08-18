@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
+import { applySchoolFilter } from '../utils/supabaseHelpers';
+import { useSchool } from '../contexts/SchoolContext';
 import { BarChart3, PieChart, CheckSquare, Printer, Loader2, Target, ArrowRight } from 'lucide-react';
 import './Dashboard.css';
 
@@ -10,30 +12,28 @@ export default function Dashboard({ session }) {
   const [stats, setStats] = useState([]);
   const [tasks, setTasks] = useState([]);
 
+  const { role, activeSchool } = useSchool();
+
   useEffect(() => {
     if (session?.user?.id) {
       fetchData();
     }
-  }, [session]);
+  }, [session, role, activeSchool]);
 
   const fetchData = async () => {
     setLoading(true);
     try {
       // Fetch user stats
-      const { data: statsData, error: statsError } = await supabase
-        .from('user_stats')
-        .select('*')
-        .eq('user_id', session.user.id);
+      let statsQuery = supabase.from('user_stats').select('*').eq('user_id', session.user.id);
+      statsQuery = applySchoolFilter(statsQuery, role, activeSchool);
+      const { data: statsData, error: statsError } = await statsQuery;
       
       if (statsData) setStats(statsData);
 
       // Fetch open tasks
-      const { data: tasksData, error: tasksError } = await supabase
-        .from('tasks')
-        .select('*')
-        .eq('user_id', session.user.id)
-        .eq('is_completed', false)
-        .order('created_at', { ascending: false });
+      let tasksQuery = supabase.from('tasks').select('*').eq('user_id', session.user.id).eq('is_completed', false);
+      tasksQuery = applySchoolFilter(tasksQuery, role, activeSchool);
+      const { data: tasksData, error: tasksError } = await tasksQuery.order('created_at', { ascending: false });
       
       if (tasksData) setTasks(tasksData);
     } catch (err) {

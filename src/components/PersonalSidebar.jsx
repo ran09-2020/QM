@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
+import { applySchoolFilter, getSchoolInsertData } from '../utils/supabaseHelpers';
+import { useSchool } from '../contexts/SchoolContext';
 import { X, Compass, ListTodo, Eye, LogOut, Trash2, Plus, Edit2, ChevronDown, ChevronUp, Brain, Download, FileText, Settings, Calendar, Target, Link as LinkIcon, ExternalLink } from 'lucide-react';
 
 const downloadableFiles = [
@@ -24,7 +26,7 @@ const clusters = [
     id: 'cluster2',
     title: 'הנהגה ותרבות מצמיחה',
     desc: 'כלים העוסקים בהובלת שינויים, ניהול קונפליקטים, קבלת החלטות ופיתוח תרבות.',
-    tools: 'עקומת השינוי, אדרת הדג, 7 השאלות, תסריט שיחה: מקושי לצורך'
+    tools: 'עקומת השינוי, אדרת הדג, 7 השאלות, להפוך קושי לצורך'
   },
   {
     id: 'cluster3',
@@ -69,6 +71,7 @@ export default function PersonalSidebar({ isOpen, setIsOpen, session, onOpenDash
   const [isLinksOpen, setIsLinksOpen] = useState(false);
   const [isRepoOpen, setIsRepoOpen] = useState(false);
   
+  const { role, activeSchool } = useSchool();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -76,23 +79,19 @@ export default function PersonalSidebar({ isOpen, setIsOpen, session, onOpenDash
       fetchTasks();
       fetchLinks();
     }
-  }, [session]);
+  }, [session, role, activeSchool]);
 
   const fetchTasks = async () => {
-    const { data } = await supabase
-      .from('tasks')
-      .select('*')
-      .eq('user_id', session.user.id)
-      .order('created_at', { ascending: true });
+    let query = supabase.from('tasks').select('*').eq('user_id', session.user.id);
+    query = applySchoolFilter(query, role, activeSchool);
+    const { data } = await query.order('created_at', { ascending: true });
     if (data) setTasks(data);
   };
 
   const fetchLinks = async () => {
-    const { data } = await supabase
-      .from('user_links')
-      .select('*')
-      .eq('user_id', session.user.id)
-      .order('created_at', { ascending: true });
+    let query = supabase.from('user_links').select('*').eq('user_id', session.user.id);
+    query = applySchoolFilter(query, role, activeSchool);
+    const { data } = await query.order('created_at', { ascending: true });
     if (data) setLinks(data);
   };
 
@@ -105,9 +104,10 @@ export default function PersonalSidebar({ isOpen, setIsOpen, session, onOpenDash
       finalTitle = '[הדרכה] ' + finalTitle;
     }
     
+    const schoolData = getSchoolInsertData(role, activeSchool);
     const { data } = await supabase
       .from('tasks')
-      .insert([{ user_id: session.user.id, title: finalTitle, description: newTaskDesc.trim() }])
+      .insert([{ user_id: session.user.id, title: finalTitle, description: newTaskDesc.trim(), ...schoolData }])
       .select();
       
     if (data) {
@@ -153,9 +153,10 @@ export default function PersonalSidebar({ isOpen, setIsOpen, session, onOpenDash
       formattedUrl = 'https://' + formattedUrl;
     }
     
+    const schoolData = getSchoolInsertData(role, activeSchool);
     const { data, error } = await supabase
       .from('user_links')
-      .insert([{ user_id: session.user.id, title: newLinkTitle.trim(), url: formattedUrl }])
+      .insert([{ user_id: session.user.id, title: newLinkTitle.trim(), url: formattedUrl, ...schoolData }])
       .select();
       
     if (error) {

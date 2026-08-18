@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
+import { applySchoolFilter } from '../utils/supabaseHelpers';
+import { useSchool } from '../contexts/SchoolContext';
 import { X, Trash2, PlayCircle, MessageSquare, FlaskConical, ChevronDown, ChevronUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
@@ -11,20 +13,19 @@ export default function CalendarModal({ session, isOpen, onClose }) {
   const [activeTab, setActiveTab] = useState('chats');
   const [simulations, setSimulations] = useState([]);
   const [expandedSimulations, setExpandedSimulations] = useState(new Set());
+  const { role, activeSchool } = useSchool();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (isOpen && session?.user?.id) {
       fetchSimulations();
     }
-  }, [isOpen, session]);
+  }, [isOpen, session, role, activeSchool]);
 
   const fetchSimulations = async () => {
-    const { data } = await supabase
-      .from('simulation_summaries')
-      .select('*')
-      .eq('user_id', session.user.id)
-      .order('created_at', { ascending: false });
+    let query = supabase.from('simulation_summaries').select('*').eq('user_id', session.user.id);
+    query = applySchoolFilter(query, role, activeSchool);
+    const { data } = await query.order('created_at', { ascending: false });
     
     if (data) setSimulations(data);
   };
