@@ -2,19 +2,46 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { applySchoolFilter } from '../utils/supabaseHelpers';
 import { useSchool } from '../contexts/SchoolContext';
-import { Compass, PieChart, CheckSquare, Printer, Loader2, Target, X, Info } from 'lucide-react';
+import { Compass, PieChart, CheckSquare, Printer, Loader2, Target, X, Info, FileText, Trash2, Eye } from 'lucide-react';
 import './DashboardModal.css';
 
 export default function DashboardModal({ session, isOpen, onClose }) {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState([]);
   const [tasks, setTasks] = useState([]);
+  const [artifacts, setArtifacts] = useState([]);
+  const [selectedArtifact, setSelectedArtifact] = useState(null);
   const [activeTab, setActiveTab] = useState('stats'); // 'stats' or 'tasks'
   const [showInfo, setShowInfo] = useState(false);
   const [showClusterInfo, setShowClusterInfo] = useState(false);
   const [showTasksInfo, setShowTasksInfo] = useState(false);
 
   const { role, activeSchool } = useSchool();
+
+  
+  const fetchArtifacts = async () => {
+    try {
+      let query = supabase.from('saved_artifacts').select('*').order('created_at', { ascending: false });
+      query = applySchoolFilter(query, role, activeSchool);
+      const { data, error } = await query;
+      if (error) throw error;
+      setArtifacts(data || []);
+    } catch (e) {
+      console.error('Error fetching artifacts:', e);
+    }
+  };
+  
+  const handleDeleteArtifact = async (id) => {
+    if (!window.confirm('האם אתה בטוח שברצונך למחוק תוצר זה?')) return;
+    try {
+      const { error } = await supabase.from('saved_artifacts').delete().eq('id', id);
+      if (error) throw error;
+      fetchArtifacts();
+      if (selectedArtifact?.id === id) setSelectedArtifact(null);
+    } catch (e) {
+      console.error('Error deleting artifact:', e);
+    }
+  };
 
   useEffect(() => {
     if (isOpen && session?.user?.id) {

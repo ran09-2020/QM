@@ -20,6 +20,13 @@ export function SchoolProvider({ children, session }) {
     }
   }, [role, session]);
 
+  
+  const NEUTRAL_SCHOOL = {
+    id: 'neutral',
+    name: 'מרחב אישי (ללא שיוך)',
+    theme_color: '#94a3b8',
+    is_neutral: true
+  };
   const loadSchools = async () => {
     setLoading(true);
     const { data, error } = await supabase
@@ -39,12 +46,13 @@ export function SchoolProvider({ children, session }) {
         return loadSchools(); // reload with new colors
       }
 
-      setSchools(data);
+      const allSchools = [NEUTRAL_SCHOOL, ...data];
+      setSchools(allSchools);
       const savedSchoolId = localStorage.getItem('activeSchoolId');
-      if (savedSchoolId && data.find(s => s.id === savedSchoolId)) {
-        setActiveSchool(data.find(s => s.id === savedSchoolId));
-      } else if (data.length > 0) {
-        setActiveSchool(data[0]);
+      if (savedSchoolId && allSchools.find(s => s.id === savedSchoolId)) {
+        setActiveSchool(allSchools.find(s => s.id === savedSchoolId));
+      } else {
+        setActiveSchool(NEUTRAL_SCHOOL);
       }
     }
     setLoading(false);
@@ -77,8 +85,61 @@ export function SchoolProvider({ children, session }) {
     return null;
   };
 
+  const deleteSchool = async (schoolId) => {
+    const { error } = await supabase
+      .from('schools')
+      .delete()
+      .eq('id', schoolId);
+      
+    if (!error) {
+      const updatedSchools = schools.filter(s => s.id !== schoolId);
+      setSchools(updatedSchools);
+      if (activeSchool?.id === schoolId) {
+        selectSchool(updatedSchools.length > 0 ? updatedSchools[0] : null);
+      }
+      return true;
+    } else {
+      console.error("Failed to delete school:", error);
+      return false;
+    }
+  };
+
+  const archiveSchool = async (school) => {
+    const newName = `[ארכיון] ${school.name}`;
+    const { error } = await supabase
+      .from('schools')
+      .update({ name: newName })
+      .eq('id', school.id);
+
+    if (!error) {
+      const updatedSchools = schools.map(s => s.id === school.id ? { ...s, name: newName } : s);
+      setSchools(updatedSchools);
+      if (activeSchool?.id === school.id) {
+        const remainingActive = updatedSchools.filter(s => !s.name?.startsWith('[ארכיון]'));
+        selectSchool(remainingActive.length > 0 ? remainingActive[0] : null);
+      }
+      return true;
+    }
+    return false;
+  };
+
+  const unarchiveSchool = async (school) => {
+    const newName = school.name.replace('[ארכיון] ', '');
+    const { error } = await supabase
+      .from('schools')
+      .update({ name: newName })
+      .eq('id', school.id);
+
+    if (!error) {
+      const updatedSchools = schools.map(s => s.id === school.id ? { ...s, name: newName } : s);
+      setSchools(updatedSchools);
+      return true;
+    }
+    return false;
+  };
+
   return (
-    <SchoolContext.Provider value={{ schools, activeSchool, selectSchool, addSchool, loading, role }}>
+    <SchoolContext.Provider value={{ schools, activeSchool, selectSchool, addSchool, deleteSchool, archiveSchool, unarchiveSchool, loading, role }}>
       {children}
     </SchoolContext.Provider>
   );

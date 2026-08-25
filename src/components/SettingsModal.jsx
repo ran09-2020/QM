@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { supabase } from '../supabaseClient';
-import { X, Loader2, AlertTriangle } from 'lucide-react';
+import { X, Loader2, AlertTriangle, Trash2, ArchiveRestore, Archive, ChevronDown } from 'lucide-react';
+import { useSchool } from '../contexts/SchoolContext';
 
 export default function SettingsModal({ session, onClose }) {
   const metadata = session?.user?.user_metadata || {};
+  const { schools, deleteSchool, archiveSchool, unarchiveSchool, role: schoolRole } = useSchool();
   const [userGender, setUserGender] = useState(metadata.user_gender || 'male');
   const [mentorGender, setMentorGender] = useState(metadata.mentor_gender || 'male');
   const [userRole, setUserRole] = useState(metadata.user_role || 'principal');
@@ -42,36 +44,88 @@ export default function SettingsModal({ session, onClose }) {
 
   return (
     <div style={{position:'fixed', top:0, left:0, right:0, bottom:0, background:'rgba(0,0,0,0.5)', zIndex:1000, display:'flex', alignItems:'center', justifyContent:'center'}}>
-      <div style={{background:'white', padding:'2.5rem', borderRadius:'24px', width:'400px', maxWidth:'90%', position:'relative', direction:'rtl'}}>
+      <div style={{background:'white', padding:'1.5rem 2rem', borderRadius:'24px', width:'400px', maxWidth:'90%', position:'relative', direction:'rtl'}}>
         <button onClick={onClose} style={{position:'absolute', top:'1.5rem', left:'1.5rem', background:'none', border:'none', cursor:'pointer'}}><X size={24} color="#64748b"/></button>
         
-        <h2 style={{marginBottom:'1.5rem', color:'#1e293b'}}>הגדרות התאמה אישית</h2>
+        <h2 style={{marginBottom:'1rem', color:'#1e293b'}}>הגדרות התאמה אישית</h2>
         
-        <div style={{marginBottom:'1.5rem', textAlign:'right'}}>
+        <div style={{marginBottom:'1rem', textAlign:'right'}}>
           <label style={{display:'block', marginBottom:'0.5rem', fontWeight:'600', color:'#475569'}}>צורת הפנייה אליך (מין המשתמש/ת)</label>
-          <select value={userGender} onChange={e => setUserGender(e.target.value)} style={{width:'100%', padding:'0.75rem', borderRadius:'12px', border:'1px solid #cbd5e1', fontFamily:'inherit', fontSize:'1rem'}}>
+          <select value={userGender} onChange={e => setUserGender(e.target.value)} style={{width:'100%', height:'40px', boxSizing:'border-box', padding:'0 0.75rem', borderRadius:'12px', border:'1px solid #cbd5e1', fontFamily:'inherit', fontSize:'1rem'}}>
             <option value="male">לשון זכר</option>
             <option value="female">לשון נקבה</option>
           </select>
         </div>
 
-        <div style={{marginBottom:'1.5rem', textAlign:'right'}}>
+        <div style={{marginBottom:'1rem', textAlign:'right'}}>
           <label style={{display:'block', marginBottom:'0.5rem', fontWeight:'600', color:'#475569'}}>תפקיד במערכת</label>
-          <select value={userRole} onChange={e => setUserRole(e.target.value)} style={{width:'100%', padding:'0.75rem', borderRadius:'12px', border:'1px solid #cbd5e1', fontFamily:'inherit', fontSize:'1rem', background: '#f8fafc'}}>
+          <select value={userRole} onChange={e => setUserRole(e.target.value)} style={{width:'100%', height:'40px', boxSizing:'border-box', padding:'0 0.75rem', borderRadius:'12px', border:'1px solid #cbd5e1', fontFamily:'inherit', fontSize:'1rem', background: '#f8fafc'}}>
             <option value="principal">מנהל/ת בית ספר</option>
             <option value="mentor">מדריך/ה (מלווה מנהלים)</option>
           </select>
         </div>
 
-        <div style={{marginBottom:'2.5rem', textAlign:'right'}}>
-          <label style={{display:'block', marginBottom:'0.5rem', fontWeight:'600', color:'#475569'}}>דמות ה-AI (מין המנטור/ית)</label>
-          <select value={mentorGender} onChange={e => setMentorGender(e.target.value)} style={{width:'100%', padding:'0.75rem', borderRadius:'12px', border:'1px solid #cbd5e1', fontFamily:'inherit', fontSize:'1rem'}}>
+        <div style={{marginBottom:'1.5rem', textAlign:'right'}}>
+          <label style={{display:'block', marginBottom:'0.5rem', fontWeight:'600', color:'#475569'}}>דמות המנטור (AI)</label>
+          <select value={mentorGender} onChange={e => setMentorGender(e.target.value)} style={{width:'100%', height:'40px', boxSizing:'border-box', padding:'0 0.75rem', borderRadius:'12px', border:'1px solid #cbd5e1', fontFamily:'inherit', fontSize:'1rem'}}>
             <option value="male">מנטור (יועץ זכר)</option>
             <option value="female">מנטורית (יועצת נקבה)</option>
           </select>
         </div>
 
-        {msg && <p style={{color: msg.includes('שגיאה') ? '#ef4444' : '#166534', marginBottom:'1.5rem', fontSize:'0.9rem', textAlign:'center', fontWeight:'600'}}>{msg}</p>}
+        {msg && <p style={{color: msg.includes('שגיאה') ? '#ef4444' : '#166534', marginBottom:'1rem', fontSize:'0.9rem', textAlign:'center', fontWeight:'600'}}>{msg}</p>}
+
+        
+        {schoolRole === 'mentor' && (
+          <div style={{marginBottom:'1.5rem', textAlign:'right'}}>
+            <details style={{ margin: 0, padding: 0, background: '#f8fafc', borderRadius: '12px', border: '1px solid #cbd5e1', overflow: 'hidden' }}>
+              <summary style={{ height:'38px', boxSizing:'border-box', padding: '0 0.75rem', fontSize: '1rem', fontFamily: 'inherit', fontWeight: 'normal', color: '#000', cursor: 'pointer', outline: 'none', listStyle: 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} className="settings-accordion-summary">
+                <span>ניהול בתי ספר וארכיון</span>
+                <ChevronDown size={18} />
+              </summary>
+              <div style={{ padding: '0 1rem 1rem 1rem', maxHeight: '110px', overflowY: 'auto', borderTop: '1px solid #e2e8f0' }}>
+                {schools.filter(s => !s.is_neutral).length === 0 ? (
+                  <div style={{fontSize: '0.9rem', color: '#94a3b8', textAlign: 'center'}}>אין בתי ספר.</div>
+                ) : (
+                  schools.filter(s => !s.is_neutral).map(school => {
+                    const isArchived = school.name?.startsWith('[ארכיון]');
+                    return (
+                      <div key={school.id} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0', borderBottom: '1px solid #e2e8f0'}}>
+                        <span style={{fontSize: '0.9rem', color: isArchived ? '#94a3b8' : '#334155', fontWeight: isArchived ? '400' : '500'}}>{school.name}</span>
+                        <div style={{display: 'flex', gap: '0.5rem'}}>
+                          {isArchived ? (
+                            <button 
+                              onClick={() => unarchiveSchool(school)}
+                              style={{background: 'none', border: 'none', color: '#10b981', cursor: 'pointer', padding: '0.2rem'}}
+                              title="שחזר לפעילות"
+                            ><ArchiveRestore size={16}/></button>
+                          ) : (
+                            <button 
+                              onClick={() => archiveSchool(school)}
+                              style={{background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', padding: '0.2rem'}}
+                              title="העבר לארכיון"
+                            ><Archive size={16}/></button>
+                          )}
+                          <button 
+                            onClick={() => {
+                              if (window.confirm(`האם למחוק סופית את "${school.name}" ממסד הנתונים? פעולה זו אינה הפיכה.`)) {
+                                deleteSchool(school.id).then(success => {
+                                  if (!success) setMsg('שגיאה במחיקה: כנראה שיש לבית הספר סיכומים מקושרים בארכיון שמונעים מחיקה.');
+                                });
+                              }
+                            }}
+                            style={{background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '0.2rem'}}
+                            title="מחק לצמיתות"
+                          ><Trash2 size={16}/></button>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </details>
+          </div>
+        )}
 
         {!showDangerZone ? (
           <button 
@@ -81,7 +135,7 @@ export default function SettingsModal({ session, onClose }) {
             <AlertTriangle size={14} /> אפשרויות איפוס (אזור סכנה)
           </button>
         ) : (
-          <div style={{ padding: '1rem', background: '#fee2e2', borderRadius: '12px', marginBottom: '1.5rem', border: '1px solid #fca5a5' }}>
+          <div style={{ padding: '0.75rem', background: '#fee2e2', borderRadius: '12px', marginBottom: '1.5rem', border: '1px solid #fca5a5' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
               <button onClick={() => setShowDangerZone(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#b91c1c' }}><X size={16} /></button>
               <h3 style={{ fontSize: '1rem', color: '#b91c1c', margin: 0 }}>אזור סכנה</h3>
@@ -114,7 +168,7 @@ export default function SettingsModal({ session, onClose }) {
                 }
               }}
               disabled={loading}
-              style={{width:'100%', padding:'0.75rem', borderRadius:'8px', background:'white', color:'#b91c1c', border:'1px solid #b91c1c', fontWeight:'600', fontSize:'0.95rem', cursor:'pointer'}}
+              style={{width:'100%', padding:'0.5rem', borderRadius:'8px', background:'white', color:'#b91c1c', border:'1px solid #b91c1c', fontWeight:'600', fontSize:'0.95rem', cursor:'pointer'}}
             >
               איפוס נתוני לוח הבקרה
             </button>

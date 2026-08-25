@@ -5,7 +5,7 @@ import PdfViewer from './PdfViewer';
 import rehypeRaw from 'rehype-raw';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Send, Loader2, Lightbulb, PenTool, Map, BookOpen, Users, FlaskConical, LogOut, BookOpenCheck, Save, RefreshCw, Paperclip, X, File as FileIcon, Download, DoorOpen, MessageSquare, ChevronDown, Plus } from 'lucide-react';
-import { sendMessageToGemini, sendSimulationMessageToGemini, clearSimulationHistory, clearChatHistory , extractArtifactJSON } from '../services/gemini';
+import { sendMessageToGemini, sendSimulationMessageToGemini, clearSimulationHistory, clearChatHistory } from '../services/gemini';
 import mammoth from 'mammoth';
 import * as XLSX from 'xlsx';
 import { supabase } from '../supabaseClient';
@@ -37,8 +37,6 @@ function ChatInterface({ session, isSimulationMode = false }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isSavingArtifact, setIsSavingArtifact] = useState(false);
-  const [saveSuccess, setSaveSuccess] = useState(false);
   
   // File Attachment State
   const [attachedFile, setAttachedFile] = useState(null);
@@ -328,10 +326,40 @@ ${chooseStr}`
     try {
       let responseText = '';
       const textForGemini = hiddenPrompt || textToSend;
+      
+      const initialModelMsgIndex = newMessages.length;
+      setMessages([...newMessages, { role: 'model', text: '', hat: null }]);
+      
+      const updateMessageCallback = (chunkText) => {
+        let activeHat = null;
+        let cleanText = chunkText;
+        const hatMatch = cleanText.match(/(?:\*\*|__)?\[כובע:\s*([^\]]+)\](?:\*\*|__)?\s*/);
+        if (hatMatch) {
+          activeHat = hatMatch[1].trim();
+          cleanText = cleanText.replace(hatMatch[0], '');
+        } else {
+          if (isSimulationMode) activeHat = 'מאמן';
+        }
+        
+        cleanText = cleanText.replace(/<br\s*\/?>/gi, ' ');
+
+        // Remove tool practice tags during streaming so they don't flicker
+        const toolRegexStream = /\[TOOL_PRACTICED:\s*(.+?)\]/g;
+        cleanText = cleanText.replace(toolRegexStream, '').trim();
+
+        setMessages(prev => {
+          const updated = [...prev];
+          if (updated[initialModelMsgIndex]) {
+            updated[initialModelMsgIndex] = { ...updated[initialModelMsgIndex], text: cleanText, hat: activeHat };
+          }
+          return updated;
+        });
+      };
+
       if (isSimulationMode) {
-        responseText = await sendSimulationMessageToGemini(textForGemini, cluster.title, cluster.tools, userRole, userGender, mentorGender, fileToSend);
+        responseText = await sendSimulationMessageToGemini(textForGemini, cluster.title, cluster.tools, userRole, userGender, mentorGender, fileToSend, updateMessageCallback);
       } else {
-        responseText = await sendMessageToGemini(textForGemini, userRole, userGender, mentorGender, fileToSend);
+        responseText = await sendMessageToGemini(textForGemini, userRole, userGender, mentorGender, fileToSend, updateMessageCallback);
       }
       let activeHat = null;
       const hatMatch = responseText.match(/(?:\*\*|__)?\[כובע:\s*([^\]]+)\](?:\*\*|__)?\s*/);
@@ -469,37 +497,6 @@ ${chooseStr}`
   const removeAttachedFile = () => {
     setAttachedFile(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
-  };
-
-
-  const handleSaveArtifact = async () => {
-    if (messages.length === 0) return;
-    setIsSavingArtifact(true);
-    try {
-      const artifactJSON = await extractArtifactJSON(messages);
-      
-      const { data, error } = await supabase
-        .from('saved_artifacts')
-        .insert([
-          {
-            user_id: session.user.id,
-            school_id: activeSchool?.id || null,
-            content: artifactJSON,
-            chat_history: messages,
-            title: artifactJSON.document_title || ('מסמך אסטרטגיה - ' + new Date().toLocaleDateString('he-IL'))
-          }
-        ]);
-        
-      if (error) {
-        console.error('Error saving artifact:', error);
-      } else {
-        setSaveSuccess(true);
-        setTimeout(() => setSaveSuccess(false), 3000);
-      }
-    } catch (e) {
-      console.error('Failed to extract or save artifact:', e);
-    }
-    setIsSavingArtifact(false);
   };
 
   const handleSummarize = async () => {
@@ -722,16 +719,6 @@ ${chooseStr}`
             )}
           </div>
           <div style={{ display: 'flex', gap: '1.5rem' }}>
-            
-            <button 
-              onClick={handleSaveArtifact}
-              disabled={isSavingArtifact || messages.length === 0}
-              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', background: 'none', border: 'none', color: '#3b82f6', cursor: 'pointer', fontWeight: '600', fontSize: '0.9rem', padding: 0 }}
-            >
-              {isSavingArtifact ? <Loader2 size={22} className="spinning" style={{ marginBottom: '2px' }} /> : saveSuccess ? <Save size={22} style={{ marginBottom: '2px', color: '#10b981' }} /> : <Save size={22} style={{ marginBottom: '2px' }} />}
-              {isSavingArtifact ? 'שומר...' : saveSuccess ? 'נשמר' : 'שמור מסמך'}
-            </button>
-
             <button 
               onClick={handleSummarize}
               disabled={isLoading}
