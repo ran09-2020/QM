@@ -751,7 +751,57 @@ ${chooseStr}`
         </div>
       )}
 
-      <div className="chat-messages" style={isSimulationMode ? { paddingTop: '1rem' } : {}}>
+      <div style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', backgroundColor: activeSchool ? `${(activeSchool.theme_color || '#4F46E5')}12` : '#f8fafc' }}>
+        {/* WATERMARK & STRIPE (Fixed to background, does not scroll) */}
+        <div style={{
+          position: 'absolute',
+          top: 0, bottom: 0, right: 0,
+          width: '6px',
+          backgroundColor: activeSchool ? (activeSchool.theme_color || '#4F46E5') : '#94a3b8',
+          opacity: 0.6,
+          zIndex: 0
+        }}></div>
+        <div style={{
+          position: 'absolute',
+          top: 0, left: 0, right: 0, bottom: 0,
+          pointerEvents: 'none',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4, 1fr)',
+          gridAutoRows: 'min-content',
+          gap: '4rem 2rem',
+          padding: '4rem 2rem',
+          opacity: 0.12,
+          alignItems: 'center',
+          justifyItems: 'center',
+          overflow: 'hidden',
+          zIndex: 0
+        }}>
+          {Array(40).fill(0).map((_, i) => (
+             <div key={i} style={{ 
+               transform: 'rotate(-25deg)', 
+               fontSize: '2rem', 
+               fontWeight: 'bold', 
+               color: activeSchool ? (activeSchool.theme_color || '#4F46E5') : '#94a3b8',
+               whiteSpace: 'nowrap',
+               userSelect: 'none'
+             }}>
+                {(activeSchool && !activeSchool.is_neutral) ? activeSchool.name : (metadata.full_name || (session?.user?.email ? session.user.email.split('@')[0] : 'מדריך/ה'))}
+             </div>
+          ))}
+        </div>
+
+      <div 
+        className="chat-messages" 
+        style={{ 
+          ...(isSimulationMode ? { paddingTop: '1rem' } : {}), 
+          backgroundColor: 'transparent',
+          position: 'relative',
+          flex: 1,
+          zIndex: 1
+        }}
+      >
+        <div style={{ position: 'relative', zIndex: 1, width: '100%', display: 'flex', flexDirection: 'column' }}>
+
         {messages.map((msg, idx) => {
           const isLastModelMsg = msg.role === 'model' && idx === messages.length - 1;
           const isLast = idx === messages.length - 1;
@@ -894,6 +944,8 @@ ${chooseStr}`
           </div>
         )}
         <div ref={messagesEndRef} />
+        </div>
+      </div>
       </div>
 
       <div className="chat-input-wrapper" style={isSimulationMode ? { paddingTop: '0.5rem' } : {}}>
