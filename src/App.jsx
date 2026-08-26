@@ -4,6 +4,7 @@ import VisionDemoReverse from './components/VisionDemoReverse';
 import VisionDemoDialogue from './components/VisionDemoDialogue';
 import VisionDemoSandbox from './components/VisionDemoSandbox';
 import VisionDemoDiagnostic from './components/VisionDemoDiagnostic';
+import VisionDemoHub from './components/VisionDemoHub';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
 import Auth from './components/Auth';
@@ -129,7 +130,8 @@ function AppContent({ session }) {
           <div className="page-wrapper">
             <Routes>
               <Route path="/" element={<ErrorBoundary><ChatInterface session={session} isSimulationMode={false} /></ErrorBoundary>} />
-              <Route path="/vision-demo" element={<ErrorBoundary><VisionDemo /></ErrorBoundary>} />
+              <Route path="/vision-demo" element={<ErrorBoundary><VisionDemoHub /></ErrorBoundary>} />
+              <Route path="/vision-demo-linear" element={<ErrorBoundary><VisionDemo /></ErrorBoundary>} />
               <Route path="/vision-demo-reverse" element={<ErrorBoundary><VisionDemoReverse /></ErrorBoundary>} />
               <Route path="/vision-demo-dialogue" element={<ErrorBoundary><VisionDemoDialogue /></ErrorBoundary>} />
               <Route path="/vision-demo-sandbox" element={<ErrorBoundary><VisionDemoSandbox /></ErrorBoundary>} />

@@ -195,7 +195,7 @@ export default function PersonalSidebar({ isOpen, setIsOpen, session, onOpenDash
   const userGender = metadata.user_gender || 'male';
   const mentorGender = metadata.mentor_gender || 'male';
   
-  const mentorTitle = mentorGender === 'female' ? 'המנטורית האישית שלך' : 'המנטור האישי שלך';
+  const mentorTitle = mentorGender === 'female' ? 'המנטורית האישית שלי' : 'המנטור האישי שלי';
   const logoutText = userGender === 'female' ? 'התנתקי' : 'התנתק';
 
   // Make the spacing between items very small to save space

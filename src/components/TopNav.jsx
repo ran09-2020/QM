@@ -4,7 +4,7 @@ import { useSchool } from '../contexts/SchoolContext';
 
 export default function TopNav({ session, setIsSidebarOpen }) {
   const mentorGender = session?.user?.user_metadata?.mentor_gender || 'male';
-  const mentorTitle = mentorGender === 'female' ? 'המנטורית האישית שלך' : 'המנטור האישי שלך';
+  const mentorTitle = mentorGender === 'female' ? 'המנטורית האישית שלי' : 'המנטור האישי שלי';
   
   const { role } = useSchool();
 

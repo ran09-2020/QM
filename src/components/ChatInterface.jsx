@@ -102,9 +102,9 @@ function ChatInterface({ session, isSimulationMode = false }) {
         const clusterInitialMessages = {
           'חזון, ייחודיות וערך': `**אשכול חזון, ייחודיות וערך:** הכלים העומדים לרשותך
 
+- **חזון שקורא לפעולה**: ממילים גדולות לתכנית אסטרטגית. <span style="background-color: #3b82f6; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; margin-left: 5px;">מיני קורס</span> [לתירגול](/vision-demo)
+- **מטריצה לפריסת חזון**: חמש רמות לזיהוי פערים ולהטמעה ממוקדת בשדה. [לתירגול](#practice:מטריצה_לפריסת_חזון)
 - **שלושת האופקים**: זיהוי תבניות וחשיבה שיטתית על פני שלושה טווחי זמן. [לתירגול](#practice:שלושת_האופקים)
-- **מטריצה לפריסת חזון**: חיבור בין המצוי כיום לרצוי בעתיד תוך שמירה על ערכי הליבה. [לתירגול](#practice:מטריצה_לפריסת_חזון)
-- **חזון שקורא לפעולה**: פריטת חזון גדול ליעדים אופרטיביים ממוקדים. [לתירגול](#practice:חזון_שקורא_לפעולה)
 
 ${chooseStr}`,
 
@@ -726,7 +726,7 @@ ${chooseStr}`
             <button 
               onClick={handleSaveArtifact}
               disabled={isSavingArtifact || messages.length === 0}
-              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', background: 'none', border: 'none', color: '#3b82f6', cursor: 'pointer', fontWeight: '600', fontSize: '0.9rem', padding: 0 }}
+              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', background: 'none', border: 'none', color: '#f97316', cursor: 'pointer', fontWeight: '600', fontSize: '0.9rem', padding: 0 }}
             >
               {isSavingArtifact ? <Loader2 size={22} className="spinning" style={{ marginBottom: '2px' }} /> : saveSuccess ? <Save size={22} style={{ marginBottom: '2px', color: '#10b981' }} /> : <Save size={22} style={{ marginBottom: '2px' }} />}
               {isSavingArtifact ? 'שומר...' : saveSuccess ? 'נשמר' : 'שמור מסמך'}
@@ -851,12 +851,17 @@ ${chooseStr}`
                     rehypePlugins={[rehypeRaw]}
                     components={{
                       a: ({node, ...props}) => {
-                        if (props.href && props.href.startsWith('#practice:')) {
-                          const toolName = decodeURIComponent(props.href.replace('#practice:', ''));
+                        if (props.href && (props.href.startsWith('#practice:') || props.href.startsWith('/vision-demo'))) {
+                          const isVisionDemo = props.href.startsWith('/vision-demo');
+                          const toolName = isVisionDemo ? '' : decodeURIComponent(props.href.replace('#practice:', ''));
                           return (
                             <a href="#" onClick={(e) => {
                               e.preventDefault();
-                              startPractice(toolName);
+                              if (isVisionDemo) {
+                                navigate(props.href, { state: { cluster } });
+                              } else {
+                                startPractice(toolName);
+                              }
                             }} className="practice-link">
                               {props.children}
                             </a>
