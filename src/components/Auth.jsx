@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { supabase } from '../supabaseClient';
-import { Loader2, Compass, Sparkles } from 'lucide-react';
+import { Loader2, Compass, Sparkles, Navigation } from 'lucide-react';
 
 export default function Auth() {
   const [loading, setLoading] = useState(false);
@@ -49,10 +49,11 @@ export default function Auth() {
   return (
     <div className="auth-container" style={{flexDirection: 'column'}}>
       <div className="auth-box">
-        <div className="auth-icon" style={{display:'flex', alignItems:'center', justifyContent:'center', marginBottom:'0.5rem', color:'var(--accent-color)'}}>
-          <Compass size={48} />
-        </div>
-        <h2 style={{fontSize: '2rem', margin: '0 0 0.5rem 0', color: 'var(--text-primary)'}}>מצפן</h2>
+        <h2 style={{fontSize: '2rem', margin: '0 0 0.5rem 0', color: '#1e3a8a', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem'}}>
+          כוכב 
+          <Navigation size={36} style={{ transform: 'rotate(-45deg)' }} fill="none" color="#3b82f6" />
+          צפון
+        </h2>
         <p className="auth-subtitle" style={{fontSize: '1.1rem'}}>המנטור למצוינות אירגונית</p>
         
         {message.text && (

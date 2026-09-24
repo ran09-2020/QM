@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { applySchoolFilter, getSchoolInsertData } from '../utils/supabaseHelpers';
 import { useSchool } from '../contexts/SchoolContext';
-import { X, Compass, ListTodo, Eye, LogOut, Trash2, Plus, Edit2, ChevronDown, ChevronUp, Brain, Download, FileText, Settings, Calendar, Target, Link as LinkIcon, ExternalLink } from 'lucide-react';
+import { X, Compass, ListTodo, Eye, LogOut, Trash2, Plus, Edit2, ChevronDown, ChevronUp, Brain, Download, FileText, Settings, Calendar, Target, Link as LinkIcon, ExternalLink, Navigation } from 'lucide-react';
 
 const downloadableFiles = [
   { id: 1, name: 'תבנית אדרת הדג' },
@@ -207,8 +207,11 @@ export default function PersonalSidebar({ isOpen, setIsOpen, session, onOpenDash
       
       <div className={`personal-sidebar ${isOpen ? 'open' : ''}`}>
         <div className="sidebar-logo-section">
-          <h2>מצפן</h2>
-          <Compass size={28} color="var(--accent-color)" />
+          <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', margin: 0, color: '#1e3a8a' }}>
+            כוכב
+            <Navigation size={28} style={{ transform: 'rotate(-45deg)' }} fill="none" color="#3b82f6" />
+            צפון
+          </h2>
           <button className="mobile-close-btn" onClick={() => setIsOpen(false)}>
             <X size={24} />
           </button>

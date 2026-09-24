@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, ChevronDown, Plus } from 'lucide-react';
+import { Menu, ChevronDown, Plus, Navigation } from 'lucide-react';
 import { useSchool } from '../contexts/SchoolContext';
 
 export default function TopNav({ session, setIsSidebarOpen }) {
@@ -15,7 +15,11 @@ export default function TopNav({ session, setIsSidebarOpen }) {
           <Menu size={28} color="#0f172a" />
         </button>
         <div className="mobile-brand-text">
-          <h2>מצפן</h2>
+          <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.2rem', margin: 0, color: '#1e3a8a' }}>
+            כוכב
+            <Navigation size={20} style={{ transform: 'rotate(-45deg)' }} fill="none" color="#3b82f6" />
+            צפון
+          </h2>
           <span>{mentorTitle}</span>
         </div>
         <div className="status-dot"></div>
