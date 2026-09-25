@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { applySchoolFilter, getSchoolInsertData } from '../utils/supabaseHelpers';
 import { useSchool } from '../contexts/SchoolContext';
-import { X, Compass, ListTodo, Eye, LogOut, Trash2, Plus, Edit2, ChevronDown, ChevronUp, Brain, Download, FileText, Settings, Calendar, Target, Link as LinkIcon, ExternalLink, Navigation } from 'lucide-react';
+import { X, Compass, ListTodo, Eye, LogOut, Trash2, Plus, Edit2, ChevronDown, ChevronUp, Brain, Download, FileText, Settings, Calendar, Target, Link as LinkIcon, ExternalLink, Navigation, Globe } from 'lucide-react';
 
 const downloadableFiles = [
   { id: 1, name: 'תבנית אדרת הדג' },
@@ -508,8 +508,22 @@ export default function PersonalSidebar({ isOpen, setIsOpen, session, onOpenDash
                 </div>
                 
                 <div className="tasks-list">
+                  
+                  {/* Pinned Hardcoded Link */}
+                  <div className="task-item-container" style={{ padding: '8px 10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#f8fafc', borderRadius: '6px', marginBottom: '6px' }}>
+                    <a 
+                      href="https://dialogim.com/sticky/"
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{ fontSize: '0.9rem', color: '#0ea5e9', fontWeight: '500', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+                    >
+                      <Globe size={14} color="#0ea5e9" />
+                      לוח פתקים שיתופי
+                    </a>
+                  </div>
+
                   {links.length === 0 ? (
-                    <p className="placeholder-text" style={{fontSize:'0.9rem', color:'#888'}}>אין קישורים כרגע.</p>
+                    <p className="placeholder-text" style={{fontSize:'0.9rem', color:'#888'}}>אין קישורים נוספים כרגע.</p>
                   ) : (
                     links.map(link => (
                       <div key={link.id} className="task-item-container" style={{ padding: '8px 10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#f8fafc', borderRadius: '6px', marginBottom: '6px' }}>
