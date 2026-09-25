@@ -51,7 +51,7 @@ export default function Auth() {
       <div className="auth-box">
         <h2 style={{fontSize: '2rem', margin: '0 0 0.5rem 0', color: '#1e3a8a', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem'}}>
           כוכב 
-          <Navigation size={36} style={{ transform: 'rotate(-45deg)' }} fill="none" color="#3b82f6" />
+          <Navigation size={36} style={{ transform: 'rotate(-45deg)' }} fill="none" color="#f97316" />
           צפון
         </h2>
         <p className="auth-subtitle" style={{fontSize: '1.1rem'}}>המנטור למצוינות אירגונית</p>
