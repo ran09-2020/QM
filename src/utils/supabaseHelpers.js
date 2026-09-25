@@ -1,10 +1,10 @@
 export const applySchoolFilter = (query, role, activeSchool) => {
   if (role === 'mentor') {
-    if (activeSchool?.id) {
+    if (activeSchool?.id && activeSchool.id !== 'neutral') {
       return query.eq('school_id', activeSchool.id);
     } else {
-      // If mentor has no active school selected, return nothing
-      return query.eq('school_id', '00000000-0000-0000-0000-000000000000');
+      // If mentor has 'neutral' selected, show artifacts that have no school assigned
+      return query.is('school_id', null);
     }
   } else {
     // Principal role only sees records with no school assigned
@@ -13,8 +13,8 @@ export const applySchoolFilter = (query, role, activeSchool) => {
 };
 
 export const getSchoolInsertData = (role, activeSchool) => {
-  if (role === 'mentor' && activeSchool?.id) {
+  if (role === 'mentor' && activeSchool?.id && activeSchool.id !== 'neutral') {
     return { school_id: activeSchool.id };
   }
-  return { school_id: null }; // Default for principal
+  return { school_id: null }; // Default for principal or when no active school is selected
 };
