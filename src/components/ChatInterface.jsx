@@ -515,7 +515,7 @@ ${chooseStr}`
         .insert([
           {
             user_id: session.user.id,
-            school_id: activeSchool?.id || null,
+            school_id: (activeSchool?.id && activeSchool.id !== 'neutral') ? activeSchool.id : null,
             content: artifactJSON,
             chat_history: messagesToSave,
             title: artifactJSON.document_title || ('מסמך אסטרטגיה - ' + new Date().toLocaleDateString('he-IL'))
