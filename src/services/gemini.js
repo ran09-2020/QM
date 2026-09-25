@@ -48,7 +48,7 @@ ${efqmKnowledge}
 
 שלב 1: עזרה ראשונה והתקרקעות (הודעה 1 בלבד - כשמנהל מציג דילמה חדשה)
 חובה עליך לפתוח את התשובה במבנה הבא בדיוק (חל איסור מוחלט על שימוש בכותרות Markdown בפתיח!):
-1. שורה ראשונה: "הדילמה שאת/ה מציג/ה נוגעת לאשכול [שם האשכול]." 
+1. שורה ראשונה: "מה שאת/ה מציג/ה נוגע לאשכול [שם האשכול]." 
 2. שורה שנייה: "אני מציע/ה את הכלי **[שם הכלי]**" 
 3. שורה שלישית: "הכלי הזה מסייע ל [מטרת הכלי במשפט קצר]."
 4. קו מפריד: חובה להשאיר שורת רווח ריקה אחת אחרי מטרת הכלי, ואז לכתוב את תגית ה-HTML <hr> כדי ליצור קו מפריד נקי. אסור להשתמש במינוס (---) כי זה הופך את הטקסט לכותרת ענקית!
@@ -77,6 +77,8 @@ ${efqmKnowledge}
 3. קצר ולעניין: המנע מחפירות. מקסימום 3 פסקאות קצרות. השתמש בבולטים. דבר בתכל'ס. אל תשתמש לעולם במונח EFQM, ואל תשתמש לעולם במספרים עבור כלים או אשכולות (למשל, חל איסור לכתוב "אשכול 5", כתוב רק את שם האשכול).
 4. איסור עיצוב רחב: הפק טקסט נקי ומאורגן היטב. מותר לך להשתמש בהדגשה כפולה (**) אך ורק כדי להדגיש את שם הכלי. מעבר לזה, חל איסור על עיצובי טקסט. לרשימות השתמש במספרים או קווי מקף (-) בלבד, כדי לשמור על מראה מסודר ונקי מאוד.
 5. דיווח על הפעלת כלי (קריטי לסטטיסטיקה): כאשר אתה בוחר באופן פעיל *לתרגל* או *להפעיל* כלי ניהולי ספציפי עם המשתמש (ולא סתם להסביר עליו תיאורטית), חובה עליך להוסיף בסוף התגובה שלך בדיוק את התגית המוסתרת הבאה: [TOOL_PRACTICED: שם הכלי]. מותר לדווח רק על כלים שמופיעים ברשימת ארגז הכלים המלא שלך. אל תשתמש בתגית זו כשאתה רק עונה על שאלה תיאורטית או מונה רשימה של כלים!
+6. איסור העתקה והתייחסות לשמירה: לעולם אל תציע למשתמש "להעתיק את המבנה" או "להעתיק את התוכן". כמו כן, לעולם אל תציין בטקסט שניתן לשמור את התוצר באמצעות כפתור השמירה בתחתית ההודעה - המשפט הזה מיותר לחלוטין מכיוון שהכפתור מופיע ויזואלית בפני המשתמש.
+7. תיוג מסמכים (קריטי!): הוסף את התגית הנסתרת [ARTIFACT] בסוף התשובה שלך **אך ורק** אם אתה מייצר עבור המשתמש מסמך (גם אם קצר), טבלה מכל סוג, או תבנית עבודה מאורגנת. **חל איסור מוחלט** להוסיף תגית זו עבור הודעות של שיח רגיל, משפטי ייעוץ, או שאלות המשך שאתה שואל את המשתמש. תגית זו מצמידה כפתור שמירה להודעה.
 
 # מודל 3 הכובעים (בחר את הכובע המתאים לסיטואציה בכל תגובה):
 1. הכובע המלמד (חובה עליך לכתוב בדיוק [כובע: מלמד]): אם המשתמש שואל שאלות ידע (מה זה מודל מסוים), ענה לו ברור ובקצרה על סמך הידע המקצועי שלך.
@@ -434,18 +436,29 @@ export const extractArtifactJSON = async (messages) => {
     throw new Error('API key not configured');
   }
   
-  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
   
   const chatTranscript = messages.map(m => `${m.role === 'user' ? 'User (Principal)' : 'AI (Mentor)'}: ${m.text}`).join('\n\n');
   
-  const prompt = `You are a data extraction assistant. Your job is to extract the "Vision" and "Operative Goals" that were formulated in the following chat transcript between a school principal and an AI mentor.
+  const prompt = `You are a data extraction assistant analyzing a chat transcript between a school principal and an AI mentor.
   
-  The school might have formulated a 5-6 sentence vision statement. Extract it as an array of strings.
-  The school might have formulated some operative goals mapped to 4 domains: Pedagogical (פדגוגי), Social-Values (חברתי-ערכי), Emotional (רגשי), and Managerial-Organizational (ארגוני-ניהולי).
+  CRITICAL RULE: Your task is to extract ONLY the specific document, table, or strategy presented by the AI in its VERY LAST MESSAGE. Do NOT summarize the entire chat history, and do NOT combine previous tables or documents from earlier in the conversation. Focus exclusively on the final artifact.
+
+  First, determine the type of the final artifact.
+  - Set "document_type" to "vision_matrix" ONLY IF the final output was explicitly building the school's central 4-domain vision matrix (Pedagogical, Social, Emotional, Organizational).
+  - For ANY OTHER TOPIC (e.g. action plans, meeting protocols, specific strategies, tables), you MUST set "document_type" to "generic_markdown".
+
+  If "document_type" is "vision_matrix", extract the Vision sentences, goals, and domains exactly as they appear in the last message.
+  If "document_type" is "generic_markdown", extract the exact Markdown document or Table from the last message. 
+  CRITICAL RULE: If the AI mentor generated a Markdown Table in the last message, you MUST preserve and output that exact Table in your markdown_content! Do not flatten it to bullet points. Put this entire Markdown string into the "markdown_content" field.
   
-  Return the extracted data EXACTLY in this JSON structure (return ONLY JSON, no markdown formatting like a markdown json block):
+  CRITICAL: Ensure you properly escape all inner double quotes (using \\") and newlines (using \\n) within the JSON string values so the result is valid parseable JSON.
+
+  Return the extracted data EXACTLY in this JSON structure (return ONLY JSON, no markdown formatting):
   {
+    "document_type": "vision_matrix" or "generic_markdown",
     "document_title": "string (generated smart title based on the chat)",
+    
     "vision_sentences": ["sentence 1", "sentence 2", ...],
     "principles": ["principle 1", "principle 2", ...],
     "goals": [
@@ -454,25 +467,22 @@ export const extractArtifactJSON = async (messages) => {
         "desc": "goal description", 
         "domain": "פדגוגי",
         "status": "טיוטה. בתהליך זיקוק",
-        "mentor_notes": ["מנוסח כמשאלה ולא כיעד", "חסר מדד תוצאה"]
+        "mentor_notes": ["מנוסח כמשאלה ולא כיעד"]
       }
     ],
     "domains": {
       "פדגוגי": { "owner": "שם אחראי", "goals": ["1.1"] },
       "חברתי-ערכי": { "owner": "שם אחראי", "goals": [] },
       "רגשי": { "owner": "", "goals": [] },
-      "ניהולי-ארגוני": { "owner": "שם אחראי", "goals": [] }
-    }
+      "ארגוני-ניהולי": { "owner": "שם אחראי", "goals": [] }
+    },
+    
+    "markdown_content": "# Title\\n\\n## Section 1\\n- Point 1\\n- Point 2..."
   }
   
-  CRITICAL RULES FOR GOALS:
-  - If a goal is not fully operative (e.g., missing a KPI, phrased as a wish, phrased negatively like "no", or lacking a mechanism), set its "status" to "טיוטה. בתהליך זיקוק".
-  - If it is a draft/wish, populate "mentor_notes" with 1-3 short, constructive pedagogical critiques in Hebrew (e.g., "מנוסח על דרך השלילה - מה כן?", "זוהי משאלה, חסר מנגנון ישים", "חסר מדד שיאפשר מדידת הצלחה").
-  - If the goal is a perfect SMART goal, set "status" to "יעד אופרטיבי" and leave "mentor_notes" empty.
-  
-  If a field wasn't mentioned in the chat, leave it empty (empty array, empty string).
-  The goal IDs should just be sequentially numbered (1.1, 1.2, etc.).
-  Ensure the domain keys exactly match: פדגוגי, חברתי-ערכי, רגשי, ארגוני-ניהולי.
+  CRITICAL RULES:
+  - For VISION MATRIX: If a goal is not fully operative, set "status" to "טיוטה. בתהליך זיקוק" and add critiques in "mentor_notes". Ensure the domain keys exactly match: פדגוגי, חברתי-ערכי, רגשי, ארגוני-ניהולי. DO NOT invent placeholders like "(להגדרה)".
+  - For GENERIC MARKDOWN: Make sure "markdown_content" contains a complete, professionally written document summarizing the insights, action items, or strategies from the chat in Hebrew.
   
   Chat Transcript:
   ${chatTranscript}
@@ -483,6 +493,12 @@ export const extractArtifactJSON = async (messages) => {
     const response = await result.response;
     let text = response.text();
     text = text.replace(/```json/g, '').replace(/```/g, '').trim();
+    
+    // Robust parsing: extract JSON block if there is conversational text
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      return JSON.parse(jsonMatch[0]);
+    }
     return JSON.parse(text);
   } catch (error) {
     console.error('Error extracting JSON:', error);

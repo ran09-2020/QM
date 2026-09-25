@@ -39,12 +39,40 @@ function ChatInterface({ session, isSimulationMode = false }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isSavingArtifact, setIsSavingArtifact] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [saveError, setSaveError] = useState(false);
   
   // File Attachment State
   const [attachedFile, setAttachedFile] = useState(null);
   const [isExtractingFile, setIsExtractingFile] = useState(false);
+  const [isSummarizing, setIsSummarizing] = useState(false);
+  const [savingMsgIndex, setSavingMsgIndex] = useState(null);
   const fileInputRef = useRef(null);
   
+  const [loadingProgress, setLoadingProgress] = useState(0);
+
+  useEffect(() => {
+    let interval;
+    if (isLoading || isSavingArtifact || isExtractingFile) {
+      setLoadingProgress(0);
+      interval = setInterval(() => {
+        setLoadingProgress(prev => {
+          if (prev >= 98) return prev;
+          let increment = 1;
+          if (prev < 40) increment = Math.floor(Math.random() * 5) + 5; // 5-10
+          else if (prev < 70) increment = Math.floor(Math.random() * 3) + 2; // 2-4
+          else if (prev < 85) increment = 2;
+          else increment = 1; // Slow down drastically at the end
+          
+          return Math.min(98, prev + increment);
+        });
+      }, 400);
+    } else {
+      setLoadingProgress(100);
+      setTimeout(() => setLoadingProgress(0), 400);
+    }
+    return () => clearInterval(interval);
+  }, [isLoading, isSavingArtifact, isExtractingFile]);
+
   const messagesEndRef = useRef(null);
   const lastModelMessageRef = useRef(null);
   const previousShowAllButtons = useRef(false);
@@ -226,9 +254,11 @@ ${chooseStr}`
 
     window.addEventListener('force_reset_chat', handleForceReset);
     window.addEventListener('load_resumed_chat', handleLoadResumed);
+    window.addEventListener('trigger_save_artifact', handleSaveArtifact);
     return () => {
        window.removeEventListener('force_reset_chat', handleForceReset);
        window.removeEventListener('load_resumed_chat', handleLoadResumed);
+       window.removeEventListener('trigger_save_artifact', handleSaveArtifact);
     };
   }, [isSimulationMode, mentorHat]);
 
@@ -472,11 +502,13 @@ ${chooseStr}`
   };
 
 
-  const handleSaveArtifact = async () => {
+  const handleSaveArtifact = async (idx) => {
     if (messages.length === 0) return;
+    const messagesToSave = idx !== undefined ? messages.slice(0, idx + 1) : messages;
     setIsSavingArtifact(true);
+    setSaveError(false);
     try {
-      const artifactJSON = await extractArtifactJSON(messages);
+      const artifactJSON = await extractArtifactJSON(messagesToSave);
       
       const { data, error } = await supabase
         .from('saved_artifacts')
@@ -485,25 +517,30 @@ ${chooseStr}`
             user_id: session.user.id,
             school_id: activeSchool?.id || null,
             content: artifactJSON,
-            chat_history: messages,
+            chat_history: messagesToSave,
             title: artifactJSON.document_title || ('מסמך אסטרטגיה - ' + new Date().toLocaleDateString('he-IL'))
           }
         ]);
         
       if (error) {
         console.error('Error saving artifact:', error);
+        setSaveError('DB: ' + (error.message || 'Error'));
+        setTimeout(() => setSaveError(false), 8000);
       } else {
         setSaveSuccess(true);
         setTimeout(() => setSaveSuccess(false), 3000);
       }
     } catch (e) {
       console.error('Failed to extract or save artifact:', e);
+      setSaveError('JS: ' + (e.message || 'Error'));
+      setTimeout(() => setSaveError(false), 8000);
     }
     setIsSavingArtifact(false);
   };
 
   const handleSummarize = async () => {
     setIsLoading(true);
+    setIsSummarizing(true);
     try {
       let summary;
       let historyStr;
@@ -568,6 +605,7 @@ ${chooseStr}`
       alert("שגיאה בשמירת הסיכום.");
     } finally {
       setIsLoading(false);
+      setIsSummarizing(false);
     }
   };
 
@@ -723,14 +761,7 @@ ${chooseStr}`
           </div>
           <div style={{ display: 'flex', gap: '1.5rem' }}>
             
-            <button 
-              onClick={handleSaveArtifact}
-              disabled={isSavingArtifact || messages.length === 0}
-              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', background: 'none', border: 'none', color: '#f97316', cursor: 'pointer', fontWeight: '600', fontSize: '0.9rem', padding: 0 }}
-            >
-              {isSavingArtifact ? <Loader2 size={22} className="spinning" style={{ marginBottom: '2px' }} /> : saveSuccess ? <Save size={22} style={{ marginBottom: '2px', color: '#10b981' }} /> : <Save size={22} style={{ marginBottom: '2px' }} />}
-              {isSavingArtifact ? 'שומר...' : saveSuccess ? 'נשמר' : 'שמור מסמך'}
-            </button>
+
 
             <button 
               onClick={handleSummarize}
@@ -738,7 +769,7 @@ ${chooseStr}`
               style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', background: 'none', border: 'none', color: '#10b981', cursor: 'pointer', fontWeight: '600', fontSize: '0.9rem', padding: 0 }}
             >
               <Download size={22} style={{ marginBottom: '2px' }} />
-              סיכום ושמירה
+              {isSummarizing ? `${loadingProgress}%` : 'סיכום ושמירה'}
             </button>
             <button 
               onClick={handleExit}
@@ -846,10 +877,49 @@ ${chooseStr}`
                 )}
                 
                 <div className="markdown-content">
-                  <ReactMarkdown 
-                    remarkPlugins={[remarkGfm]} 
-                    rehypePlugins={[rehypeRaw]}
-                    components={{
+                  {(() => {
+                    const mdComponents = {
+                      table: ({node, ...props}) => (
+                        <div style={{ overflowX: 'auto', marginBottom: '1rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right' }} {...props} />
+                          
+                          {msg.role === 'model' && msg.text && msg.text.includes('[ARTIFACT]') && (
+                            <div style={{ padding: '10px 15px', backgroundColor: '#f8fafc', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'flex-start' }}>
+                              <button 
+                                onClick={async (e) => {
+                                  e.preventDefault();
+                                  setSavingMsgIndex(idx);
+                                  await handleSaveArtifact(idx);
+                                  setTimeout(() => {
+                                    setSavingMsgIndex(null);
+                                  }, 3000);
+                                }} 
+                                className="pill-btn" 
+                                style={{ 
+                                  borderColor: saveError && savingMsgIndex === idx ? '#ef4444' : (saveSuccess && savingMsgIndex === idx ? '#10b981' : 'black'), 
+                                  backgroundColor: saveError && savingMsgIndex === idx ? '#fef2f2' : (saveSuccess && savingMsgIndex === idx ? '#10b981' : 'transparent'),
+                                  color: saveError && savingMsgIndex === idx ? '#ef4444' : (saveSuccess && savingMsgIndex === idx ? 'white' : 'black'), 
+                                  display: 'flex', alignItems: 'center', transition: 'all 0.3s',
+                                  opacity: savingMsgIndex === idx && isSavingArtifact && loadingProgress < 100 ? '0.7' : '1',
+                                  margin: 0
+                                }}
+                                disabled={savingMsgIndex === idx || saveSuccess || !!saveError}
+                              >
+                                {savingMsgIndex === idx || saveSuccess || saveError ? (
+                                  saveError ? saveError : (saveSuccess ? 'נשמר בהצלחה ✓' : `${loadingProgress}%...`)
+                                ) : (
+                                  <>
+                                    <Save size={16} style={{ marginLeft: '5px' }} />
+                                    שמירת המסמך
+                                  </>
+                                )}
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      ),
+                      th: ({node, ...props}) => <th style={{ padding: '0.75rem 1rem', backgroundColor: '#f8fafc', borderBottom: '2px solid #e2e8f0', fontWeight: '600', color: '#1e293b' }} {...props} />,
+                      td: ({node, ...props}) => <td style={{ padding: '0.75rem 1rem', borderBottom: '1px solid #e2e8f0', color: '#334155' }} {...props} />,
                       a: ({node, ...props}) => {
                         if (props.href && (props.href.startsWith('#practice:') || props.href.startsWith('/vision-demo'))) {
                           const isVisionDemo = props.href.startsWith('/vision-demo');
@@ -914,11 +984,16 @@ ${chooseStr}`
                         }
                         return <a {...props} />;
                       }
-                    }}
-                  >
-                    {msg.text}
-                  </ReactMarkdown>
+                    };
+
+                    return (
+                      <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]} components={mdComponents}>
+                        {msg.text ? msg.text.replace(/\[TOOL_PRACTICED:\s*(.+?)\]/g, "").replace(/\[ARTIFACT\]/g, "").trim() : ""}
+                      </ReactMarkdown>
+                    );
+                  })()}
                 </div>
+
                 {msg.buttons && (
                   <div className="message-buttons">
                     {msg.buttons.map((btn, bidx) => (
@@ -937,13 +1012,11 @@ ${chooseStr}`
           </div>
         );
         })}
-        {isLoading && (
+        {isLoading && !isSummarizing && (
           <div className="message-wrapper model">
-            <div className="message-bubble" style={{padding: '1rem', minHeight: '44px', display: 'flex', alignItems: 'center'}}>
-              <div className="typing-indicator">
-                <div className="typing-dot"></div>
-                <div className="typing-dot"></div>
-                <div className="typing-dot"></div>
+            <div className="message-bubble" style={{padding: '1rem', minHeight: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+              <div style={{ color: 'var(--accent-color)', fontWeight: 'bold', fontSize: '1rem' }}>
+                {loadingProgress}% מעבד...
               </div>
             </div>
           </div>
@@ -954,7 +1027,6 @@ ${chooseStr}`
       </div>
 
       <div className="chat-input-wrapper" style={isSimulationMode ? { paddingTop: '0.5rem' } : {}}>
-        
         
         
         {!isSimulationMode && (

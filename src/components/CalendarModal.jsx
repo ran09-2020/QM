@@ -47,6 +47,43 @@ export default function CalendarModal({ session, isOpen, onClose }) {
   const buildHTMLString = (content, title) => {
     if (!content) return "";
     let html = "<div style='font-family: Arial, sans-serif; direction: rtl;'>";
+    
+    if (content.document_type === 'generic_markdown' || (content.markdown_content && !content.vision_sentences)) {
+      html += `<h2>${title || 'מסמך אסטרטגיה'}</h2>`;
+      // Very basic markdown to HTML converter for Word export
+      let mkd = content.markdown_content || '';
+      mkd = mkd.replace(/^### (.*$)/gim, '<h4>$1</h4>')
+               .replace(/^## (.*$)/gim, '<h3>$1</h3>')
+               .replace(/^# (.*$)/gim, '<h2>$1</h2>')
+               .replace(/\*\*(.*)\*\*/gim, '<b>$1</b>')
+               .replace(/\*(.*)\*/gim, '<i>$1</i>')
+               .replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>');
+               
+      // Basic table support for Word (if the AI generated markdown tables)
+      if (mkd.includes('|')) {
+        // First convert each row to <tr>...</tr>
+        mkd = mkd.replace(/^[\s]*\|(.+)\|[\s]*$/gm, (match, inner) => {
+           if (inner.includes('---')) return ''; // drop separator row entirely
+           let cols = inner.split('|');
+           return '<tr>' + cols.map(c => `<td style="border: 1px solid #ccc; padding: 5px;">${c.trim()}</td>`).join('') + '</tr>';
+        });
+        
+        // Then wrap contiguous <tr> blocks in a <table>
+        mkd = mkd.replace(/(<tr>[\s\S]*?<\/tr>\s*)+/g, (match) => {
+           return `<table style="border-collapse: collapse; width: 100%; border: 1px solid #ccc; margin: 15px 0;">\n${match}</table>\n`;
+        });
+      }
+
+      // Finally, replace remaining newlines with <br/> (after tables are processed)
+      mkd = mkd.replace(/\n\n/gim, '<br/><br/>')
+               .replace(/\n/gim, '<br/>');
+               
+      html += `<div>${mkd}</div>`;
+      html += "</div>";
+      return html;
+    }
+
+    // Default to vision matrix template
     html += `<h2>${title || 'מסמך אסטרטגיה'}</h2>`;
     html += "<h3>חזון בית הספר</h3><ul>";
     for (let i=0; i<5; i++) {
@@ -148,6 +185,17 @@ export default function CalendarModal({ session, isOpen, onClose }) {
 
   const renderArtifactContent = (content) => {
     if (!content) return null;
+    
+    if (content.document_type === 'generic_markdown' || (content.markdown_content && !content.vision_sentences)) {
+      return (
+        <div className="viewer-content markdown-content" style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '8px', marginBottom: '2rem', lineHeight: '1.6', color: '#1e293b' }}>
+          <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+            {content.markdown_content ? content.markdown_content.replace(/\[TOOL_PRACTICED:\s*(.+?)\]/g, "").replace(/\[ARTIFACT\]/g, "").trim() : ''}
+          </ReactMarkdown>
+        </div>
+      );
+    }
+
     return (
       <div className="viewer-content">
         <div style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '8px', marginBottom: '2rem' }}>
@@ -425,7 +473,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
           </button>
         </div>
 
-        <div style={{ padding: '1.5rem', overflowY: 'auto', flex: 1 }}>
+        <div className="modal-body-scroll" style={{ padding: '1.5rem', overflowY: 'auto', flex: 1 }}>
           {activeTab === 'chats' && (
             <div className="tasks-list">
               {simulations.filter(s => s.cluster && s.cluster.startsWith('שיחה אישית')).length === 0 ? (
@@ -466,7 +514,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                       {isExpanded && sim.summary && (
                         <div className="task-content markdown-content" style={{ padding: '1rem', backgroundColor: '#fff', borderTop: '1px solid #e2e8f0', fontSize: '0.95rem', color: '#334155', lineHeight: '1.6' }}>
                           <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
-                            {sim.summary}
+                            {sim.summary ? sim.summary.replace(/\[TOOL_PRACTICED:\s*(.+?)\]/g, "").replace(/\[ARTIFACT\]/g, "").trim() : ''}
                           </ReactMarkdown>
                           <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
                             <button 
@@ -525,7 +573,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                       
                       {isExpanded && sim.summary && (
                         <div style={{ padding: '1rem', borderTop: '1px solid #e2e8f0', backgroundColor: '#fff', fontSize: '0.95rem', lineHeight: '1.5' }}>
-                          <p style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{sim.summary}</p>
+                          <p style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{sim.summary ? sim.summary.replace(/\[TOOL_PRACTICED:\s*(.+?)\]/g, "").replace(/\[ARTIFACT\]/g, "").trim() : ''}</p>
                         </div>
                       )}
                     </div>
@@ -542,7 +590,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                     <div className="no-print" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', paddingBottom: '1rem', borderBottom: '2px solid #e2e8f0' }}>
                       <div>
                         <h2 style={{ margin: '0 0 0.5rem 0', color: '#1e293b' }}>{selectedArtifact.title}</h2>
-                        <div style={{ color: '#64748b', fontSize: '0.9rem' }}>{new Date(selectedArtifact.created_at).toLocaleDateString('he-IL')} &bull; מסמך אסטרטגיה</div>
+                        <div style={{ color: '#64748b', fontSize: '0.9rem' }}>{new Date(selectedArtifact.created_at).toLocaleDateString('he-IL')} {new Date(selectedArtifact.created_at).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })} &bull; מסמך אסטרטגיה</div>
                       </div>
                       <div style={{ display: 'flex', gap: '1rem' }}>
                         <button 
@@ -587,7 +635,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                           <div>
                             <h3 style={{ margin: '0 0 0.3rem 0', color: '#1e293b', fontSize: '1.1rem' }}>{art.title}</h3>
                             <div style={{ color: '#64748b', fontSize: '0.9rem' }}>
-                              {new Date(art.created_at).toLocaleDateString('he-IL')} &bull; מסמך אסטרטגיה
+                              {new Date(art.created_at).toLocaleDateString('he-IL')} {new Date(art.created_at).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })} &bull; מסמך אסטרטגיה
                             </div>
                           </div>
                         </div>

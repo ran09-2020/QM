@@ -142,7 +142,8 @@ function MessageBubble({ msg, idx, isLast, lastModelMessageRef, startPractice, s
             </ReactMarkdown>
           </div>
           
-          {msg.role === 'model' && msg.text && (msg.text.includes('| ---') || msg.text.includes('|---') || msg.text.includes('<table') || msg.text.includes('<details') || msg.text.includes('מסמך אסטרטגי') || msg.text.includes('מסמך אופרטיבי')) && (
+          {/* Artifact saving button injected by Mentor */}
+          {msg.role === 'model' && msg.text && msg.text.length > 50 && (
             <div style={{ marginTop: '15px', borderTop: '1px solid #e5e7eb', paddingTop: '12px', display: 'flex', justifyContent: 'center' }}>
               <button 
                 onClick={(e) => {
