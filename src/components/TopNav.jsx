@@ -19,6 +19,7 @@ export default function TopNav({ session, setIsSidebarOpen }) {
             כוכב
             <Navigation size={20} style={{ transform: 'rotate(-45deg)' }} fill="none" color="#3b82f6" />
             צפון
+            <span style={{ fontSize: '0.7rem', backgroundColor: '#e2e8f0', color: '#475569', padding: '2px 6px', borderRadius: '12px', marginRight: '5px' }}>בטא</span>
           </h2>
           <span>{mentorTitle}</span>
         </div>
