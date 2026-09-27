@@ -1010,4 +1010,21 @@ body.resizing {
     overflow-wrap: break-word !important;
     padding: 0.5rem !important;
   }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .viewer-content, .markdown-content, .modal-content, .artifact-viewer, .CalendarModal-container {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .desktop-only { display: none !important; }
+}
+
+@media (min-width: 769px) {
+  .mobile-only { display: none !important; }
 }

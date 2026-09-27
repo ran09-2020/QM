@@ -546,6 +546,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
                         <button 
                           onClick={(e) => handleSaveAs(selectedArtifact.content, selectedArtifact.title, e)}
+                          className="desktop-only"
                           style={{ padding: '0.5rem 1rem', background: '#f1f5f9', color: '#475569', border: '1px solid #cbd5e1', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '500' }}>
                           <Save size={16} /> שמירה אל...
                         </button>
@@ -556,6 +557,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                         </button>
                         <button 
                           onClick={() => handleShareMobile(selectedArtifact.content, selectedArtifact.title)}
+                          className="mobile-only"
                           style={{ padding: '0.5rem 1rem', background: '#10b981', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '500' }}>
                           <Share2 size={16} /> שיתוף
                         </button>
@@ -636,13 +638,13 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                       </div>
                       
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '0.5rem', borderTop: '1px solid #e2e8f0', paddingTop: '1rem' }}>
-                         <button onClick={(e) => handleSaveAs(art.content, art.title, e)} style={{ flex: 1, minWidth: '120px', padding: '0.6rem', background: '#f8fafc', color: '#475569', border: '1px solid #cbd5e1', borderRadius: '6px', fontWeight: '500', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
+                         <button className="desktop-only" onClick={(e) => handleSaveAs(art.content, art.title, e)} style={{ flex: 1, minWidth: '120px', padding: '0.6rem', background: '#f8fafc', color: '#475569', border: '1px solid #cbd5e1', borderRadius: '6px', fontWeight: '500', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
                            <Save size={16} /> שמירה אל...
                          </button>
                          <button onClick={() => handleExportPDF(art.content, art.title, art)} style={{ flex: 1, minWidth: '120px', padding: '0.6rem', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '6px', fontWeight: '500', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
                            <Download size={16} /> הורד כ-PDF
                          </button>
-                         <button onClick={() => handleShareMobile(art.content, art.title)} style={{ flex: 1, minWidth: '120px', padding: '0.6rem', background: '#10b981', color: 'white', border: 'none', borderRadius: '6px', fontWeight: '500', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
+                         <button className="mobile-only" onClick={() => handleShareMobile(art.content, art.title)} style={{ flex: 1, minWidth: '120px', padding: '0.6rem', background: '#10b981', color: 'white', border: 'none', borderRadius: '6px', fontWeight: '500', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
                            <Share2 size={16} /> שיתוף לווטסאפ
                          </button>
                       </div>
