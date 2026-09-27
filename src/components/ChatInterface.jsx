@@ -918,37 +918,6 @@ ${chooseStr}`
                                 </button>
 
                                 <button 
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    const textToCopy = msg.text.replace(/\[ARTIFACT\]/g, "").trim();
-                                    const htmlToCopy = buildHTMLString(textToCopy);
-                                    copyToClipboard(textToCopy, htmlToCopy).then(() => {
-                                      const btn = e.currentTarget;
-                                      const originalHTML = btn.innerHTML;
-                                      btn.innerHTML = 'הועתק ✓';
-                                      btn.style.backgroundColor = '#10b981';
-                                      btn.style.color = 'white';
-                                      btn.style.borderColor = '#10b981';
-                                      setTimeout(() => {
-                                        btn.innerHTML = originalHTML;
-                                        btn.style.backgroundColor = 'transparent';
-                                        btn.style.color = 'black';
-                                        btn.style.borderColor = 'black';
-                                      }, 2000);
-                                    }).catch(err => {
-                                      alert("שגיאה בהעתקה");
-                                    });
-                                  }} 
-                                  className="pill-btn" 
-                                  style={{ 
-                                    display: 'flex', alignItems: 'center', transition: 'all 0.3s', margin: 0, marginRight: '10px'
-                                  }}
-                                >
-                                  <Copy size={16} style={{ marginLeft: '5px' }} />
-                                  העתקת מסמך
-                                </button>
-
-                                <button 
                                   onClick={async (e) => {
                                     e.preventDefault();
                                     const btn = e.currentTarget;
@@ -993,7 +962,7 @@ ${chooseStr}`
                                   }}
                                 >
                                   <Save size={16} style={{ marginLeft: '5px' }} />
-                                  שמור כ...
+                                  שמירה אל...
                                 </button>
                               </div>
                             )}
