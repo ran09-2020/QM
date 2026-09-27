@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { applySchoolFilter } from '../utils/supabaseHelpers';
 import { useSchool } from '../contexts/SchoolContext';
@@ -456,7 +456,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
       display: 'flex', justifyContent: 'center', alignItems: 'center'
     }}>
       <div className="modal-content" onClick={e => e.stopPropagation()} style={{
-        backgroundColor: '#fff', borderRadius: '12px', width: '90%', maxWidth: '600px',
+        backgroundColor: '#fff', borderRadius: '12px', width: '90%', maxWidth: '900px',
         maxHeight: '85vh', display: 'flex', flexDirection: 'column', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)'
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem', borderBottom: '1px solid #e2e8f0' }}>
@@ -730,6 +730,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
     </div>
   );
 }
+
 
 
 
