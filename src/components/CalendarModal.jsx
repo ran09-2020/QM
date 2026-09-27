@@ -116,14 +116,14 @@ export default function CalendarModal({ session, isOpen, onClose }) {
 
       const opt = {
         margin:       10,
-        filename:     `${title || 'document'}.pdf`,
+        filename:     `document.pdf`,
         image:        { type: 'jpeg', quality: 0.98 },
         html2canvas:  { scale: 2 },
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
       };
 
       const pdfBlob = await html2pdf().set(opt).from(container).outputPdf('blob');
-      const file = new File([pdfBlob], `${title || 'document'}.pdf`, { type: 'application/pdf' });
+      const file = new File([pdfBlob], `document.pdf`, { type: 'application/pdf' });
 
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
         btn.innerHTML = originalHTML;

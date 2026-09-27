@@ -3,9 +3,6 @@ export const buildHTMLString = (content, title) => {
   let html = "<div style='font-family: Arial, sans-serif; direction: rtl;'>";
   
   if (typeof content === 'string' || content.document_type === 'generic_markdown' || (content.markdown_content && !content.vision_sentences)) {
-    if (title) {
-      html += `<h2 dir="rtl" style="text-align: right;">${title}</h2>`;
-    }
     // Very basic markdown to HTML converter for Word export
     let mkd = typeof content === 'string' ? content : (content.markdown_content || '');
     mkd = mkd.replace(/^### (.*$)/gim, '<h4 dir="rtl" style="text-align: right;">$1</h4>')
@@ -52,34 +49,43 @@ export const buildHTMLString = (content, title) => {
     return html;
   }
 
-  // Default to vision matrix template
-  html += `<h2 dir="rtl" style="text-align: right;">${title || 'מסמך אסטרטגיה'}</h2>`;
-  html += "<h3 dir=\"rtl\" style=\"text-align: right;\">חזון בית הספר</h3><ul>";
+  // Strategy Template
+  html += `<h2 dir="rtl" style="text-align: center;">${title || 'מסמך אסטרטגיה'}</h2>`;
+  html += "<h3 dir=\"rtl\" style=\"text-align: right; margin-top: 20px;\">חזון בית הספר</h3><ol style=\"line-height: 1.8;\">";
   (content.vision_sentences || []).forEach(sentence => {
-    html += `<li dir="rtl" style="text-align: right;">${sentence}</li>`;
+    if (sentence) {
+      html += `<li dir="rtl" style="text-align: right;">${sentence}</li>`;
+    }
   });
-  html += "</ul>";
+  html += "</ol>";
   
-  html += "<h3 dir=\"rtl\" style=\"text-align: right;\">הגדרת מדדים והגדרת יעדים</h3>";
-  
-  Object.keys(content.dimensions || {}).forEach(dim => {
-    const dimData = content.dimensions[dim];
-    html += `<h4 dir="rtl" style="text-align: right; background-color: #f0f0f0; padding: 5px;">${dim}</h4>`;
-    html += `<p dir="rtl" style="text-align: right;"><b>הגדרה משותפת:</b> ${dimData.definition}</p>`;
-    
-    html += `<table dir="rtl" style="table-layout: fixed; word-wrap: break-word; border-collapse: collapse; width: 100%; border: 1px solid #ccc; margin-bottom: 15px; direction: rtl; text-align: right;">
-      <tr style="background-color: #ddd;">
-        <th dir="rtl" style="border: 1px solid #ccc; padding: 8px; text-align: right;">ערכים ומושגי יסוד (רדאר)</th>
-        <th dir="rtl" style="border: 1px solid #ccc; padding: 8px; text-align: right;">יעדים תוצאתיים</th>
-        <th dir="rtl" style="border: 1px solid #ccc; padding: 8px; text-align: right;">מדדי ביצוע ותהליך</th>
-      </tr>
-      <tr>
-        <td dir="rtl" style="border: 1px solid #ccc; padding: 8px; text-align: right;">${(dimData.radar_values || []).join(", ")}</td>
-        <td dir="rtl" style="border: 1px solid #ccc; padding: 8px; text-align: right;"><ul>${(dimData.outcome_goals || []).map(g => `<li dir="rtl" style="text-align: right;">${g}</li>`).join("")}</ul></td>
-        <td dir="rtl" style="border: 1px solid #ccc; padding: 8px; text-align: right;"><ul>${(dimData.process_metrics || []).map(m => `<li dir="rtl" style="text-align: right;">${m}</li>`).join("")}</ul></td>
-      </tr>
-    </table>`;
-  });
+  if (content.goals && content.goals.length > 0) {
+    html += "<h3 dir=\"rtl\" style=\"text-align: right; margin-top: 30px;\">יעדים אופרטיביים</h3>";
+    html += `<table dir="rtl" style="table-layout: fixed; word-wrap: break-word; border-collapse: collapse; width: 100%; border: 1px solid #ccc; direction: rtl; text-align: center;">
+      <tr style="background-color: #f3f4f6;">
+        <th style="border: 1px solid #ccc; padding: 10px; width: 8%;">מס' יעד</th>
+        <th style="border: 1px solid #ccc; padding: 10px; width: 23%;">פדגוגי</th>
+        <th style="border: 1px solid #ccc; padding: 10px; width: 23%;">חברתי-ערכי</th>
+        <th style="border: 1px solid #ccc; padding: 10px; width: 23%;">רגשי</th>
+        <th style="border: 1px solid #ccc; padding: 10px; width: 23%;">ארגוני-ניהולי</th>
+      </tr>`;
+      
+    content.goals.forEach(g => {
+      const isP = g.domain === 'פדגוגי' ? g.desc : '';
+      const isS = g.domain === 'חברתי-ערכי' ? g.desc : '';
+      const isC = g.domain === 'רגשי' ? g.desc : '';
+      const isM = (g.domain === 'ארגוני-ניהולי' || g.domain === 'ניהולי-ארגוני') ? g.desc : '';
+      
+      html += `<tr>
+        <td style="border: 1px solid #ccc; padding: 10px; font-weight: bold;">${g.id}</td>
+        <td style="border: 1px solid #ccc; padding: 10px; vertical-align: top; background: ${isP ? '#eff6ff' : 'transparent'};">${isP}</td>
+        <td style="border: 1px solid #ccc; padding: 10px; vertical-align: top; background: ${isS ? '#eff6ff' : 'transparent'};">${isS}</td>
+        <td style="border: 1px solid #ccc; padding: 10px; vertical-align: top; background: ${isC ? '#eff6ff' : 'transparent'};">${isC}</td>
+        <td style="border: 1px solid #ccc; padding: 10px; vertical-align: top; background: ${isM ? '#eff6ff' : 'transparent'};">${isM}</td>
+      </tr>`;
+    });
+    html += `</table>`;
+  }
   
   html += "</div>";
   return html;
