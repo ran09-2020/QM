@@ -17,7 +17,7 @@ export default function TopNav({ session, setIsSidebarOpen }) {
         <div className="mobile-brand-text">
           <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.2rem', margin: 0, color: '#1e3a8a' }}>
             כוכב
-            <Navigation size={20} style={{ transform: 'rotate(-45deg)' }} fill="none" color="#f97316" />
+            <Navigation size={20} style={{ transform: 'rotate(-45deg)' }} fill="none" color="#2563eb" />
             צפון
           </h2>
           <span>{mentorTitle}</span>

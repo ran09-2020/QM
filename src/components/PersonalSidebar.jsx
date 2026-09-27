@@ -209,7 +209,7 @@ export default function PersonalSidebar({ isOpen, setIsOpen, session, onOpenDash
         <div className="sidebar-logo-section">
           <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', margin: 0, color: '#1e3a8a' }}>
             כוכב
-            <Navigation size={28} style={{ transform: 'rotate(-45deg)' }} fill="none" color="#3b82f6" />
+            <Navigation size={28} style={{ transform: 'rotate(-45deg)' }} fill="none" color="#2563eb" />
             צפון
           </h2>
           <button className="mobile-close-btn" onClick={() => setIsOpen(false)}>
