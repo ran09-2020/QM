@@ -188,7 +188,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
     
     if (content.document_type === 'generic_markdown' || (content.markdown_content && !content.vision_sentences)) {
       return (
-        <div className="viewer-content markdown-content" style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '8px', marginBottom: '2rem', lineHeight: '1.6', color: '#1e293b' }}>
+        <div className="viewer-content markdown-content" style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '8px', marginBottom: '2rem', lineHeight: '1.6', color: '#1e293b', overflowX: 'auto' }}>
           <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
             {content.markdown_content ? content.markdown_content.replace(/\[TOOL_PRACTICED:\s*(.+?)\]/g, "").replace(/\[ARTIFACT\]/g, "").trim() : ''}
           </ReactMarkdown>
@@ -622,9 +622,9 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                       padding: '1.2rem', display: 'flex', flexDirection: 'column', gap: '1rem',
                       boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
                     }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
                         
-                        <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+                        <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', gap: '0.8rem', flex: '1 1 200px' }}>
                           <div style={{ 
                             backgroundColor: '#e0e7ff', color: '#4f46e5',
                             padding: '0.5rem', borderRadius: '8px', display: 'flex',
