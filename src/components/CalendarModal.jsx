@@ -71,18 +71,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
         // Then wrap contiguous <tr> blocks in a <table>
         mkd = mkd.replace(/(<tr>[\s\S]*?<\/tr>\s*)+/g, (match) => {
            
-          // Add a dummy row to force minimum column widths in Word
-          let firstRowMatch = match.match(/<tr>(.*?)<\/tr>/i);
-          let forcedWidthRow = "";
-          if (firstRowMatch) {
-            let colCount = (firstRowMatch[1].match(/<td/g) || []).length;
-            if (colCount > 0) {
-              let hiddenText = "-------------------------"; // Unbreakable long string
-              let dummyCols = Array(colCount).fill(`<td style="border: none; padding: 0; color: white; font-size: 1px;">${hiddenText}</td>`).join("");
-              forcedWidthRow = `<tr style="height: 1px;">${dummyCols}</tr>`;
-            }
-          }
-          return `<table dir="rtl" style="table-layout: fixed; word-wrap: break-word; border-collapse: collapse; width: 100%; border: 1px solid #ccc; margin: 15px 0; direction: rtl; text-align: right;">\n${forcedWidthRow}\n${match}</table>\n`;
+          return `<table dir="rtl" style="table-layout: fixed; word-wrap: break-word; border-collapse: collapse; width: 100%; border: 1px solid #ccc; margin: 15px 0; direction: rtl; text-align: right;">\n${match}</table>\n`;
 
         });
       }
@@ -174,17 +163,18 @@ export default function CalendarModal({ session, isOpen, onClose }) {
 
   const handleExportWord = async (content, title) => {
     try {
-      const { htmlToDocx } = await import("wp-html-to-docx");
       const rawHTML = buildHTMLString(content, title);
-      const docxData = await htmlToDocx(`<div dir="rtl">${rawHTML}</div>`, { page: { orientation: 'landscape', margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 } } });
+      const preHtml = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>${title || 'מסמך'}</title></head><body>`;
+      const postHtml = "</body></html>";
+      const fullHtml = preHtml + rawHTML + postHtml;
       
-      const blob = new Blob([docxData], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+      const blob = new Blob(['\ufeff', fullHtml], { type: 'application/msword' });
       const url = URL.createObjectURL(blob);
       
       const fileDownload = document.createElement("a");
       document.body.appendChild(fileDownload);
       fileDownload.href = url;
-      fileDownload.download = (title || "מסמך") + ".docx";
+      fileDownload.download = (title || "מסמך") + ".doc";
       fileDownload.click();
       
       setTimeout(() => {
@@ -192,8 +182,8 @@ export default function CalendarModal({ session, isOpen, onClose }) {
         URL.revokeObjectURL(url);
       }, 100);
     } catch (error) {
-      console.error("Docx generation failed", error);
-      alert("שגיאה ביצירת קובץ וורד");
+      console.error("Doc generation failed", error);
+      alert("שגיאה ביצירת קובץ");
     }
   };
 
@@ -628,7 +618,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                         <button 
                           onClick={() => handleExportWord(selectedArtifact.content, selectedArtifact.title)}
                           style={{ padding: '0.5rem 1rem', background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '500' }}>
-                          <Download size={16} /> Word
+                          <Download size={16} /> Docs / Word
                         </button>
                         <button 
                           onClick={() => handleExportPDF()}
@@ -713,7 +703,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                       
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '0.5rem', borderTop: '1px solid #e2e8f0', paddingTop: '1rem' }}>
                          <button onClick={() => handleExportWord(art.content, art.title)} style={{ flex: 1, padding: '0.6rem', background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', fontWeight: '500', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
-                           <Download size={16} /> הורד כ-Word
+                           <Download size={16} /> Docs / Word
                          </button>
                          <button onClick={() => handleExportPDF(art.content, art.title, art)} style={{ flex: 1, padding: '0.6rem', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '6px', fontWeight: '500', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
                            <Download size={16} /> הורד כ-PDF
@@ -730,6 +720,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
     </div>
   );
 }
+
 
 
 
