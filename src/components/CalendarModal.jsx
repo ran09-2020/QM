@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { applySchoolFilter } from '../utils/supabaseHelpers';
 import { useSchool } from '../contexts/SchoolContext';
@@ -476,30 +476,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                         <div style={{ color: '#64748b', fontSize: '0.9rem' }}>{new Date(selectedArtifact.created_at).toLocaleDateString('he-IL')} {new Date(selectedArtifact.created_at).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })} &bull; מסמך אסטרטגיה</div>
                       </div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
-                        <button 
-                          onClick={(e) => {
-                            e.preventDefault();
-                            let textToCopy = "";
-                            if (selectedArtifact.content.document_type === 'generic_markdown' || (selectedArtifact.content.markdown_content && !selectedArtifact.content.vision_sentences)) {
-                                textToCopy = selectedArtifact.content.markdown_content || selectedArtifact.content;
-                            } else {
-                                textToCopy = JSON.stringify(selectedArtifact.content, null, 2);
-                            }
-                            const htmlToCopy = buildHTMLString(selectedArtifact.content, selectedArtifact.title);
-                            copyToClipboard(textToCopy, htmlToCopy).then(() => {
-                              const btn = e.currentTarget;
-                              const originalHTML = btn.innerHTML;
-                              btn.innerHTML = 'הועתק ✓';
-                              btn.style.backgroundColor = '#10b981';
-                              setTimeout(() => {
-                                btn.innerHTML = originalHTML;
-                                btn.style.backgroundColor = '#f1f5f9';
-                              }, 2000);
-                            });
-                          }}
-                          style={{ padding: '0.5rem 1rem', background: '#f1f5f9', color: '#475569', border: '1px solid #cbd5e1', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '500' }}>
-                          <Copy size={16} /> העתק מסמך
-                        </button>
+                        
                         <button 
                           onClick={() => handleExportPDF()}
                           style={{ padding: '0.5rem 1rem', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '500' }}>
@@ -582,30 +559,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                       </div>
                       
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '0.5rem', borderTop: '1px solid #e2e8f0', paddingTop: '1rem' }}>
-                         <button onClick={(e) => {
-                           e.preventDefault();
-                           let textToCopy = "";
-                           if (art.content.document_type === 'generic_markdown' || (art.content.markdown_content && !art.content.vision_sentences)) {
-                               textToCopy = art.content.markdown_content || art.content;
-                           } else {
-                               textToCopy = JSON.stringify(art.content, null, 2);
-                           }
-                           const htmlToCopy = buildHTMLString(art.content, art.title);
-                           copyToClipboard(textToCopy, htmlToCopy).then(() => {
-                             const btn = e.currentTarget;
-                             const originalHTML = btn.innerHTML;
-                             btn.innerHTML = 'הועתק ✓';
-                             btn.style.backgroundColor = '#10b981';
-                             btn.style.color = 'white';
-                             setTimeout(() => {
-                               btn.innerHTML = originalHTML;
-                               btn.style.backgroundColor = '#f8fafc';
-                               btn.style.color = '#475569';
-                             }, 2000);
-                           });
-                         }} style={{ flex: 1, padding: '0.6rem', background: '#f8fafc', color: '#475569', border: '1px solid #cbd5e1', borderRadius: '6px', fontWeight: '500', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
-                           <Copy size={16} /> העתק
-                         </button>
+                         
                          <button onClick={() => handleExportPDF(art.content, art.title, art)} style={{ flex: 1, padding: '0.6rem', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '6px', fontWeight: '500', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
                            <Download size={16} /> הורד כ-PDF
                          </button>
@@ -621,6 +575,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
     </div>
   );
 }
+
 
 
 

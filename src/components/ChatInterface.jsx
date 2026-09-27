@@ -947,6 +947,67 @@ ${chooseStr}`
                                   <Copy size={16} style={{ marginLeft: '5px' }} />
                                   העתקת מסמך
                                 </button>
+
+                                <button 
+                                  onClick={async (e) => {
+                                    e.preventDefault();
+                                    const btn = e.currentTarget;
+                                    const originalHTML = btn.innerHTML;
+                                    btn.innerHTML = 'שומר...';
+                                    try {
+                                      const textContent = msg.text.replace(/\[ARTIFACT\]/g, "").trim();
+                                      const rawHTML = buildHTMLString(textContent, null);
+                                      const { htmlToDocx } = await import("wp-html-to-docx");
+                                      const docxData = await htmlToDocx(`<div dir="rtl">${rawHTML}</div>`, { page: { orientation: 'landscape', margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 } } });
+                                      const blob = new Blob([docxData], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+                                      
+                                      if (window.showSaveFilePicker) {
+                                        try {
+                                          const handle = await window.showSaveFilePicker({
+                                            suggestedName: "מסמך.docx",
+                                            types: [{
+                                              description: 'Word Document',
+                                              accept: {'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx']},
+                                            }],
+                                          });
+                                          const writable = await handle.createWritable();
+                                          await writable.write(blob);
+                                          await writable.close();
+                                        } catch (err) {
+                                          if (err.name !== 'AbortError') console.error(err);
+                                        }
+                                      } else {
+                                        const url = URL.createObjectURL(blob);
+                                        const a = document.createElement('a');
+                                        a.href = url;
+                                        a.download = "מסמך.docx";
+                                        a.click();
+                                        URL.revokeObjectURL(url);
+                                      }
+                                      btn.innerHTML = 'נשמר ✓';
+                                      btn.style.backgroundColor = '#10b981';
+                                      btn.style.color = 'white';
+                                      btn.style.borderColor = '#10b981';
+                                    } catch (error) {
+                                      console.error("Save As failed", error);
+                                      alert("שגיאה בשמירת המסמך");
+                                      btn.innerHTML = originalHTML;
+                                    }
+                                    setTimeout(() => {
+                                      btn.innerHTML = originalHTML;
+                                      btn.style.backgroundColor = 'transparent';
+                                      btn.style.color = 'black';
+                                      btn.style.borderColor = 'black';
+                                    }, 2000);
+                                  }} 
+                                  className="pill-btn" 
+                                  style={{ 
+                                    display: 'flex', alignItems: 'center', transition: 'all 0.3s', margin: 0, marginRight: '10px'
+                                  }}
+                                >
+                                  <Save size={16} style={{ marginLeft: '5px' }} />
+                                  שמור כ...
+                                </button>
                               </div>
                             )}
                         </div>
