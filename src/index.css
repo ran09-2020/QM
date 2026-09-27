@@ -984,4 +984,4 @@ body.resizing {
 }
 @media (max-width: 600px) { .artifact-card-header { flex-direction: column !important; align-items: flex-end !important; gap: 1rem !important; } .artifact-card-title { min-width: 100% !important; } .artifact-card-actions { align-self: flex-start !important; } }
 
-@media (max-width: 600px) { .artifact-viewer .no-print { flex-direction: column !important; align-items: stretch !important; gap: 1rem !important; } .artifact-viewer .no-print > div:first-child { min-width: 100% !important; } .markdown-content table { min-width: max-content !important; display: table !important; } .markdown-content td, .markdown-content th { white-space: nowrap !important; } }
+@media screen and (max-width: 600px) { .artifact-viewer .no-print { flex-direction: column !important; align-items: stretch !important; gap: 1rem !important; } .artifact-viewer .no-print > div:first-child { min-width: 100% !important; } .markdown-content table { min-width: 600px !important; display: table !important; } .markdown-content td, .markdown-content th { white-space: normal !important; word-wrap: break-word !important; } }
