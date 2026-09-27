@@ -982,3 +982,4 @@ body.sidebar-collapsed .personal-sidebar {
 body.resizing {
   user-select: none;
 }
+@media (max-width: 600px) { .artifact-card-header { flex-direction: column !important; align-items: flex-end !important; gap: 1rem !important; } .artifact-card-title { min-width: 100% !important; } .artifact-card-actions { align-self: flex-start !important; } }

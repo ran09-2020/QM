@@ -625,14 +625,14 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                   <div style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>אין עדיין תוצרים שמורים.</div>
                 ) : (
                   artifacts.map((art) => (
-                    <div key={art.id} style={{
+                    <div key={art.id} className="artifact-card" style={{
                       backgroundColor: 'white', borderRadius: '8px', border: '1px solid #e2e8f0',
                       padding: '1.2rem', display: 'flex', flexDirection: 'column', gap: '1rem',
                       boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
                     }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
+                      <div className="artifact-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
                         
-                        <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', gap: '0.8rem', flex: '1 1 200px', minWidth: '200px', wordBreak: 'break-word' }}>
+                        <div className="artifact-card-title" style={{ textAlign: 'right', display: 'flex', alignItems: 'center', gap: '0.8rem', flex: '1 1 auto' }}>
                           <div style={{ 
                             backgroundColor: '#e0e7ff', color: '#4f46e5',
                             padding: '0.5rem', borderRadius: '8px', display: 'flex',
@@ -648,7 +648,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                           </div>
                         </div>
 
-                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <div className="artifact-card-actions" style={{ display: 'flex', gap: '0.5rem' }}>
                           <button style={{
                             background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px',
                             padding: '0.5rem 0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem',
