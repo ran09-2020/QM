@@ -188,8 +188,16 @@ export default function CalendarModal({ session, isOpen, onClose }) {
     
     if (content.document_type === 'generic_markdown' || (content.markdown_content && !content.vision_sentences)) {
       return (
-        <div className="viewer-content markdown-content" style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '8px', marginBottom: '2rem', lineHeight: '1.6', color: '#1e293b', overflowX: 'auto' }}>
-          <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+        <div className="viewer-content markdown-content" style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '8px', marginBottom: '2rem', lineHeight: '1.6', color: '#1e293b', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+          <ReactMarkdown 
+            remarkPlugins={[remarkGfm]} 
+            rehypePlugins={[rehypeRaw]}
+            components={{
+              table: ({node, ...props}) => <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem', marginBottom: '1rem' }} {...props} />,
+              th: ({node, ...props}) => <th style={{ padding: '0.75rem 1rem', backgroundColor: '#f1f5f9', borderBottom: '2px solid #e2e8f0', fontWeight: '600', color: '#1e293b', whiteSpace: 'nowrap' }} {...props} />,
+              td: ({node, ...props}) => <td style={{ padding: '0.75rem 1rem', borderBottom: '1px solid #e2e8f0', color: '#334155', whiteSpace: 'nowrap' }} {...props} />,
+            }}
+          >
             {content.markdown_content ? content.markdown_content.replace(/\[TOOL_PRACTICED:\s*(.+?)\]/g, "").replace(/\[ARTIFACT\]/g, "").trim() : ''}
           </ReactMarkdown>
         </div>
@@ -624,7 +632,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                     }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
                         
-                        <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', gap: '0.8rem', flex: '1 1 200px' }}>
+                        <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', gap: '0.8rem', flex: '1 1 200px', minWidth: '200px', wordBreak: 'break-word' }}>
                           <div style={{ 
                             backgroundColor: '#e0e7ff', color: '#4f46e5',
                             padding: '0.5rem', borderRadius: '8px', display: 'flex',
