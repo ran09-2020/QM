@@ -349,14 +349,14 @@ export default function CalendarModal({ session, isOpen, onClose }) {
         backgroundColor: '#fff', borderRadius: '12px', width: '90%', maxWidth: '900px',
         maxHeight: '85vh', display: 'flex', flexDirection: 'column', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)'
       }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem', borderBottom: '1px solid #e2e8f0' }}>
+        <div className="no-print" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem', borderBottom: '1px solid #e2e8f0' }}>
           <h2 style={{ margin: 0, fontSize: '1.25rem', color: '#0f172a' }}>יומן אירועים</h2>
           <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}>
             <X size={24} />
           </button>
         </div>
 
-        <div style={{ display: 'flex', borderBottom: '1px solid #e2e8f0' }}>
+        <div className="no-print" style={{ display: 'flex', borderBottom: '1px solid #e2e8f0' }}>
           <button 
             onClick={() => setActiveTab('simulations')}
             style={{ 
