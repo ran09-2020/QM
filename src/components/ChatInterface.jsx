@@ -4,7 +4,7 @@ import remarkGfm from 'remark-gfm';
 import PdfViewer from './PdfViewer';
 import rehypeRaw from 'rehype-raw';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Send, Loader2, Lightbulb, PenTool, Map, BookOpen, Users, FlaskConical, LogOut, BookOpenCheck, Save, RefreshCw, Paperclip, X, File as FileIcon, Download, DoorOpen, MessageSquare, ChevronDown, Plus } from 'lucide-react';
+import { Send, Loader2, Lightbulb, PenTool, Map, BookOpen, Users, FlaskConical, LogOut, BookOpenCheck, Save, RefreshCw, Paperclip, X, File as FileIcon, Download, DoorOpen, MessageSquare, ChevronDown, Plus, Copy } from 'lucide-react';
 import { sendMessageToGemini, sendSimulationMessageToGemini, clearSimulationHistory, clearChatHistory , extractArtifactJSON } from '../services/gemini';
 import mammoth from 'mammoth';
 import * as XLSX from 'xlsx';
@@ -885,37 +885,67 @@ ${chooseStr}`
                           
                           {msg.role === 'model' && msg.text && msg.text.includes('[ARTIFACT]') && (
                             <div style={{ padding: '10px 15px', backgroundColor: '#f8fafc', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'flex-start' }}>
-                              <button 
-                                onClick={async (e) => {
-                                  e.preventDefault();
-                                  setSavingMsgIndex(idx);
-                                  await handleSaveArtifact(idx);
-                                  setTimeout(() => {
-                                    setSavingMsgIndex(null);
-                                  }, 3000);
-                                }} 
-                                className="pill-btn" 
-                                style={{ 
-                                  borderColor: saveError && savingMsgIndex === idx ? '#ef4444' : (saveSuccess && savingMsgIndex === idx ? '#10b981' : 'black'), 
-                                  backgroundColor: saveError && savingMsgIndex === idx ? '#fef2f2' : (saveSuccess && savingMsgIndex === idx ? '#10b981' : 'transparent'),
-                                  color: saveError && savingMsgIndex === idx ? '#ef4444' : (saveSuccess && savingMsgIndex === idx ? 'white' : 'black'), 
-                                  display: 'flex', alignItems: 'center', transition: 'all 0.3s',
-                                  opacity: savingMsgIndex === idx && isSavingArtifact && loadingProgress < 100 ? '0.7' : '1',
-                                  margin: 0
-                                }}
-                                disabled={savingMsgIndex === idx || saveSuccess || !!saveError}
-                              >
-                                {savingMsgIndex === idx || saveSuccess || saveError ? (
-                                  saveError ? saveError : (saveSuccess ? 'נשמר בהצלחה ✓' : `${loadingProgress}%...`)
-                                ) : (
-                                  <>
-                                    <Save size={16} style={{ marginLeft: '5px' }} />
-                                    שמירת המסמך
-                                  </>
-                                )}
-                              </button>
-                            </div>
-                          )}
+                                <button 
+                                  onClick={async (e) => {
+                                    e.preventDefault();
+                                    setSavingMsgIndex(idx);
+                                    await handleSaveArtifact(idx);
+                                    setTimeout(() => {
+                                      setSavingMsgIndex(null);
+                                    }, 3000);
+                                  }} 
+                                  className="pill-btn" 
+                                  style={{ 
+                                    borderColor: saveError && savingMsgIndex === idx ? '#ef4444' : (saveSuccess && savingMsgIndex === idx ? '#10b981' : 'black'), 
+                                    backgroundColor: saveError && savingMsgIndex === idx ? '#fef2f2' : (saveSuccess && savingMsgIndex === idx ? '#10b981' : 'transparent'),
+                                    color: saveError && savingMsgIndex === idx ? '#ef4444' : (saveSuccess && savingMsgIndex === idx ? 'white' : 'black'), 
+                                    display: 'flex', alignItems: 'center', transition: 'all 0.3s',
+                                    opacity: savingMsgIndex === idx && isSavingArtifact && loadingProgress < 100 ? '0.7' : '1',
+                                    margin: 0
+                                  }}
+                                  disabled={savingMsgIndex === idx || saveSuccess || !!saveError}
+                                >
+                                  {savingMsgIndex === idx || saveSuccess || saveError ? (
+                                    saveError ? saveError : (saveSuccess ? 'נשמר בהצלחה ✓' : `${loadingProgress}%...`)
+                                  ) : (
+                                    <>
+                                      <Save size={16} style={{ marginLeft: '5px' }} />
+                                      שמירת המסמך
+                                    </>
+                                  )}
+                                </button>
+
+                                <button 
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    const textToCopy = msg.text.replace(/\[ARTIFACT\]/g, "").trim();
+                                    navigator.clipboard.writeText(textToCopy).then(() => {
+                                      const btn = e.currentTarget;
+                                      const originalHTML = btn.innerHTML;
+                                      btn.innerHTML = 'הועתק ✓';
+                                      btn.style.backgroundColor = '#10b981';
+                                      btn.style.color = 'white';
+                                      btn.style.borderColor = '#10b981';
+                                      setTimeout(() => {
+                                        btn.innerHTML = originalHTML;
+                                        btn.style.backgroundColor = 'transparent';
+                                        btn.style.color = 'black';
+                                        btn.style.borderColor = 'black';
+                                      }, 2000);
+                                    }).catch(err => {
+                                      alert("שגיאה בהעתקה");
+                                    });
+                                  }} 
+                                  className="pill-btn" 
+                                  style={{ 
+                                    display: 'flex', alignItems: 'center', transition: 'all 0.3s', margin: 0, marginRight: '10px'
+                                  }}
+                                >
+                                  <Copy size={16} style={{ marginLeft: '5px' }} />
+                                  העתקת מסמך
+                                </button>
+                              </div>
+                            )}
                         </div>
                       ),
                       th: ({node, ...props}) => <th style={{ padding: '0.75rem 1rem', backgroundColor: '#f8fafc', borderBottom: '2px solid #e2e8f0', fontWeight: '600', color: '#1e293b' }} {...props} />,

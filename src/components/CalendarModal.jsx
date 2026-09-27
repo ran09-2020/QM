@@ -1,8 +1,8 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { applySchoolFilter } from '../utils/supabaseHelpers';
 import { useSchool } from '../contexts/SchoolContext';
-import { X, Trash2, PlayCircle, Download, Save, FileText, MessageSquare, FlaskConical, ChevronDown, ChevronUp } from 'lucide-react';
+import { X, Trash2, PlayCircle, Download, Save, FileText, MessageSquare, FlaskConical, ChevronDown, ChevronUp, Copy } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -652,7 +652,29 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                         <div style={{ color: '#64748b', fontSize: '0.9rem' }}>{new Date(selectedArtifact.created_at).toLocaleDateString('he-IL')} {new Date(selectedArtifact.created_at).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })} &bull; מסמך אסטרטגיה</div>
                       </div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
-                        <button onClick={() => handleExportDOCX(selectedArtifact.content, selectedArtifact.title)} style={{ padding: '0.5rem 1rem', background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '500' }}><Download size={16} /> Word</button><button onClick={() => handleExportGoogleDocs(selectedArtifact.content, selectedArtifact.title)} style={{ padding: '0.5rem 1rem', background: '#10b981', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '500' }}><Download size={16} /> Google Docs</button>
+                        <button 
+                          onClick={(e) => {
+                            e.preventDefault();
+                            let textToCopy = "";
+                            if (selectedArtifact.content.document_type === 'generic_markdown' || (selectedArtifact.content.markdown_content && !selectedArtifact.content.vision_sentences)) {
+                                textToCopy = selectedArtifact.content.markdown_content || selectedArtifact.content;
+                            } else {
+                                textToCopy = JSON.stringify(selectedArtifact.content, null, 2);
+                            }
+                            navigator.clipboard.writeText(textToCopy).then(() => {
+                              const btn = e.currentTarget;
+                              const originalHTML = btn.innerHTML;
+                              btn.innerHTML = 'הועתק ✓';
+                              btn.style.backgroundColor = '#10b981';
+                              setTimeout(() => {
+                                btn.innerHTML = originalHTML;
+                                btn.style.backgroundColor = '#f1f5f9';
+                              }, 2000);
+                            });
+                          }}
+                          style={{ padding: '0.5rem 1rem', background: '#f1f5f9', color: '#475569', border: '1px solid #cbd5e1', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '500' }}>
+                          <Copy size={16} /> העתק מסמך
+                        </button>
                         <button 
                           onClick={() => handleExportPDF()}
                           style={{ padding: '0.5rem 1rem', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '500' }}>
@@ -735,7 +757,29 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                       </div>
                       
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '0.5rem', borderTop: '1px solid #e2e8f0', paddingTop: '1rem' }}>
-                         <button onClick={() => handleExportDOCX(art.content, art.title)} style={{ flex: 1, padding: '0.6rem', background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', fontWeight: '500', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}><Download size={16} /> Word</button><button onClick={() => handleExportGoogleDocs(art.content, art.title)} style={{ flex: 1, padding: '0.6rem', background: '#10b981', color: 'white', border: 'none', borderRadius: '6px', fontWeight: '500', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}><Download size={16} /> Docs</button>
+                         <button onClick={(e) => {
+                           e.preventDefault();
+                           let textToCopy = "";
+                           if (art.content.document_type === 'generic_markdown' || (art.content.markdown_content && !art.content.vision_sentences)) {
+                               textToCopy = art.content.markdown_content || art.content;
+                           } else {
+                               textToCopy = JSON.stringify(art.content, null, 2);
+                           }
+                           navigator.clipboard.writeText(textToCopy).then(() => {
+                             const btn = e.currentTarget;
+                             const originalHTML = btn.innerHTML;
+                             btn.innerHTML = 'הועתק ✓';
+                             btn.style.backgroundColor = '#10b981';
+                             btn.style.color = 'white';
+                             setTimeout(() => {
+                               btn.innerHTML = originalHTML;
+                               btn.style.backgroundColor = '#f8fafc';
+                               btn.style.color = '#475569';
+                             }, 2000);
+                           });
+                         }} style={{ flex: 1, padding: '0.6rem', background: '#f8fafc', color: '#475569', border: '1px solid #cbd5e1', borderRadius: '6px', fontWeight: '500', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
+                           <Copy size={16} /> העתק
+                         </button>
                          <button onClick={() => handleExportPDF(art.content, art.title, art)} style={{ flex: 1, padding: '0.6rem', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '6px', fontWeight: '500', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
                            <Download size={16} /> הורד כ-PDF
                          </button>
