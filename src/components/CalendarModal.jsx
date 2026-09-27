@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { applySchoolFilter } from '../utils/supabaseHelpers';
 import { useSchool } from '../contexts/SchoolContext';
@@ -71,7 +71,18 @@ export default function CalendarModal({ session, isOpen, onClose }) {
         // Then wrap contiguous <tr> blocks in a <table>
         mkd = mkd.replace(/(<tr>[\s\S]*?<\/tr>\s*)+/g, (match) => {
            
-          return `<table dir="rtl" style="table-layout: fixed; word-wrap: break-word; border-collapse: collapse; width: 100%; border: 1px solid #ccc; margin: 15px 0; direction: rtl; text-align: right;">\n${match}</table>\n`;
+          // Add a dummy row to force minimum column widths in Word
+          let firstRowMatch = match.match(/<tr>(.*?)<\/tr>/i);
+          let forcedWidthRow = "";
+          if (firstRowMatch) {
+            let colCount = (firstRowMatch[1].match(/<td/g) || []).length;
+            if (colCount > 0) {
+              let hiddenText = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"; // Unbreakable long string
+              let dummyCols = Array(colCount).fill(`<td style="border: none; padding: 0; color: white; font-size: 1px;">${hiddenText}</td>`).join("");
+              forcedWidthRow = `<tr style="height: 1px; color: white; font-size: 1px;">${dummyCols}</tr>`;
+            }
+          }
+          return `<table dir="rtl" style="table-layout: fixed; word-wrap: break-word; border-collapse: collapse; width: 100%; border: 1px solid #ccc; margin: 15px 0; direction: rtl; text-align: right;">\n${forcedWidthRow}\n${match}</table>\n`;
 
         });
       }
@@ -163,18 +174,17 @@ export default function CalendarModal({ session, isOpen, onClose }) {
 
   const handleExportWord = async (content, title) => {
     try {
+      const { htmlToDocx } = await import("wp-html-to-docx");
       const rawHTML = buildHTMLString(content, title);
-      const preHtml = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>${title || 'מסמך'}</title></head><body>`;
-      const postHtml = "</body></html>";
-      const fullHtml = preHtml + rawHTML + postHtml;
+      const docxData = await htmlToDocx(`<div dir="rtl">${rawHTML}</div>`, { page: { orientation: 'landscape', margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 } } });
       
-      const blob = new Blob(['\ufeff', fullHtml], { type: 'application/msword' });
+      const blob = new Blob([docxData], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
       const url = URL.createObjectURL(blob);
       
       const fileDownload = document.createElement("a");
       document.body.appendChild(fileDownload);
       fileDownload.href = url;
-      fileDownload.download = (title || "מסמך") + ".doc";
+      fileDownload.download = (title || "מסמך") + ".docx";
       fileDownload.click();
       
       setTimeout(() => {
@@ -182,8 +192,8 @@ export default function CalendarModal({ session, isOpen, onClose }) {
         URL.revokeObjectURL(url);
       }, 100);
     } catch (error) {
-      console.error("Doc generation failed", error);
-      alert("שגיאה ביצירת קובץ");
+      console.error("Docx generation failed", error);
+      alert("שגיאה ביצירת קובץ וורד");
     }
   };
 
