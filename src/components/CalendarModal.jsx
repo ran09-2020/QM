@@ -648,7 +648,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                           </div>
                         </div>
 
-                        <div className="artifact-card-actions" style={{ display: 'flex', gap: '0.5rem' }}>
+                        <div className="artifact-card-actions" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                           <button style={{
                             background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px',
                             padding: '0.5rem 0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem',
@@ -687,7 +687,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                         </div>
                       </div>
                       
-                      <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem', borderTop: '1px solid #e2e8f0', paddingTop: '1rem' }}>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '0.5rem', borderTop: '1px solid #e2e8f0', paddingTop: '1rem' }}>
                          <button onClick={() => handleExportWord(art.content, art.title)} style={{ flex: 1, padding: '0.6rem', background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', fontWeight: '500', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
                            <Download size={16} /> הורד כ-Word
                          </button>
