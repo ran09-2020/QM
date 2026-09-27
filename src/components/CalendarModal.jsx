@@ -52,9 +52,9 @@ export default function CalendarModal({ session, isOpen, onClose }) {
       html += `<h2>${title || 'מסמך אסטרטגיה'}</h2>`;
       // Very basic markdown to HTML converter for Word export
       let mkd = content.markdown_content || '';
-      mkd = mkd.replace(/^### (.*$)/gim, '<h4>$1</h4>')
-               .replace(/^## (.*$)/gim, '<h3>$1</h3>')
-               .replace(/^# (.*$)/gim, '<h2>$1</h2>')
+      mkd = mkd.replace(/^### (.*$)/gim, '<h4 dir="rtl" style="text-align: right;">$1</h4>')
+               .replace(/^## (.*$)/gim, '<h3 dir="rtl" style="text-align: right;">$1</h3>')
+               .replace(/^# (.*$)/gim, '<h2 dir="rtl" style="text-align: right;">$1</h2>')
                .replace(/\*\*(.*)\*\*/gim, '<b>$1</b>')
                .replace(/\*(.*)\*/gim, '<i>$1</i>')
                .replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>');
@@ -65,12 +65,12 @@ export default function CalendarModal({ session, isOpen, onClose }) {
         mkd = mkd.replace(/^[\s]*\|(.+)\|[\s]*$/gm, (match, inner) => {
            if (inner.includes('---')) return ''; // drop separator row entirely
            let cols = inner.split('|');
-           let colWidth = Math.floor(100 / cols.length); return '<tr>' + cols.map(c => `<td style="border: 1px solid #ccc; padding: 5px; width: ${colWidth}%;">${c.trim()}</td>`).join('') + '</tr>';
+           let colWidth = Math.floor(100 / cols.length); return '<tr>' + cols.map(c => `<td dir="rtl" style="border: 1px solid #ccc; padding: 5px; width: ${colWidth}%; text-align: right; direction: rtl;">${c.trim()}</td>`).join('') + '</tr>';
         });
         
         // Then wrap contiguous <tr> blocks in a <table>
         mkd = mkd.replace(/(<tr>[\s\S]*?<\/tr>\s*)+/g, (match) => {
-           return `<table style="border-collapse: collapse; width: 100%; border: 1px solid #ccc; margin: 15px 0;">\n${match}</table>\n`;
+           return `<table dir="rtl" style="border-collapse: collapse; width: 100%; border: 1px solid #ccc; margin: 15px 0; direction: rtl; text-align: right;">\n${match}</table>\n`;
         });
       }
 
@@ -717,6 +717,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
     </div>
   );
 }
+
 
 
 
