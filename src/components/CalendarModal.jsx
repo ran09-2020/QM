@@ -97,32 +97,48 @@ export default function CalendarModal({ session, isOpen, onClose }) {
     }, 2000);
   };
 
-  const handleShareMobile = async (content, title) => {
-    if (!navigator.share) {
-      alert("שיתוף אינו נתמך בדפדפן זה");
-      return;
-    }
-    
-    // Convert markdown content to plain text to share beautifully to WhatsApp
-    let plainText = title + "\n\n";
-    if (content.markdown_content) {
-      plainText += content.markdown_content.replace(/\[TOOL_PRACTICED:\s*(.+?)\]/g, "").replace(/\[ARTIFACT\]/g, "").replace(/[*#]/g, "").trim();
-    } else if (content.vision_sentences) {
-      plainText += "חזון בית הספר:\n" + content.vision_sentences.filter(Boolean).map((s,i)=>`${i+1}. ${s}`).join("\n") + "\n\n";
-      if (content.goals) {
-        plainText += "יעדים:\n" + content.goals.map(g => `- ${g.desc} (${g.domain})`).join("\n");
-      }
-    } else {
-      plainText += JSON.stringify(content);
-    }
-    
+  const handleShareMobile = async (content, title, e) => {
+    e.preventDefault();
+    const btn = e.currentTarget;
+    const originalHTML = btn.innerHTML;
+    btn.innerHTML = 'מכין קובץ...';
+
     try {
-      await navigator.share({
-        title: title || 'מסמך מתוך המערכת',
-        text: plainText
-      });
+      const html2pdf = (await import('html2pdf.js')).default;
+      const { buildHTMLString } = await import('../utils/markdownToHtml');
+      const rawHTML = buildHTMLString(content, title);
+      
+      const container = document.createElement('div');
+      container.innerHTML = rawHTML;
+      container.style.padding = '20px';
+      container.dir = 'rtl';
+      container.style.fontFamily = 'Arial, sans-serif';
+
+      const opt = {
+        margin:       10,
+        filename:     `${title || 'document'}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+      };
+
+      const pdfBlob = await html2pdf().set(opt).from(container).outputPdf('blob');
+      const file = new File([pdfBlob], `${title || 'document'}.pdf`, { type: 'application/pdf' });
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        btn.innerHTML = originalHTML;
+        await navigator.share({
+          files: [file],
+          title: title || 'מסמך',
+        });
+      } else {
+        alert('שיתוף קבצים ישיר אינו נתמך בדפדפן זה. אנא השתמש בכפתור הורדת PDF.');
+        btn.innerHTML = originalHTML;
+      }
     } catch (err) {
-      console.log("Share cancelled or failed", err);
+      console.error("Share failed", err);
+      alert('שגיאה בשיתוף הקובץ');
+      btn.innerHTML = originalHTML;
     }
   };
 
@@ -556,7 +572,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                           <Download size={16} /> PDF
                         </button>
                         <button 
-                          onClick={() => handleShareMobile(selectedArtifact.content, selectedArtifact.title)}
+                          onClick={(e) => handleShareMobile(selectedArtifact.content, selectedArtifact.title, e)}
                           className="mobile-only"
                           style={{ padding: '0.5rem 1rem', background: '#10b981', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '500' }}>
                           <Share2 size={16} /> שיתוף
@@ -644,7 +660,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                          <button onClick={() => handleExportPDF(art.content, art.title, art)} style={{ flex: 1, minWidth: '120px', padding: '0.6rem', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '6px', fontWeight: '500', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
                            <Download size={16} /> הורד כ-PDF
                          </button>
-                         <button className="mobile-only" onClick={() => handleShareMobile(art.content, art.title)} style={{ flex: 1, minWidth: '120px', padding: '0.6rem', background: '#10b981', color: 'white', border: 'none', borderRadius: '6px', fontWeight: '500', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
+                         <button className="mobile-only" onClick={(e) => handleShareMobile(art.content, art.title, e)} style={{ flex: 1, minWidth: '120px', padding: '0.6rem', background: '#10b981', color: 'white', border: 'none', borderRadius: '6px', fontWeight: '500', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
                            <Share2 size={16} /> שיתוף לווטסאפ
                          </button>
                       </div>
