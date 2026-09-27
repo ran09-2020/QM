@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { applySchoolFilter } from '../utils/supabaseHelpers';
 import { useSchool } from '../contexts/SchoolContext';
-import { X, Trash2, PlayCircle, Download, Save, FileText, MessageSquare, FlaskConical, ChevronDown, ChevronUp, Copy } from 'lucide-react';
+import { X, Trash2, PlayCircle, Download, Save, FileText, MessageSquare, FlaskConical, ChevronDown, ChevronUp, Copy, Share2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -95,6 +95,35 @@ export default function CalendarModal({ session, isOpen, onClose }) {
       btn.style.color = '#475569';
       btn.style.borderColor = '#cbd5e1';
     }, 2000);
+  };
+
+  const handleShareMobile = async (content, title) => {
+    if (!navigator.share) {
+      alert("שיתוף אינו נתמך בדפדפן זה");
+      return;
+    }
+    
+    // Convert markdown content to plain text to share beautifully to WhatsApp
+    let plainText = title + "\n\n";
+    if (content.markdown_content) {
+      plainText += content.markdown_content.replace(/\[TOOL_PRACTICED:\s*(.+?)\]/g, "").replace(/\[ARTIFACT\]/g, "").replace(/[*#]/g, "").trim();
+    } else if (content.vision_sentences) {
+      plainText += "חזון בית הספר:\n" + content.vision_sentences.filter(Boolean).map((s,i)=>`${i+1}. ${s}`).join("\n") + "\n\n";
+      if (content.goals) {
+        plainText += "יעדים:\n" + content.goals.map(g => `- ${g.desc} (${g.domain})`).join("\n");
+      }
+    } else {
+      plainText += JSON.stringify(content);
+    }
+    
+    try {
+      await navigator.share({
+        title: title || 'מסמך מתוך המערכת',
+        text: plainText
+      });
+    } catch (err) {
+      console.log("Share cancelled or failed", err);
+    }
   };
 
   const renderArtifactContent = (content) => {
@@ -526,6 +555,11 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                           <Download size={16} /> PDF
                         </button>
                         <button 
+                          onClick={() => handleShareMobile(selectedArtifact.content, selectedArtifact.title)}
+                          style={{ padding: '0.5rem 1rem', background: '#10b981', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '500' }}>
+                          <Share2 size={16} /> שיתוף
+                        </button>
+                        <button 
                           onClick={() => setSelectedArtifact(null)}
                           style={{ padding: '0.5rem 1rem', background: '#f1f5f9', color: '#475569', border: '1px solid #cbd5e1', borderRadius: '6px', cursor: 'pointer', fontWeight: '500' }}>
                           חזור לרשימה
@@ -607,6 +641,9 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                          </button>
                          <button onClick={() => handleExportPDF(art.content, art.title, art)} style={{ flex: 1, minWidth: '120px', padding: '0.6rem', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '6px', fontWeight: '500', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
                            <Download size={16} /> הורד כ-PDF
+                         </button>
+                         <button onClick={() => handleShareMobile(art.content, art.title)} style={{ flex: 1, minWidth: '120px', padding: '0.6rem', background: '#10b981', color: 'white', border: 'none', borderRadius: '6px', fontWeight: '500', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
+                           <Share2 size={16} /> שיתוף לווטסאפ
                          </button>
                       </div>
                     </div>
