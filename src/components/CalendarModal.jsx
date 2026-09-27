@@ -193,7 +193,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
             remarkPlugins={[remarkGfm]} 
             rehypePlugins={[rehypeRaw]}
             components={{
-              table: ({node, ...props}) => <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem', marginBottom: '1rem' }} {...props} />,
+              table: ({node, ...props}) => <table style={{ borderCollapse: 'collapse', marginTop: '1rem', marginBottom: '1rem', width: '100%', minWidth: 'max-content' }} className="responsive-table" {...props} />,
               th: ({node, ...props}) => <th style={{ padding: '0.75rem 1rem', backgroundColor: '#f1f5f9', borderBottom: '2px solid #e2e8f0', fontWeight: '600', color: '#1e293b', whiteSpace: 'nowrap' }} {...props} />,
               td: ({node, ...props}) => <td style={{ padding: '0.75rem 1rem', borderBottom: '1px solid #e2e8f0', color: '#334155', whiteSpace: 'nowrap' }} {...props} />,
             }}
