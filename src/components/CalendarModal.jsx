@@ -8,6 +8,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import { loadChatHistory, loadSimulationHistory } from '../services/gemini';
+import { copyToClipboard } from '../utils/clipboard';
 
 export default function CalendarModal({ session, isOpen, onClose }) {
   const [activeTab, setActiveTab] = useState('chats');
@@ -661,7 +662,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                             } else {
                                 textToCopy = JSON.stringify(selectedArtifact.content, null, 2);
                             }
-                            navigator.clipboard.writeText(textToCopy).then(() => {
+                            copyToClipboard(textToCopy).then(() => {
                               const btn = e.currentTarget;
                               const originalHTML = btn.innerHTML;
                               btn.innerHTML = 'הועתק ✓';
@@ -765,7 +766,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                            } else {
                                textToCopy = JSON.stringify(art.content, null, 2);
                            }
-                           navigator.clipboard.writeText(textToCopy).then(() => {
+                           copyToClipboard(textToCopy).then(() => {
                              const btn = e.currentTarget;
                              const originalHTML = btn.innerHTML;
                              btn.innerHTML = 'הועתק ✓';

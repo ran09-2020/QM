@@ -8,6 +8,7 @@ import { Send, Loader2, Lightbulb, PenTool, Map, BookOpen, Users, FlaskConical, 
 import { sendMessageToGemini, sendSimulationMessageToGemini, clearSimulationHistory, clearChatHistory , extractArtifactJSON } from '../services/gemini';
 import mammoth from 'mammoth';
 import * as XLSX from 'xlsx';
+import { copyToClipboard } from '../utils/clipboard';
 import { supabase } from '../supabaseClient';
 import { getSchoolInsertData } from '../utils/supabaseHelpers';
 import { useSchool } from '../contexts/SchoolContext';
@@ -919,7 +920,7 @@ ${chooseStr}`
                                   onClick={(e) => {
                                     e.preventDefault();
                                     const textToCopy = msg.text.replace(/\[ARTIFACT\]/g, "").trim();
-                                    navigator.clipboard.writeText(textToCopy).then(() => {
+                                    copyToClipboard(textToCopy).then(() => {
                                       const btn = e.currentTarget;
                                       const originalHTML = btn.innerHTML;
                                       btn.innerHTML = 'הועתק ✓';
