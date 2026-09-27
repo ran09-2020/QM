@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { applySchoolFilter } from '../utils/supabaseHelpers';
 import { useSchool } from '../contexts/SchoolContext';
@@ -56,6 +56,45 @@ export default function CalendarModal({ session, isOpen, onClose }) {
     } else {
       window.print();
     }
+  };
+
+  const handleSaveAs = async (content, title, e) => {
+    e.preventDefault();
+    const btn = e.currentTarget;
+    const originalHTML = btn.innerHTML;
+    btn.innerHTML = 'שומר...';
+    try {
+      const { buildHTMLString } = await import('../utils/markdownToHtml');
+      const rawHTML = buildHTMLString(content, title);
+      const preHtml = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>${title || 'מסמך'}</title><style>body, table, td, th, p, h1, h2, h3, h4, h5, h6, li { font-family: Arial, sans-serif !important; }</style></head><body>`;
+      const postHtml = "</body></html>";
+      const fullHtml = preHtml + rawHTML + postHtml;
+      
+      const blob = new Blob(['\ufeff', fullHtml], { type: "application/msword" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = (title || "מסמך") + ".doc";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      btn.innerHTML = 'נשמר ✓';
+      btn.style.backgroundColor = '#10b981';
+      btn.style.color = 'white';
+      btn.style.borderColor = '#10b981';
+    } catch (error) {
+      console.error("Save As failed", error);
+      alert("שגיאה בשמירת המסמך");
+      btn.innerHTML = originalHTML;
+    }
+    setTimeout(() => {
+      btn.innerHTML = originalHTML;
+      btn.style.backgroundColor = '#f1f5f9';
+      btn.style.color = '#475569';
+      btn.style.borderColor = '#cbd5e1';
+    }, 2000);
   };
 
   const renderArtifactContent = (content) => {
@@ -476,7 +515,11 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                         <div style={{ color: '#64748b', fontSize: '0.9rem' }}>{new Date(selectedArtifact.created_at).toLocaleDateString('he-IL')} {new Date(selectedArtifact.created_at).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })} &bull; מסמך אסטרטגיה</div>
                       </div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
-                        
+                        <button 
+                          onClick={(e) => handleSaveAs(selectedArtifact.content, selectedArtifact.title, e)}
+                          style={{ padding: '0.5rem 1rem', background: '#f1f5f9', color: '#475569', border: '1px solid #cbd5e1', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '500' }}>
+                          <Save size={16} /> שמירה אל...
+                        </button>
                         <button 
                           onClick={() => handleExportPDF()}
                           style={{ padding: '0.5rem 1rem', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '500' }}>
@@ -559,8 +602,10 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                       </div>
                       
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '0.5rem', borderTop: '1px solid #e2e8f0', paddingTop: '1rem' }}>
-                         
-                         <button onClick={() => handleExportPDF(art.content, art.title, art)} style={{ flex: 1, padding: '0.6rem', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '6px', fontWeight: '500', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
+                         <button onClick={(e) => handleSaveAs(art.content, art.title, e)} style={{ flex: 1, minWidth: '120px', padding: '0.6rem', background: '#f8fafc', color: '#475569', border: '1px solid #cbd5e1', borderRadius: '6px', fontWeight: '500', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
+                           <Save size={16} /> שמירה אל...
+                         </button>
+                         <button onClick={() => handleExportPDF(art.content, art.title, art)} style={{ flex: 1, minWidth: '120px', padding: '0.6rem', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '6px', fontWeight: '500', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
                            <Download size={16} /> הורד כ-PDF
                          </button>
                       </div>
