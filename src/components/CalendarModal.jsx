@@ -595,12 +595,12 @@ export default function CalendarModal({ session, isOpen, onClose }) {
             <div className="tab-pane active fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {selectedArtifact ? (
                   <div className="artifact-viewer">
-                    <div className="no-print" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', paddingBottom: '1rem', borderBottom: '2px solid #e2e8f0' }}>
-                      <div>
+                    <div className="no-print" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem', paddingBottom: '1rem', borderBottom: '2px solid #e2e8f0' }}>
+                      <div style={{ flex: '1 1 100%' }}>
                         <h2 style={{ margin: '0 0 0.5rem 0', color: '#1e293b' }}>{selectedArtifact.title}</h2>
                         <div style={{ color: '#64748b', fontSize: '0.9rem' }}>{new Date(selectedArtifact.created_at).toLocaleDateString('he-IL')} {new Date(selectedArtifact.created_at).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })} &bull; מסמך אסטרטגיה</div>
                       </div>
-                      <div style={{ display: 'flex', gap: '1rem' }}>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
                         <button 
                           onClick={() => handleExportWord(selectedArtifact.content, selectedArtifact.title)}
                           style={{ padding: '0.5rem 1rem', background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '500' }}>
