@@ -107,7 +107,7 @@ function AppContent({ session }) {
     : { backgroundColor: '#fafafa', '--right-sidebar-width': `${sidebarWidth}px` };
 
   return (
-    <Router basename={import.meta.env.MODE === 'production' ? '/n-star' : '/'}>
+    <Router basename={import.meta.env.MODE === 'production' ? '/n-star/0' : '/'}>
       <div className="app-container app-layout-new" style={appStyle}>
         <PersonalSidebar 
           isOpen={isSidebarOpen} 
