@@ -9,6 +9,7 @@ import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import { loadChatHistory, loadSimulationHistory } from '../services/gemini';
 import { copyToClipboard } from '../utils/clipboard';
+import { buildHTMLString } from '../utils/markdownToHtml';
 
 export default function CalendarModal({ session, isOpen, onClose }) {
   const [activeTab, setActiveTab] = useState('chats');
@@ -45,185 +46,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
   };
 
 
-  const buildHTMLString = (content, title) => {
-    if (!content) return "";
-    let html = "<div style='font-family: Arial, sans-serif; direction: rtl;'>";
-    
-    if (content.document_type === 'generic_markdown' || (content.markdown_content && !content.vision_sentences)) {
-      html += `<h2>${title || 'מסמך אסטרטגיה'}</h2>`;
-      // Very basic markdown to HTML converter for Word export
-      let mkd = content.markdown_content || '';
-      mkd = mkd.replace(/^### (.*$)/gim, '<h4 dir="rtl" style="text-align: right;">$1</h4>')
-               .replace(/^## (.*$)/gim, '<h3 dir="rtl" style="text-align: right;">$1</h3>')
-               .replace(/^# (.*$)/gim, '<h2 dir="rtl" style="text-align: right;">$1</h2>')
-               .replace(/\*\*(.*)\*\*/gim, '<b>$1</b>')
-               .replace(/\*(.*)\*/gim, '<i>$1</i>')
-               .replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>');
-               
-      // Basic table support for Word (if the AI generated markdown tables)
-      if (mkd.includes('|')) {
-        // First convert each row to <tr>...</tr>
-        mkd = mkd.replace(/^[\s]*\|(.+)\|[\s]*$/gm, (match, inner) => {
-           if (inner.includes('---')) return ''; // drop separator row entirely
-           let cols = inner.split('|');
-           return '<tr>' + cols.map(c => `<td dir="rtl" style="border: 1px solid #ccc; padding: 5px; text-align: right; direction: rtl; word-wrap: break-word;">${c.trim()}</td>`).join('') + '</tr>';
-        });
-        
-        // Then wrap contiguous <tr> blocks in a <table>
-        mkd = mkd.replace(/(<tr>[\s\S]*?<\/tr>\s*)+/g, (match) => {
-           
-          // Add a dummy row to force minimum column widths in Word
-          let firstRowMatch = match.match(/<tr>(.*?)<\/tr>/i);
-          let forcedWidthRow = "";
-          if (firstRowMatch) {
-            let colCount = (firstRowMatch[1].match(/<td/g) || []).length;
-            if (colCount > 0) {
-              let hiddenText = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"; // Unbreakable long string
-              let dummyCols = Array(colCount).fill(`<td style="border: none; padding: 0; color: white; font-size: 1px;">${hiddenText}</td>`).join("");
-              forcedWidthRow = `<tr style="height: 1px; color: white; font-size: 1px;">${dummyCols}</tr>`;
-            }
-          }
-          return `<table dir="rtl" style="table-layout: fixed; word-wrap: break-word; border-collapse: collapse; width: 100%; border: 1px solid #ccc; margin: 15px 0; direction: rtl; text-align: right;">\n${forcedWidthRow}\n${match}</table>\n`;
 
-        });
-      }
-
-      // Finally, replace remaining newlines with <br/> (after tables are processed)
-      mkd = mkd.replace(/\n\n/gim, '<br/><br/>')
-               .replace(/\n/gim, '<br/>');
-               
-      html += `<div>${mkd}</div>`;
-      html += "</div>";
-      return html;
-    }
-
-    // Default to vision matrix template
-    html += `<h2>${title || 'מסמך אסטרטגיה'}</h2>`;
-    html += "<h3>חזון בית הספר</h3><ul>";
-    for (let i=0; i<5; i++) {
-       const sentence = content.vision_sentences?.[i] || "(להגדרה - עיין במחוון)";
-       html += `<li>${sentence}</li>`;
-    }
-    html += "</ul><h3>יעדים אופרטיביים</h3>";
-    html += "<table border='1' style='width:100%; border-collapse: collapse;' cellpadding='8'>";
-    html += "<tr style='background: #f3f4f6;'><th>מס' יעד</th><th>פדגוגי</th><th>חברתי-ערכי</th><th>רגשי</th><th>ארגוני-ניהולי</th></tr>";
-    
-    if (content.goals?.length > 0) {
-      content.goals.forEach(g => {
-        const isPed = g.domain === 'פדגוגי';
-        const isSoc = g.domain === 'חברתי-ערכי';
-        const isEmo = g.domain === 'רגשי';
-        const isMan = g.domain === 'ארגוני-ניהולי' || g.domain === 'ניהולי-ארגוני';
-        
-        let notesHTML = "";
-        if (g.mentor_notes && g.mentor_notes.length > 0) {
-           notesHTML = `<div style="color: red; font-size: 0.9em; margin-top: 10px;"><b>הערות מאמן:</b><ul>`;
-           g.mentor_notes.forEach(n => notesHTML += `<li>${n}</li>`);
-           notesHTML += `</ul></div>`;
-        }
-        
-        html += `<tr>`;
-        html += `<td style="text-align:center;"><b>${g.id}</b></td>`;
-        html += `<td>${isPed ? g.desc + notesHTML : ''}</td>`;
-        html += `<td>${isSoc ? g.desc + notesHTML : ''}</td>`;
-        html += `<td>${isEmo ? g.desc + notesHTML : ''}</td>`;
-        html += `<td>${isMan ? g.desc + notesHTML : ''}</td>`;
-        html += `</tr>`;
-      });
-    } else {
-      html += "<tr><td colspan='5'>אין יעדים מוגדרים</td></tr>";
-    }
-    html += "</table>";
-
-    // Add domains section
-    html += "<h3 style='margin-top: 30px;'>מפת התחומים האסטרטגיים (חללים ריקים)</h3>";
-    html += "<table style='width:100%; border-collapse: separate; border-spacing: 15px;'>";
-    
-    const domainKeys = ['פדגוגי', 'חברתי-ערכי', 'רגשי', 'ארגוני-ניהולי'];
-    // In some older saves, 'קהילה' might be used instead of 'רגשי'
-    const getDomainData = (key) => {
-        if (key === 'רגשי') return content.domains?.[key] || content.domains?.['קהילה'];
-        if (key === 'ארגוני-ניהולי') return content.domains?.[key] || content.domains?.['ניהולי-ארגוני'];
-        return content.domains?.[key];
-    };
-    
-    html += "<tr>";
-    for(let i=0; i<2; i++) {
-       const key = domainKeys[i];
-       const data = getDomainData(key);
-       html += `<td style='border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; width: 50%;'>`;
-       html += `<h4 style='margin: 0 0 10px 0;'>${key}</h4>`;
-       html += `<p style='margin: 5px 0;'><b>אחראי: </b>${data?.owner || 'להשלמה עם המדריך'}</p>`;
-       html += `<p style='margin: 5px 0;'><b>יעדים שנגזרו: </b>${(data?.goals && data.goals.length > 0) ? data.goals.join(', ') : 'חלל ריק למילוי בשנתון'}</p>`;
-       html += `</td>`;
-    }
-    html += "</tr><tr>";
-    for(let i=2; i<4; i++) {
-       const key = domainKeys[i];
-       const data = getDomainData(key);
-       html += `<td style='border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; width: 50%;'>`;
-       html += `<h4 style='margin: 0 0 10px 0;'>${key}</h4>`;
-       html += `<p style='margin: 5px 0;'><b>אחראי: </b>${data?.owner || 'להשלמה עם המדריך'}</p>`;
-       html += `<p style='margin: 5px 0;'><b>יעדים שנגזרו: </b>${(data?.goals && data.goals.length > 0) ? data.goals.join(', ') : 'חלל ריק למילוי בשנתון'}</p>`;
-       html += `</td>`;
-    }
-    html += "</tr></table>";
-
-    html += "</div>";
-    return html;
-  };
-
-  const handleExportDOCX = async (content, title) => {
-    try {
-      const { htmlToDocx } = await import("wp-html-to-docx");
-      const rawHTML = buildHTMLString(content, title);
-      const docxData = await htmlToDocx(`<div dir="rtl">${rawHTML}</div>`, { page: { orientation: 'landscape', margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 } } });
-      
-      const blob = new Blob([docxData], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
-      const url = URL.createObjectURL(blob);
-      
-      const fileDownload = document.createElement("a");
-      document.body.appendChild(fileDownload);
-      fileDownload.href = url;
-      fileDownload.download = (title || "מסמך") + ".docx";
-      fileDownload.click();
-      
-      setTimeout(() => {
-        document.body.removeChild(fileDownload);
-        URL.revokeObjectURL(url);
-      }, 100);
-    } catch (error) {
-      console.error("Docx generation failed", error);
-      alert("שגיאה ביצירת קובץ וורד");
-    }
-  };
-
-  const handleExportGoogleDocs = async (content, title) => {
-    try {
-      // For Google Docs we use HTML-based export because Google Docs handles it natively and perfectly
-      const rawHTML = buildHTMLString(content, title);
-      const preHtml = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>${title || 'מסמך'}</title></head><body>`;
-      const postHtml = "</body></html>";
-      const fullHtml = preHtml + rawHTML + postHtml;
-      
-      const blob = new Blob(['\ufeff', fullHtml], { type: 'application/msword' });
-      const url = URL.createObjectURL(blob);
-      
-      const fileDownload = document.createElement("a");
-      document.body.appendChild(fileDownload);
-      fileDownload.href = url;
-      fileDownload.download = (title || "מסמך_GoogleDocs") + ".doc";
-      fileDownload.click();
-      
-      setTimeout(() => {
-        document.body.removeChild(fileDownload);
-        URL.revokeObjectURL(url);
-      }, 100);
-    } catch (error) {
-      console.error("Google Docs generation failed", error);
-      alert("שגיאה ביצירת קובץ");
-    }
-  };
 
   const handleExportPDF = (content, title, art) => {
     if (!selectedArtifact && art) {
@@ -662,7 +485,8 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                             } else {
                                 textToCopy = JSON.stringify(selectedArtifact.content, null, 2);
                             }
-                            copyToClipboard(textToCopy).then(() => {
+                            const htmlToCopy = buildHTMLString(selectedArtifact.content, selectedArtifact.title);
+                            copyToClipboard(textToCopy, htmlToCopy).then(() => {
                               const btn = e.currentTarget;
                               const originalHTML = btn.innerHTML;
                               btn.innerHTML = 'הועתק ✓';
@@ -766,7 +590,8 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                            } else {
                                textToCopy = JSON.stringify(art.content, null, 2);
                            }
-                           copyToClipboard(textToCopy).then(() => {
+                           const htmlToCopy = buildHTMLString(art.content, art.title);
+                           copyToClipboard(textToCopy, htmlToCopy).then(() => {
                              const btn = e.currentTarget;
                              const originalHTML = btn.innerHTML;
                              btn.innerHTML = 'הועתק ✓';
@@ -796,6 +621,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
     </div>
   );
 }
+
 
 
 

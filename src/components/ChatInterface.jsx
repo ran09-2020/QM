@@ -9,6 +9,7 @@ import { sendMessageToGemini, sendSimulationMessageToGemini, clearSimulationHist
 import mammoth from 'mammoth';
 import * as XLSX from 'xlsx';
 import { copyToClipboard } from '../utils/clipboard';
+import { buildHTMLString } from '../utils/markdownToHtml';
 import { supabase } from '../supabaseClient';
 import { getSchoolInsertData } from '../utils/supabaseHelpers';
 import { useSchool } from '../contexts/SchoolContext';
@@ -920,7 +921,8 @@ ${chooseStr}`
                                   onClick={(e) => {
                                     e.preventDefault();
                                     const textToCopy = msg.text.replace(/\[ARTIFACT\]/g, "").trim();
-                                    copyToClipboard(textToCopy).then(() => {
+                                    const htmlToCopy = buildHTMLString(textToCopy);
+                                    copyToClipboard(textToCopy, htmlToCopy).then(() => {
                                       const btn = e.currentTarget;
                                       const originalHTML = btn.innerHTML;
                                       btn.innerHTML = 'הועתק ✓';
