@@ -188,7 +188,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
     
     if (content.document_type === 'generic_markdown' || (content.markdown_content && !content.vision_sentences)) {
       return (
-        <div className="viewer-content markdown-content" style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '8px', marginBottom: '2rem', lineHeight: '1.6', color: '#1e293b', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+        <div className="viewer-content markdown-content" style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '8px', marginBottom: '2rem', lineHeight: '1.6', color: '#1e293b', overflowX: 'auto', WebkitOverflowScrolling: 'touch', minWidth: 0, maxWidth: '100%', width: '100%', boxSizing: 'border-box' }}>
           <ReactMarkdown 
             remarkPlugins={[remarkGfm]} 
             rehypePlugins={[rehypeRaw]}
@@ -592,9 +592,9 @@ export default function CalendarModal({ session, isOpen, onClose }) {
           )}
 
           {activeTab === 'artifacts' && (
-            <div className="tab-pane active fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div className="tab-pane active fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', minWidth: 0, width: '100%' }}>
               {selectedArtifact ? (
-                  <div className="artifact-viewer">
+                  <div className="artifact-viewer" style={{ minWidth: 0, width: '100%' }}>
                     <div className="no-print" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem', paddingBottom: '1rem', borderBottom: '2px solid #e2e8f0' }}>
                       <div style={{ flex: '1 1 100%' }}>
                         <h2 style={{ margin: '0 0 0.5rem 0', color: '#1e293b' }}>{selectedArtifact.title}</h2>
