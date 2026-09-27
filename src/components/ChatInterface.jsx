@@ -926,7 +926,7 @@ ${chooseStr}`
                                     try {
                                       const textContent = msg.text.replace(/\[ARTIFACT\]/g, "").trim();
                                       const rawHTML = buildHTMLString(textContent, null);
-                                      const preHtml = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>מסמך</title></head><body>`;
+                                      const preHtml = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>מסמך</title><style>body, table, td, th, p, h1, h2, h3, h4, h5, h6, li { font-family: Arial, sans-serif !important; }</style></head><body>`;
                                       const postHtml = "</body></html>";
                                       const fullHtml = preHtml + rawHTML + postHtml;
                                       
