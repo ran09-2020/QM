@@ -65,7 +65,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
         mkd = mkd.replace(/^[\s]*\|(.+)\|[\s]*$/gm, (match, inner) => {
            if (inner.includes('---')) return ''; // drop separator row entirely
            let cols = inner.split('|');
-           let colWidth = Math.floor(100 / cols.length); return '<tr>' + cols.map(c => `<td dir="rtl" style="border: 1px solid #ccc; padding: 5px; width: ${colWidth}%; text-align: right; direction: rtl;">${c.trim()}</td>`).join('') + '</tr>';
+           return '<tr>' + cols.map(c => `<td dir="rtl" style="border: 1px solid #ccc; padding: 5px; text-align: right; direction: rtl; word-wrap: break-word;">${c.trim()}</td>`).join('') + '</tr>';
         });
         
         // Then wrap contiguous <tr> blocks in a <table>
@@ -717,6 +717,9 @@ export default function CalendarModal({ session, isOpen, onClose }) {
     </div>
   );
 }
+
+
+
 
 
 
