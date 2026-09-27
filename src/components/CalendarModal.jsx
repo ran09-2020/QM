@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { applySchoolFilter } from '../utils/supabaseHelpers';
 import { useSchool } from '../contexts/SchoolContext';
@@ -160,17 +160,24 @@ export default function CalendarModal({ session, isOpen, onClose }) {
   };
 
   const handleExportWord = (content, title) => {
-    const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>מסמך אסטרטגיה</title><style>body { font-family: Arial, sans-serif; direction: rtl; }</style></head><body>";
+    const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export</title><style>@page { size: A4 portrait; margin: 2cm; } body { font-family: Arial, sans-serif; direction: rtl; } table { table-layout: fixed; width: 100%; border-collapse: collapse; } td, th { word-wrap: break-word; white-space: normal; }</style></head><body>";
     const footer = "</body></html>";
     
     const sourceHTML = header + buildHTMLString(content, title) + footer;
-    const source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
+    
+    const blob = new Blob(['\ufeff', sourceHTML], { type: 'application/msword' });
+    const url = URL.createObjectURL(blob);
+    
     const fileDownload = document.createElement("a");
     document.body.appendChild(fileDownload);
-    fileDownload.href = source;
-    fileDownload.download = (title || 'מסמך_אסטרטגיה') + '.doc';
+    fileDownload.href = url;
+    fileDownload.download = (title || 'document') + '.doc';
     fileDownload.click();
-    document.body.removeChild(fileDownload);
+    
+    setTimeout(() => {
+      document.body.removeChild(fileDownload);
+      URL.revokeObjectURL(url);
+    }, 100);
   };
 
   const handleExportPDF = (content, title, art) => {
@@ -193,9 +200,9 @@ export default function CalendarModal({ session, isOpen, onClose }) {
             remarkPlugins={[remarkGfm]} 
             rehypePlugins={[rehypeRaw]}
             components={{
-              table: ({node, ...props}) => <table style={{ borderCollapse: 'collapse', marginTop: '1rem', marginBottom: '1rem', width: '100%', minWidth: 'max-content' }} className="responsive-table" {...props} />,
-              th: ({node, ...props}) => <th style={{ padding: '0.75rem 1rem', backgroundColor: '#f1f5f9', borderBottom: '2px solid #e2e8f0', fontWeight: '600', color: '#1e293b', whiteSpace: 'nowrap' }} {...props} />,
-              td: ({node, ...props}) => <td style={{ padding: '0.75rem 1rem', borderBottom: '1px solid #e2e8f0', color: '#334155', whiteSpace: 'nowrap' }} {...props} />,
+              table: ({node, ...props}) => <table style={{ borderCollapse: 'collapse', marginTop: '1rem', marginBottom: '1rem', width: '100%' }} className="responsive-table" {...props} />,
+              th: ({node, ...props}) => <th style={{ padding: '0.75rem 1rem', backgroundColor: '#f1f5f9', borderBottom: '2px solid #e2e8f0', fontWeight: '600', color: '#1e293b' }} {...props} />,
+              td: ({node, ...props}) => <td style={{ padding: '0.75rem 1rem', borderBottom: '1px solid #e2e8f0', color: '#334155' }} {...props} />,
             }}
           >
             {content.markdown_content ? content.markdown_content.replace(/\[TOOL_PRACTICED:\s*(.+?)\]/g, "").replace(/\[ARTIFACT\]/g, "").trim() : ''}
@@ -706,3 +713,4 @@ export default function CalendarModal({ session, isOpen, onClose }) {
     </div>
   );
 }
+
