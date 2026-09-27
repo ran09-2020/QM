@@ -573,7 +573,6 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                         </button>
                         <button 
                           onClick={(e) => handleShareMobile(selectedArtifact.content, selectedArtifact.title, e)}
-                          className="mobile-only"
                           style={{ padding: '0.5rem 1rem', background: '#10b981', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '500' }}>
                           <Share2 size={16} /> שיתוף
                         </button>
@@ -660,7 +659,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
                          <button onClick={() => handleExportPDF(art.content, art.title, art)} style={{ flex: 1, minWidth: '120px', padding: '0.6rem', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '6px', fontWeight: '500', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
                            <Download size={16} /> הורד כ-PDF
                          </button>
-                         <button className="mobile-only" onClick={(e) => handleShareMobile(art.content, art.title, e)} style={{ flex: 1, minWidth: '120px', padding: '0.6rem', background: '#10b981', color: 'white', border: 'none', borderRadius: '6px', fontWeight: '500', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
+                         <button onClick={(e) => handleShareMobile(art.content, art.title, e)} style={{ flex: 1, minWidth: '120px', padding: '0.6rem', background: '#10b981', color: 'white', border: 'none', borderRadius: '6px', fontWeight: '500', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
                            <Share2 size={16} /> שיתוף לווטסאפ
                          </button>
                       </div>
