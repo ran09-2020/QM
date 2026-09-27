@@ -957,33 +957,20 @@ ${chooseStr}`
                                     try {
                                       const textContent = msg.text.replace(/\[ARTIFACT\]/g, "").trim();
                                       const rawHTML = buildHTMLString(textContent, null);
-                                      const { htmlToDocx } = await import("wp-html-to-docx");
-                                      const docxData = await htmlToDocx(`<div dir="rtl">${rawHTML}</div>`, { page: { orientation: 'landscape', margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 } } });
-                                      const blob = new Blob([docxData], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+                                      const preHtml = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>מסמך</title></head><body>`;
+                                      const postHtml = "</body></html>";
+                                      const fullHtml = preHtml + rawHTML + postHtml;
                                       
-                                      if (window.showSaveFilePicker) {
-                                        try {
-                                          const handle = await window.showSaveFilePicker({
-                                            suggestedName: "מסמך.docx",
-                                            types: [{
-                                              description: 'Word Document',
-                                              accept: {'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx']},
-                                            }],
-                                          });
-                                          const writable = await handle.createWritable();
-                                          await writable.write(blob);
-                                          await writable.close();
-                                        } catch (err) {
-                                          if (err.name !== 'AbortError') console.error(err);
-                                        }
-                                      } else {
-                                        const url = URL.createObjectURL(blob);
-                                        const a = document.createElement('a');
-                                        a.href = url;
-                                        a.download = "מסמך.docx";
-                                        a.click();
-                                        URL.revokeObjectURL(url);
-                                      }
+                                      const blob = new Blob(['\ufeff', fullHtml], { type: "application/msword" });
+                                      const url = URL.createObjectURL(blob);
+                                      const a = document.createElement('a');
+                                      a.href = url;
+                                      a.download = "מסמך.doc";
+                                      document.body.appendChild(a);
+                                      a.click();
+                                      document.body.removeChild(a);
+                                      URL.revokeObjectURL(url);
+                                      
                                       btn.innerHTML = 'נשמר ✓';
                                       btn.style.backgroundColor = '#10b981';
                                       btn.style.color = 'white';
