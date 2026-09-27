@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { applySchoolFilter } from '../utils/supabaseHelpers';
 import { useSchool } from '../contexts/SchoolContext';
@@ -70,7 +70,20 @@ export default function CalendarModal({ session, isOpen, onClose }) {
         
         // Then wrap contiguous <tr> blocks in a <table>
         mkd = mkd.replace(/(<tr>[\s\S]*?<\/tr>\s*)+/g, (match) => {
-           return `<table dir="rtl" style="border-collapse: collapse; width: 100%; border: 1px solid #ccc; margin: 15px 0; direction: rtl; text-align: right;">\n${match}</table>\n`;
+           
+          // Add a dummy row to force minimum column widths in Word
+          let firstRowMatch = match.match(/<tr>(.*?)<\/tr>/i);
+          let forcedWidthRow = "";
+          if (firstRowMatch) {
+            let colCount = (firstRowMatch[1].match(/<td/g) || []).length;
+            if (colCount > 0) {
+              let hiddenText = "-------------------------"; // Unbreakable long string
+              let dummyCols = Array(colCount).fill(`<td style="border: none; padding: 0; color: white; font-size: 1px;">${hiddenText}</td>`).join("");
+              forcedWidthRow = `<tr style="height: 1px;">${dummyCols}</tr>`;
+            }
+          }
+          return `<table dir="rtl" style="table-layout: fixed; word-wrap: break-word; border-collapse: collapse; width: 100%; border: 1px solid #ccc; margin: 15px 0; direction: rtl; text-align: right;">\n${forcedWidthRow}\n${match}</table>\n`;
+
         });
       }
 
@@ -163,7 +176,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
     try {
       const { htmlToDocx } = await import("wp-html-to-docx");
       const rawHTML = buildHTMLString(content, title);
-      const docxData = await htmlToDocx(`<div dir="rtl">${rawHTML}</div>`);
+      const docxData = await htmlToDocx(`<div dir="rtl">${rawHTML}</div>`, { page: { orientation: 'landscape', margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 } } });
       
       const blob = new Blob([docxData], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
       const url = URL.createObjectURL(blob);
@@ -717,6 +730,7 @@ export default function CalendarModal({ session, isOpen, onClose }) {
     </div>
   );
 }
+
 
 
 
