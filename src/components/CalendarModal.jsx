@@ -159,25 +159,29 @@ export default function CalendarModal({ session, isOpen, onClose }) {
     return html;
   };
 
-  const handleExportWord = (content, title) => {
-    const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export</title><style>@page { size: A4 portrait; margin: 2cm; } body { font-family: Arial, sans-serif; direction: rtl; } table { table-layout: fixed; width: 100%; border-collapse: collapse; } td, th { word-wrap: break-word; white-space: normal; }</style></head><body>";
-    const footer = "</body></html>";
-    
-    const sourceHTML = header + buildHTMLString(content, title) + footer;
-    
-    const blob = new Blob(['\ufeff', sourceHTML], { type: 'application/msword' });
-    const url = URL.createObjectURL(blob);
-    
-    const fileDownload = document.createElement("a");
-    document.body.appendChild(fileDownload);
-    fileDownload.href = url;
-    fileDownload.download = (title || 'document') + '.doc';
-    fileDownload.click();
-    
-    setTimeout(() => {
-      document.body.removeChild(fileDownload);
-      URL.revokeObjectURL(url);
-    }, 100);
+  const handleExportWord = async (content, title) => {
+    try {
+      const { htmlToDocx } = await import("wp-html-to-docx");
+      const rawHTML = buildHTMLString(content, title);
+      const docxData = await htmlToDocx(`<div dir="rtl">${rawHTML}</div>`);
+      
+      const blob = new Blob([docxData], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+      const url = URL.createObjectURL(blob);
+      
+      const fileDownload = document.createElement("a");
+      document.body.appendChild(fileDownload);
+      fileDownload.href = url;
+      fileDownload.download = (title || "מסמך") + ".docx";
+      fileDownload.click();
+      
+      setTimeout(() => {
+        document.body.removeChild(fileDownload);
+        URL.revokeObjectURL(url);
+      }, 100);
+    } catch (error) {
+      console.error("Docx generation failed", error);
+      alert("שגיאה ביצירת קובץ וורד");
+    }
   };
 
   const handleExportPDF = (content, title, art) => {
@@ -713,4 +717,5 @@ export default function CalendarModal({ session, isOpen, onClose }) {
     </div>
   );
 }
+
 
