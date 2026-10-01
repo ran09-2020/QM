@@ -5,7 +5,7 @@ import VisionDemoDialogue from './components/VisionDemoDialogue';
 import VisionDemoSandbox from './components/VisionDemoSandbox';
 import VisionDemoDiagnostic from './components/VisionDemoDiagnostic';
 import VisionDemoHub from './components/VisionDemoHub';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
 import Auth from './components/Auth';
 import TopNav from './components/TopNav';
@@ -16,6 +16,13 @@ import SettingsModal from './components/SettingsModal';
 import CalendarModal from './components/CalendarModal';
 import { Loader2 } from 'lucide-react';
 import { SchoolProvider, useSchool } from './contexts/SchoolContext';
+import { useTracker } from './hooks/useTracker';
+import AdminStats from './pages/AdminStats';
+
+const TrackerComponent = () => {
+  useTracker();
+  return null;
+};
 
 
 class ErrorBoundary extends React.Component {
@@ -107,7 +114,6 @@ function AppContent({ session }) {
     : { backgroundColor: '#fafafa', '--right-sidebar-width': `${sidebarWidth}px` };
 
   return (
-    <Router basename={import.meta.env.MODE === 'production' ? '/n-star' : '/'}>
       <div className="app-container app-layout-new" style={appStyle}>
         <PersonalSidebar 
           isOpen={isSidebarOpen} 
@@ -164,7 +170,6 @@ function AppContent({ session }) {
           />
         )}
       </div>
-    </Router>
   );
 }
 
@@ -204,9 +209,19 @@ function App() {
   }
 
   return (
-    <SchoolProvider session={session}>
-      <AppContent session={session} />
-    </SchoolProvider>
+    <Router>
+      <TrackerComponent />
+      <Routes>
+        <Route path="/admin-stats" element={<ErrorBoundary><AdminStats /></ErrorBoundary>} />
+        <Route path="/*" element={
+          !session ? <Auth /> : (
+            <SchoolProvider session={session}>
+              <AppContent session={session} />
+            </SchoolProvider>
+          )
+        } />
+      </Routes>
+    </Router>
   );
 }
 

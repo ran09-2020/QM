@@ -998,6 +998,10 @@ ${chooseStr}`
                                 handleSend('תאמן אותי על תרחיש שאהיה פעיל בו');
                               } else if (action === 'more_example') {
                                 handleSend('שלב אחרי שלב (הצג לי דוגמה נוספת בדיוק לפי התבנית)');
+                              } else if (action === 'continue_demo') {
+                                handleSend('כן, להמשיך לשלב הבא');
+                              } else {
+                                handleSend(String(props.children));
                               }
                             }} className="pill-btn" style={{ margin: '5px', display: 'inline-flex', borderColor: '#8b5cf6', color: '#7e22ce' }}>
                               {props.children}
